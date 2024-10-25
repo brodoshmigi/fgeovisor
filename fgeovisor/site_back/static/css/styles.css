@@ -28,6 +28,7 @@ body {
     transition: 0.5s;
     padding-top: 85px;
     z-index: 1;
+    white-space: nowrap;
 }
 
 .sidebar a {
@@ -41,6 +42,12 @@ body {
 
 .sidebar a:hover {
     background-color: #434853;
+}
+
+.errormsg{
+    text-align: center;
+    color: red;
+    display: none;
 }
 
 /* Кнопка открытия меню */
@@ -106,7 +113,7 @@ body {
     background-color: #38393c; /* Цвет фона формы */
     margin: auto; /* Центрируем по горизонтали */
     width: 700px; /* Максимальная ширина 700 пикселей */
-    height: 350px; /* Высота модального окна */
+    height: 400px; /* Высота модального окна */
     border: 1px solid #888;
     border-radius: 10px; /* Закругленные углы */
     position: relative; /* Устанавливаем позицию относительно окна */

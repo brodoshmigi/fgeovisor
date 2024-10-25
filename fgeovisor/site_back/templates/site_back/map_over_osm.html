@@ -13,16 +13,20 @@
     <!-- Боковое меню -->
     <div id="sidebar" class="sidebar" style="width: 0;">
         <div id="defoltview">
-        <a href="#" onclick="showLoginForm()">Войти</a>
-        <a href="#" onclick="showRegistrationForm()">Зарегистрироваться</a>
+            <a href="#" onclick="showLoginForm()">Войти</a>
+            <a href="#" onclick="showRegistrationForm()">Зарегистрироваться</a>
         </div>
         <div id="loggedinbuttons">
-        <a href="{% url 'log-out' %}">Выйти</a>
+            <div id="superuser">
+                <a href="{% url 'admin:index' %}">Панель админа</a>
+            </div>
+            <a href="{% url 'log-out' %}">Выйти</a>
         </div>
     </div>
 
     <button id="createbutton" class="ui-button">Добавить поле</button>
-
+    <button id="calcNdvi" class="popup-button">Рассчитать NDVI</button>
+    <button id="deleteButton" class="popup-button">Удалить</button>
     <button id="finishButton" class="ui-button" style="display: none;">Создать</button>
     <button id="cancelButton" class="ui-button" style="display: none;">Отменить</button>
     <!-- Карта -->
@@ -43,6 +47,7 @@
     <div style="display: none;">
         <div id="loginForm">
             <!-- Содержимое файла login.html -->
+            <div class="errormsg" id="errormsg"><p>Неправильное имя пользователя или пароль</p></div>
             <h2>Вход</h2>
             <form method="post" action="{% url 'log-in' %}">
                 {% csrf_token %}
@@ -57,6 +62,7 @@
 
         <div id="registrationForm">
             <!-- Содержимое файла registration.html -->
+            <div class="errormsg" id="errorrg"><p>Неверные данные или пользователь уже существует</p></div>
             <h2>Регистрация</h2>
             <form method="post" action="{% url 'sign-in' %}">
                 {% csrf_token %}
@@ -71,6 +77,9 @@
     <script>
         const csrfToken = document.querySelector('[name = csrfmiddlewaretoken]').value;
         var authcheck = "{{auth_check | safe}}";
+        var isadmin = "{{is_staff | safe}}";
+        var loginerror = "{{login_error | safe}}"
+        var regerror = "{{is_vallid_error | safe}}"
     </script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="{% static 'js/scripts.js' %}"></script>

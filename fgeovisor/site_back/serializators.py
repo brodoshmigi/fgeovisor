@@ -2,6 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Polygon, Image, SessionStorage, ActivityLog
 from django.contrib.auth import login, authenticate
+from copy import copy
 
 """
 Тут храним сериализаторы данных из quaryset моделей, который в БД у нас
@@ -71,6 +72,22 @@ class UserLoginSerializator(serializers.ModelSerializer):
         
         #extra_kwargs = {'password': {'read_only': True}}
     
+'''
+самопальный обработчик ошибок
+'''
+class My_errors():
 
-
+    error_wordbook={
+            'auth_check': False,
+            'is_staff': False,
+            'is_vallid_error': False,
+            'login_error': False,
+            }
+    
+    tmp_context = copy(error_wordbook)
+    
+    def error_send():
+        final = copy(My_errors.tmp_context)
+        My_errors.tmp_context = copy(My_errors.error_wordbook)
+        return(final)
     

@@ -15,14 +15,13 @@ function initMap() {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
     
-
     function createpoligon(){
         document.getElementById("createbutton").style.display = "none"
         document.getElementById("finishButton").style.display = "block"
         document.getElementById("cancelButton").style.display = "block"
         let latLng = [];
-        let newfield = L.polygon(latLng, { color: 'deepskyblue' }).addTo(map);
-
+        let newfield = L.polygon(latLng, { color: 'deepskyblue', dashArray: "10, 5" }).addTo(map);
+        
 
         // Меняем курсор при старте создания полигона
         map.getContainer().style.cursor = 'crosshair';
@@ -36,17 +35,42 @@ function initMap() {
 
         document.getElementById("finishButton").onclick = function() {
             if (latLng.length >= 3){
+                const newStyle = {dashArray: "0, 0"};
+                newfield.setStyle(newStyle);
                 map.off('click', onMapClick); // Отключаем обработчик кликов
                 map.getContainer().style.cursor = ''; // Возвращаем курсор в исходное состояние
                 document.getElementById("finishButton").style.display = "none"
                 document.getElementById("cancelButton").style.display = "none"
                 document.getElementById("createbutton").style.display = "block"
+                //начало блока с попапами//
+
+                let popupContent = document.createElement('div');
+                let calcNDVI = document.getElementById('calcNdvi').cloneNode(true);
+                calcNDVI.id='calcNdviClone';
+                popupContent.appendChild(document.createTextNode("Это поле"));
+                popupContent.appendChild(calcNDVI);
+                
+                let deleteB = document.getElementById('deleteButton').cloneNode(true);
+                deleteB.id='deleteBClone';
+                popupContent.appendChild(deleteB);
+                
+                function deletePolygon(newfield){
+                    newfield.remove();
+                }
+
+                deleteB.addEventListener("click", function() {
+                    deletePolygon(newfield);
+                });
+                
+
+                newfield.bindPopup(popupContent);  //присвоение попапа 
+                //конец юлока с попапами
                 savePolygon(latLng);
             }else{
                 alert("У поля должно быть минимум 3 угла!")
             }
         };
-
+        
         document.getElementById("cancelButton").onclick = function(){
             map.off('click', onMapClick);
             map.getContainer().style.cursor = '';
@@ -55,13 +79,12 @@ function initMap() {
             document.getElementById("createbutton").style.display = "block"
             newfield.remove();
         }
-
     }
 
     document.getElementById("createbutton").onclick = function(){
         createpoligon();
     }
-    
+
 
     function savePolygon(latLng){
         const data ={
@@ -83,6 +106,17 @@ function initMap() {
     }
 }
 
+
+function calcNDVI(){
+    alert("Функция в разработке");
+}
+
+document.addEventListener("click", function(event){
+    if (event.target && event.target.id.startsWith("calcNdviClone")){
+        calcNDVI();
+    }
+})
+
 // Функция для переключения бокового меню
 function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
@@ -100,11 +134,16 @@ function closeModal() {
     const modal = document.getElementById("modal");
     modal.style.display = "none"; // Скрываем модальное окно
     document.getElementById("modalBody").innerHTML = ""; // Очищаем содержимое модального окна
+    loginerror = "False"
+    regerror = "False"
 }
 
 // Функция для отображения формы входа
 function showLoginForm() {
     document.getElementById("modalBody").innerHTML = document.getElementById("loginForm").innerHTML; // Загружаем содержимое формы входа
+    if (loginerror == "True"){
+        document.getElementById("errormsg").style.display = "block";
+    }
     openModal(); // Открываем модальное окно
     var passwordField = document.querySelectorAll("#modalBody input[type='password']");
     passwordField.forEach(function(field){
@@ -115,6 +154,9 @@ function showLoginForm() {
 // Функция для отображения формы регистрации
 function showRegistrationForm() {
     document.getElementById("modalBody").innerHTML = document.getElementById("registrationForm").innerHTML; // Загружаем содержимое формы регистрации
+    if (regerror == "True"){
+        document.getElementById("errorrg").style.display = "block";
+    }
     openModal(); // Открываем модальное окно
     var form = document.querySelector("form[action]");
     form.addEventListener("submit", function(event) {
@@ -157,6 +199,17 @@ document.addEventListener("DOMContentLoaded", function() {
         }else{
             document.getElementById("loggedinbuttons").style.display = "block";
             document.getElementById("defoltview").style.display = "none";
+            if (isadmin == "False"){
+                document.getElementById("superuser").style.display = "none";
+            }else{
+                document.getElementById("superuser").style.display = "block";
+            }
+        }
+        if (loginerror == "True"){
+            showLoginForm();
+        }
+        if (regerror == "True"){
+            showRegistrationForm();
         }
     }
     switchsidebarcontent();

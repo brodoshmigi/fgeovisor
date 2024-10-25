@@ -7,8 +7,8 @@ from rest_framework.views import APIView
 from django.urls import reverse
 from rest_framework.response import Response
 from .models import Polygon
-from .serializators import PolygonOwnerSerializator, UserRegistrationSerializator, UserLoginSerializator
-
+from .serializators import (PolygonOwnerSerializator, UserRegistrationSerializator, UserLoginSerializator,
+                            My_errors)
 
 """
 Request запросы на вывод HTML файлов
@@ -23,27 +23,24 @@ class MapView(APIView):
     # ТУТА ПРОВЕРКА ГУТ ГУТ
     def get(self, request):
         user = self.request.user
+        context = My_errors.tmp_context
         if user.username == AnonymousUser.username:
-            """
-            Просто возвращаем карту 
             
-            """
-            context={'auth_check': True,
-                     'is_staff': user.is_staff}
+            # описание состояния пользователя дл js
+            context['auth_check'] = False
 
-            return render(request, "site_back/map_over_osm.html", context=context)
-            #return Response(user.username)
+            return render(request, "site_back/map_over_osm.html", context=My_errors.error_send())
+            #return Response(My_errors.error_send())
         else:
             """
             Возвращаем дату из сериализатора
             """
-            # // TO
-            context={'auth_check': True,
-                     'is_staff': user.is_staff}
+            # описание состояния пользователя дл js
+            context['auth_check'] = True
+            context['is_staff'] = user.is_staff
             
-            # DO //
-            return render(request, "site_back/map_over_osm.html", context=context)
-            #return Response(user.username)
+            return redirect(reverse('map'), context=My_errors.error_send())
+            #return Response(My_errors.error_send())
         
 class RegistrationView(APIView):
     """
@@ -59,7 +56,9 @@ class RegistrationView(APIView):
             registrationData.save()
         else: 
             # отрисовка карты, отправка ошибки на фронт
-            return render(request, "site_back/map_over_osm.html", context={'is_vallid_error': True})
+            My_errors.tmp_context['is_vallid_error'] = True
+            return redirect(reverse('map'))
+            #return Response(My_errors.error_send())
         username = request.POST['username']
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
@@ -85,8 +84,8 @@ class LoginView(APIView):
             return redirect(reverse('map'))
         except AttributeError:
             # отрисовка карты, отправка ошибки на фронт
-            return render(request, "site_back/map_over_osm.html", context={'login_error': True})
-  
+            My_errors.tmp_context['login_error'] = True
+            return redirect(reverse('map'))
     
 """
 Request запросы на JSON
@@ -105,4 +104,3 @@ class UserPolygonsView(generics.ListAPIView):
 def logoutView(request):
     logout(request)
     return redirect(reverse('map'))
-
