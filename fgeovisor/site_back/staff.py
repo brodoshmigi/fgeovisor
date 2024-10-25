@@ -8,7 +8,11 @@ from copy import copy
 class My_errors():
     '''
     самопальный обработчик ошибок
+
+    Существует для того что бы упростить передачу ошибок с Django на js, чтобы при каждой передачи пременной 'context'
+    при отрисовки html страницы не перечислять состояние все ошибок
     '''
+    #список всех существующих ошибок
     error_wordbook={
             'auth_check': False,
             'is_staff': False,
@@ -21,5 +25,6 @@ class My_errors():
     
     def error_send():
         final = copy(My_errors.tmp_context)
-        My_errors.tmp_context = copy(My_errors.error_wordbook)
+        #сбрасывает временную переменную 
+        My_errors.tmp_context = copy(My_errors.error_wordbook) 
         return(final)
