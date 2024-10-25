@@ -1,15 +1,16 @@
 import json
 import rest_framework.permissions as rp
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import AnonymousUser, User
 from rest_framework import generics, status
 from rest_framework.views import APIView
-from django.urls import reverse
+from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from .models import Polygon
-from .serializators import (PolygonOwnerSerializator, UserRegistrationSerializator, UserLoginSerializator,
-                            My_errors)
+from .serializators import (UserRegistrationSerializator, UserLoginSerializator)
+from .staff import My_errors
 
 """
 Request запросы на вывод HTML файлов
@@ -40,12 +41,16 @@ class MapView(APIView):
             context['auth_check'] = True
             context['is_staff'] = user.is_staff
             
+            """
+            Здесь мы отправляем данные о полигонах, нужно написать
+            """
+
             return render(request, "site_back/map_over_osm.html", context=My_errors.error_send())
             #return Response(My_errors.error_send())
         
 class RegistrationView(APIView):
     """
-    Функция регистрации аккаунта с простейшей валидацией на стороне сервера
+    Класс регистрации аккаунта с простейшей валидацией на стороне сервера
     """
     permission_classes = [rp.AllowAny]
 
@@ -68,7 +73,7 @@ class RegistrationView(APIView):
 
 class LoginView(APIView):
     """
-    Функция логина в аккаунт
+    Класс логина в аккаунт
     """ 
     permission_classes = [rp.AllowAny]
 
@@ -87,31 +92,31 @@ class LoginView(APIView):
             # отрисовка карты, отправка ошибки на фронт
             My_errors.tmp_context['login_error'] = True
             return redirect(reverse('map'))
-    
-"""
-Request запросы на JSON
-"""
 
-class UserPolygonsView(generics.ListAPIView):
-    """
-    Отправляет JSON от сериализатора по запросу 
-    """
-    serializer_class = PolygonOwnerSerializator
-    queryset = Polygon.objects.all()
-
-"""
-Класс Трах-Трахыча
-"""
 class createView(APIView):
+    """
+    Методом научного тыка сохраняем данные из GeoJSON с фронта в БД ПОЛИГОН!!!!!!!!
+    """
+    parser_classes = [JSONParser]
     
     def post(self, request):
-        data = request.data
+        """
+        Желательно переписать по умному потом пж _(-_-)_ 
+        Обясняю почему: мы получаем юзера, т.к. определяем его выше,
+        потом отрезаем от полученного geodjson только нужную часть
+        и потом преобразуем его в str потому что gdal/geos принимает...
+        строку...
+        """
         # Обрабатываем GeoJSON здесь
+        user = self.request.user
+        polygonInstance = Polygon(login=user, polygon_data=str(
+                                    request.data["geometry"]))
+        polygonInstance.save()
         return Response({'status': 'success', 'message': 'GeoJSON received!'})
 
-"""
-Функции КОпатыча
-"""
 def logoutView(request):
+    """
+    Функции Копатыча | выход из аккаунта
+    """
     logout(request)
     return redirect(reverse('map'))
