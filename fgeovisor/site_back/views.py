@@ -40,13 +40,14 @@ class MapView(APIView):
             context['auth_check'] = True
             context['is_staff'] = user.is_staff
             
-            return redirect(reverse('map'), context=My_errors.error_send())
+            return render(request, "site_back/map_over_osm.html", context=My_errors.error_send())
             #return Response(My_errors.error_send())
         
+    """
+    Класс регистрации аккаунта с простейшей валидацией на стороне сервера
+    """
+
 class RegistrationView(APIView):
-    """
-    Функция регистрации аккаунта с простейшей валидацией на стороне сервера
-    """
     permission_classes = [rp.AllowAny]
 
     def post(self, request):
@@ -66,10 +67,11 @@ class RegistrationView(APIView):
         login(request, user)   
         return redirect(reverse('map'))
 
+"""
+    Класс логина в аккаунт
+""" 
+
 class LoginView(APIView):
-    """
-    Функция логина в аккаунт
-    """ 
     permission_classes = [rp.AllowAny]
 
     def post(self, request):
