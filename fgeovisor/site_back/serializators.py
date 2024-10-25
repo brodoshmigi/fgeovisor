@@ -24,8 +24,6 @@ class ImageSerializator(serializers.ModelSerializer):
         model = Image
         fields = '__all__'
 
-
-
 #### Основной сериализатор с связми User + полигон + изображение
 class PolygonOwnerSerializator(serializers.ModelSerializer):
 
@@ -39,14 +37,11 @@ class PolygonOwnerSerializator(serializers.ModelSerializer):
         model = Polygon
         fields = ['login', 'login_username', 'polygon_id', 'polygon_data', 
                     'Images', 'created_at', 'updated_at']
-        
-
-"""
-Сериализатор для регистрации бим бим бам бам
-"""
 
 class UserRegistrationSerializator(serializers.ModelSerializer):
-
+    """
+    Сериализатор для регистрации бим бим бам бам
+    """
     class Meta:
         model = User
         fields = ["username", "email", "password"]
@@ -63,31 +58,14 @@ class UserRegistrationSerializator(serializers.ModelSerializer):
         user.save()
         return user 
 
-###Сериализатор для логина буп буп биб бам
 class UserLoginSerializator(serializers.ModelSerializer):
-
+    """
+    Сериализатор для логина буп буп биб бам
+    """
     class Meta:
         model = User
         fields = ["username", "password"]
         
         #extra_kwargs = {'password': {'read_only': True}}
-    
-'''
-самопальный обработчик ошибок
-'''
-class My_errors():
 
-    error_wordbook={
-            'auth_check': False,
-            'is_staff': False,
-            'is_vallid_error': False,
-            'login_error': False,
-            }
-    
-    tmp_context = copy(error_wordbook)
-    
-    def error_send():
-        final = copy(My_errors.tmp_context)
-        My_errors.tmp_context = copy(My_errors.error_wordbook)
-        return(final)
     
