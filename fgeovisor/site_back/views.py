@@ -113,6 +113,10 @@ class createView(APIView):
                                     request.data["geometry"]))
         polygonInstance.save()
         return Response({'status': 'success', 'message': 'GeoJSON received!'})
+    
+    def get(self, request):
+        My_errors.tmp_context["create_error"] = True
+        return redirect(reverse("map"))
 
 def logoutView(request):
     """
