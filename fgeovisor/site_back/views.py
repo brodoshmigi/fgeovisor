@@ -40,7 +40,7 @@ class MapView(APIView):
             context['auth_check'] = True
             context['is_staff'] = user.is_staff
             
-            return redirect(reverse('map'), context=My_errors.error_send())
+            return render(request, "site_back/map_over_osm.html", context=My_errors.error_send())
             #return Response(My_errors.error_send())
         
 class RegistrationView(APIView):

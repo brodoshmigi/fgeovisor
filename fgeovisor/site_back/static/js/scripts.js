@@ -96,7 +96,7 @@ function initMap() {
             },
             body: JSON.stringify(geojson)
         })
-        .then(function(response) {
+        .then(function(response) { //перехват респонса из джанго
             return response.json();
         })
         .then(function(data) {
