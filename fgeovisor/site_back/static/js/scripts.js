@@ -186,8 +186,11 @@ function bindValidation() {
     }
 }
 
-// функция для создания полигонов
-
+function bulling(){
+    if (permition_access == "True"){
+        alert("Куда ты лезешь?!");
+    }
+}
 
 //Инициализация карты при загрузке страницы
 document.addEventListener("DOMContentLoaded", function() {
@@ -214,5 +217,6 @@ document.addEventListener("DOMContentLoaded", function() {
             showRegistrationForm();
         }
     }
+    bulling();
     switchsidebarcontent();
 });
