@@ -1,3 +1,4 @@
+import json
 import rest_framework.permissions as rp
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
@@ -97,6 +98,16 @@ class UserPolygonsView(generics.ListAPIView):
     """
     serializer_class = PolygonOwnerSerializator
     queryset = Polygon.objects.all()
+
+"""
+Класс Трах-Трахыча
+"""
+class createView(APIView):
+    
+    def post(self, request):
+        data = request.data
+        # Обрабатываем GeoJSON здесь
+        return Response({'status': 'success', 'message': 'GeoJSON received!'})
 
 """
 Функции КОпатыча

@@ -65,7 +65,8 @@ function initMap() {
 
                 newfield.bindPopup(popupContent);  //присвоение попапа 
                 //конец юлока с попапами
-                savePolygon(latLng);
+                let geojson = newfield.toGeoJSON();
+                savePolygon(geojson);
             }else{
                 alert("У поля должно быть минимум 3 угла!")
             }
@@ -86,23 +87,24 @@ function initMap() {
     }
 
 
-    function savePolygon(latLng){
-        const data ={
-            latLng: latLng.map(function(point){
-                return [point.lat, point.lng];
-            })
-        };
-        fetch('/save_polygon',{
+    function savePolygon(geojson){
+        fetch('create-polygon/', {
             method: 'POST',
             headers: {
-                'Content-Type':application/JSON,
-                'X-CSRFToken':csrfToken
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken // Добавляем CSRF-токен
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(geojson)
         })
-        .then(function(response){
+        .then(function(response) {
             return response.json();
         })
+        .then(function(data) {
+            console.log('Success:', data);
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+        });
     }
 }
 
