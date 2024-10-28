@@ -14,6 +14,71 @@ function initMap() {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+
+    getPolygons();
+
+    function getPolygons(){
+        fetch("get-polygons/")
+            .then(function(response){
+            return response.json();
+            })
+            .then(function(data){
+                displayPoligons(data);
+            })
+    }
+
+    let polygonLayerGroup  = L.layerGroup().addTo(map);
+     
+    function displayPoligons(geojsonData){
+        polygonLayerGroup.clearLayers();
+
+        L.geoJSON(geojsonData,{
+            style: function(){
+                return {color:"deepskyblue"}
+            },
+            onEachFeature:function(feature,layer){
+                if (feature.properties && feature.id){
+                    layer.id = feature.id;
+                    let popupContent = document.createElement('div');
+                    let calcNDVI = document.getElementById('calcNdvi').cloneNode(true);
+                    calcNDVI.id='calcNdviClone';
+                    popupContent.appendChild(document.createTextNode("Это поле"));
+                    popupContent.appendChild(calcNDVI);
+                    
+                    let deleteB = document.getElementById('deleteButton').cloneNode(true);
+                    deleteB.id='deleteBClone';
+                    deleteB.addEventListener("click", function() {
+                        deletePolygon(layer);
+                    });
+                    popupContent.appendChild(deleteB);
+                    layer.bindPopup(popupContent);
+                }
+            }
+        }).addTo(polygonLayerGroup);
+    }
+    //удаление полигона
+
+    function deletePolygon(layer){
+        fetch('delete-polygon/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken // Добавляем CSRF-токен
+            },
+            body: JSON.stringify(layer.id)
+        })
+        .then(function(response) { //перехват респонса из джанго
+            return response.json();
+        })
+        .then(function(data) {
+            console.log('Success:', data);
+            layer.remove();
+
+        })
+        .catch(function(error) {
+            console.error('Error:', error);
+        });
+    }
     
     function createpoligon(){
         document.getElementById("createbutton").style.display = "none"
@@ -42,31 +107,9 @@ function initMap() {
                 document.getElementById("finishButton").style.display = "none"
                 document.getElementById("cancelButton").style.display = "none"
                 document.getElementById("createbutton").style.display = "block"
-                //начало блока с попапами//
-
-                let popupContent = document.createElement('div');
-                let calcNDVI = document.getElementById('calcNdvi').cloneNode(true);
-                calcNDVI.id='calcNdviClone';
-                popupContent.appendChild(document.createTextNode("Это поле"));
-                popupContent.appendChild(calcNDVI);
-                
-                let deleteB = document.getElementById('deleteButton').cloneNode(true);
-                deleteB.id='deleteBClone';
-                popupContent.appendChild(deleteB);
-                
-                function deletePolygon(newfield){
-                    newfield.remove();
-                }
-
-                deleteB.addEventListener("click", function() {
-                    deletePolygon(newfield);
-                });
-                
-
-                newfield.bindPopup(popupContent);  //присвоение попапа 
-                //конец юлока с попапами
                 let geojson = newfield.toGeoJSON();
                 savePolygon(geojson);
+                newfield.remove();
             }else{
                 alert("У поля должно быть минимум 3 угла!")
             }
@@ -87,7 +130,7 @@ function initMap() {
     }
 
 
-    function savePolygon(geojson){
+    async function savePolygon(geojson){
         fetch('create-polygon/', {
             method: 'POST',
             headers: {
@@ -105,9 +148,11 @@ function initMap() {
         .catch(function(error) {
             console.error('Error:', error);
         });
+        await delay(25);
+        console.log("обновляем полигоны");
+        getPolygons();
     }
 }
-
 
 function calcNDVI(){
     alert("Функция в разработке");
@@ -190,6 +235,13 @@ function bulling(){
     if (permition_access == "True"){
         alert("Куда ты лезешь?!");
     }
+}
+
+//Задержки
+function delay(ms){
+    return new Promise(function(resolve){
+        setTimeout(resolve,ms);
+    })
 }
 
 //Инициализация карты при загрузке страницы
