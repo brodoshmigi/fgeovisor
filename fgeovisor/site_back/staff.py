@@ -1,9 +1,12 @@
 from copy import copy
+from django.contrib.gis.geos import LinearRing
+from .models import Polygon
+from .serializators import PolygonFromDbSerializer
+from rest_framework.response import Response
 
 """
 Аналог utils.py. Тут храним вспомогательный код.
 """
-
 
 class My_errors():
     '''
@@ -28,3 +31,11 @@ class My_errors():
         #сбрасывает временную переменную 
         My_errors.tmp_context = copy(My_errors.error_wordbook) 
         return(final)
+
+
+def get_polygons(user_id):
+        polygons = Polygon.objects.filter(login=user_id)
+        tmp = []
+        for objects in polygons: 
+            tmp.append(PolygonFromDbSerializer(objects).data)
+        return tmp

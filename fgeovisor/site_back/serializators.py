@@ -1,8 +1,8 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Polygon, Image, SessionStorage, ActivityLog
-from django.contrib.auth import login, authenticate
-from copy import copy
+from rest_framework_gis.serializers import GeoFeatureModelSerializer
+
 
 """
 Тут храним сериализаторы данных из quaryset моделей, который в БД у нас
@@ -28,15 +28,14 @@ class ImageSerializator(serializers.ModelSerializer):
 class PolygonOwnerSerializator(serializers.ModelSerializer):
 
     # 
-    Images = ImageSerializator(many=True, read_only=True, source='images')
+    #Images = ImageSerializator(many=True, read_only=True, source='images')
     
     # Обращается в модель Polygon к записи Login и оттуда берет через связь username
     login_username = serializers.ReadOnlyField(source="login.username")
 
     class Meta:
         model = Polygon
-        fields = ['login', 'login_username', 'polygon_id', 'polygon_data', 
-                    'Images', 'created_at', 'updated_at']
+        fields = ['login','login_username', 'polygon_id', 'polygon_data']
 
 class UserRegistrationSerializator(serializers.ModelSerializer):
     """
@@ -68,4 +67,13 @@ class UserLoginSerializator(serializers.ModelSerializer):
         
         #extra_kwargs = {'password': {'read_only': True}}
 
+    
+
+class PolygonFromDbSerializer(GeoFeatureModelSerializer):
+     
+    class Meta:
+        model = Polygon
+        fields = ['polygon_id','polygon_data']
+        geo_field = 'polygon_data'
+    
     

@@ -15,7 +15,7 @@ class Polygon(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = ['login', 'polygon_data']
+        unique_together = ['login', 'polygon_data', 'polygon_id']
 
     def __str__(self):
         return f"Полигон - {self.login}, создан - {self.created_at}"
