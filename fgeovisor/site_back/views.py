@@ -118,10 +118,15 @@ class GetPolygons(APIView):
         return Response(polygons)
 
 class DeletePolygon(APIView):
+    """
+    Удаляет полигоны по запросу с фронта по id полигона, т.к. у юзера есть доступ только к своему полигону
+    """
+    permission_classes = [rp.IsAuthenticated]
     
-    def post(self,request):
-        Polygon.objects.get(polygon_id=request.data).delete()
-        return Response({"success": True,"hui":request.data})
+    def post(self, request):
+        Polygons = Polygon.objects.filter(login=self.request.user.id)
+        Polygons.get(polygon_id=request.data).delete()
+        return Response({"success": True})
 
 
 def logoutView(request):
