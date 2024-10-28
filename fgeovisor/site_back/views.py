@@ -117,6 +117,13 @@ class GetPolygons(APIView):
         polygons = get_polygons(self.request.user.id)
         return Response(polygons)
 
+class DeletePolygon(APIView):
+    
+    def post(self,request):
+        Polygon.objects.get(polygon_id=request.data).delete()
+        return Response({"success": True,"hui":request.data})
+
+
 def logoutView(request):
     """
     Функции Копатыча | выход из аккаунта
