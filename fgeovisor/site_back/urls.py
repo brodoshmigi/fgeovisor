@@ -10,5 +10,6 @@ urlpatterns = [
     path('log-in/', views.LoginView.as_view(), name='log-in'),
     path('log-out/', views.logoutView, name='log-out'),
     path('create-polygon/', views.CreateView.as_view(), name='create-polygon'),
-    path('get-polygons/', views.GetPolygons.as_view(), name='get-polygon')
+    path('get-polygons/', views.GetPolygons.as_view(), name='get-polygons'),
+    path('delete-polygon/', views.DeletePolygon.as_view(), name="delete-polygon")
 ]
