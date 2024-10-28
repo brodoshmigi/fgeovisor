@@ -1,4 +1,3 @@
-import json
 import rest_framework.permissions as rp
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -10,12 +9,10 @@ from rest_framework.response import Response
 from .models import Polygon
 from .serializators import (UserRegistrationSerializator, UserLoginSerializator,)
 from .staff import My_errors, get_polygons
-#from django.http import JsonResponse
-from django.core.serializers import serialize
 
 
 """
-Request запросы на вывод HTML файлов
+Классы представлений, которые отрабатывают обращения клиента
 """
 
 class MapView(APIView):
@@ -31,23 +28,18 @@ class MapView(APIView):
         if user.username == AnonymousUser.username:
             # описание состояния пользователя дл js
             context['auth_check'] = False
-            return render(request, "site_back/map_over_osm.html", context=My_errors.error_send())
+            return render(request, 'site_back/map_over_osm.html', context=My_errors.error_send())
             #return Response(My_errors.error_send())
         else:
-           
             # описание состояния пользователя дл js
             context['auth_check'] = True
             context['is_staff'] = user.is_staff
-            return render(request, "site_back/map_over_osm.html", context=My_errors.error_send())
-            
+            return render(request, 'site_back/map_over_osm.html', context=My_errors.error_send())
 
-
-        
+class RegistrationView(APIView):
     """
     Класс регистрации аккаунта с простейшей валидацией на стороне сервера
     """
-
-class RegistrationView(APIView):
     permission_classes = [rp.AllowAny]
 
     def post(self, request):
@@ -66,10 +58,6 @@ class RegistrationView(APIView):
         user = authenticate(request, username=username, password=password)
         login(request, user)   
         return redirect(reverse('map'))
-
-"""
-    Класс логина в аккаунт
-""" 
 
 class LoginView(APIView):
     """
@@ -93,7 +81,8 @@ class LoginView(APIView):
             My_errors.tmp_context['login_error'] = True
             return redirect(reverse('map'))
 
-class CreateView(APIView):
+
+class CreatePolygon(APIView):
     """
     Методом научного тыка сохраняем данные из GeoJSON с фронта в БД ПОЛИГОН!!!!!!!!
     """
@@ -110,16 +99,19 @@ class CreateView(APIView):
         # Обрабатываем GeoJSON здесь
         user = self.request.user
         polygonInstance = Polygon(login=user, polygon_data=str(
-                                    request.data["geometry"]))
+                                    request.data['geometry']))
         polygonInstance.save()
         return Response({'status': 'Polygon saved!'})
 
     def get(self, request):
-        My_errors.tmp_context["create_error"] = True
-        return redirect(reverse("map"))
-
+        My_errors.tmp_context['create_error'] = True
+        return redirect(reverse('map'))
 
 class GetPolygons(APIView):
+    """
+    Возвращает полигоны пользователя
+    """
+    permission_classes = [rp.IsAuthenticated]
 
     def get(self, request):
         polygons = get_polygons(self.request.user.id)

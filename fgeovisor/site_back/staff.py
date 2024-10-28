@@ -1,20 +1,18 @@
 from copy import copy
-from django.contrib.gis.geos import LinearRing
 from .models import Polygon
 from .serializators import PolygonFromDbSerializer
-from rest_framework.response import Response
 
 """
 Аналог utils.py. Тут храним вспомогательный код.
 """
 
 class My_errors():
-    '''
-    самопальный обработчик ошибок
+    """
+    Cамопальный обработчик ошибок
 
     Существует для того что бы упростить передачу ошибок с Django на js, чтобы при каждой передачи пременной 'context'
     при отрисовки html страницы не перечислять состояние все ошибок
-    '''
+    """
     #список всех существующих ошибок
     error_wordbook={
             'auth_check': False,
@@ -34,6 +32,9 @@ class My_errors():
 
 
 def get_polygons(user_id):
+        """
+        Отправляем запрос в БД, формируем список из пользовательских полигонов
+        """
         polygons = Polygon.objects.filter(login=user_id)
         tmp = []
         for objects in polygons: 
