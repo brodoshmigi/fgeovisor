@@ -129,7 +129,7 @@ class DeletePolygon(APIView):
     
     def post(self,request):
         Polygon.objects.get(polygon_id=request.data).delete()
-        return Response({"success": True,"hui":request.data})
+        return Response({"success": True})
 
 
 def logoutView(request):
