@@ -86,6 +86,7 @@ function initMap() {
         document.getElementById("cancelButton").style.display = "block"
         let latLng = [];
         let newfield = L.polygon(latLng, { color: 'deepskyblue', dashArray: "10, 5" }).addTo(map);
+        let tempLine = L.polyline([],{color:'gray',dashArray: "10, 5"}).addTo(map);//костина шиза
         
 
         // Меняем курсор при старте создания полигона
@@ -94,15 +95,27 @@ function initMap() {
          function onMapClick(e) {
             latLng.push(e.latlng); // Добавляем координаты клика в массив
             newfield.setLatLngs(latLng); // Обновляем полигон с новыми координатами
+            tempLine.setLatLngs([e.latLng,e.latLng]);//Костина шиза
+        }
+
+        //Костина шиза функция
+        function onMapMouseMove(e){
+            if (latLng.length >0){
+                let lastPoint = latLng[latLng.length - 1];
+                let firstPoint = latLng[0];
+                tempLine.setLatLngs([lastPoint,e.latlng,firstPoint]);
+            }
         }
 
         map.on('click', onMapClick); // Включаем обработчик кликов
+        map.on('mousemove', onMapMouseMove);//обработчик шизы
 
         document.getElementById("finishButton").onclick = function() {
             if (latLng.length >= 3){
                 const newStyle = {dashArray: "0, 0"};
                 newfield.setStyle(newStyle);
                 map.off('click', onMapClick); // Отключаем обработчик кликов
+                map.off('mousemove',onMapMouseMove);//Выключиие шизы
                 map.getContainer().style.cursor = ''; // Возвращаем курсор в исходное состояние
                 document.getElementById("finishButton").style.display = "none"
                 document.getElementById("cancelButton").style.display = "none"
@@ -110,6 +123,7 @@ function initMap() {
                 let geojson = newfield.toGeoJSON();
                 savePolygon(geojson);
                 newfield.remove();
+                tempLine.remove();
             }else{
                 alert("У поля должно быть минимум 3 угла!")
             }
@@ -117,11 +131,13 @@ function initMap() {
         
         document.getElementById("cancelButton").onclick = function(){
             map.off('click', onMapClick);
+            map.off('mousemove',onMapMouseMove);//Выключиие шизы
             map.getContainer().style.cursor = '';
             document.getElementById("finishButton").style.display = "none"
             document.getElementById("cancelButton").style.display = "none"
             document.getElementById("createbutton").style.display = "block"
             newfield.remove();
+            tempLine.remove();
         }
     }
 
