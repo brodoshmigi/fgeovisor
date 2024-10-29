@@ -24,10 +24,11 @@
         </div>
     </div>
 
-    <button id="createbutton" class="ui-button">Добавить поле</button>
+    <button id="createButton" class="ui-button">Добавить поле</button>
     <button id="calcNdvi" class="popup-button">Рассчитать NDVI</button>
     <button id="deleteButton" class="popup-button">Удалить</button>
-    <button id="finishButton" class="ui-button" style="display: none;">Создать</button>
+    <button id="editButton" class="popup-button">Изменить</button>
+    <button id="finishButton" class="ui-button" style="display: none;">Применить</button>
     <button id="cancelButton" class="ui-button" style="display: none;">Отменить</button>
     <!-- Карта -->
     <div id="map" onmousedown="document.getElementById('sidebar').style.width='0px'" ontouchstart ="document.getElementById('sidebar').style.width='0px'"></div>
@@ -83,6 +84,7 @@
         var permition_access = "{{create_error | safe}}"
     </script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-editable@1.2.0/src/Leaflet.Editable.js"></script>
     <script src="{% static 'js/scripts.js' %}"></script>
 </body>
 </html>

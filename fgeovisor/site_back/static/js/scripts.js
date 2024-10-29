@@ -4,7 +4,8 @@ function initMap() {
     var bounds = L.latLngBounds(southWest, northEast);
 
     var map = L.map('map', {
-        attributionControl: false,
+        editable: true,//Включаем пакет, позволяющий производить редактирование объектов leaflet
+        attributionControl: false,//отключаем ссылку на нытьё хохла
         maxBounds: bounds,
         maxBoundsViscosity: 1.0,
         minZoom: 3,
@@ -14,6 +15,9 @@ function initMap() {
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
+
+
+    //подгрузка полигонов из БД
 
     getPolygons();
 
@@ -27,37 +31,108 @@ function initMap() {
             })
     }
 
+    //Массив с полигонами, нужен для корректного отображения полигонов при работе с ними
     let polygonLayerGroup  = L.layerGroup().addTo(map);
-     
-    function displayPoligons(geojsonData){
-        polygonLayerGroup.clearLayers();
 
+    //Функция для редактирования полигонов
+    function enableEdit(layer){
+        layer.enableEdit(); //включаем редактирование для элемента
+        layer.closePopup();// закрываемвсплывающее окно
+        //проводим манипуляции с кнопками в првой части экрана
+        document.getElementById("createButton").style.display = "none"
+        document.getElementById("finishButton").style.display = "block"
+        document.getElementById("cancelButton").style.display = "block"
+        //назначаем кнопкам функции
+        document.getElementById("finishButton").onclick = function(){
+            finishEdit(layer);
+        };
+        document.getElementById("cancelButton").onclick = function(){
+            cancelEdit(layer);
+            getPolygons();
+        };
+        //функция для применения изменений
+        function finishEdit(layer){
+            //выключаем редактирование
+            layer.disableEdit();
+            //фиксируем изменения как новый полигон и удаляем старый
+            console.log(layer.id)
+            updetePolygon(layer);
+            document.getElementById("createButton").style.display = "block"
+            document.getElementById("finishButton").style.display = "none"
+            document.getElementById("cancelButton").style.display = "none"
+        }
+        //функция  отмены изменений
+        function cancelEdit(layer){
+            document.getElementById("createButton").style.display = "block"
+            document.getElementById("finishButton").style.display = "none"
+            document.getElementById("cancelButton").style.display = "none"
+            layer.disableEdit();
+        }
+    };
+
+    //Функция рассчёта NDVI
+
+    function calcNdvi(layer){
+        /*fetch('calc-NDVI/',{
+            method: 'Post',
+            headers:{
+                'content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(layer.id)
+        })
+        .then(function(response){
+    
+        })
+        .catch(function(error){
+    
+        })*/
+       alert("Функция в разработке!")
+    }
+    
+    //функция отображения политгонов из БД
+    function displayPoligons(geojsonData){
+        //очищаем слой полигонов во избежание фатомных элементов
+        polygonLayerGroup.clearLayers();
+        //Создаём полигон по заданным в файле параметрам
         L.geoJSON(geojsonData,{
             style: function(){
                 return {color:"deepskyblue"}
             },
+            //для каждого элемента в файле JSON выполняем блок:
             onEachFeature:function(feature,layer){
                 if (feature.properties && feature.id){
                     layer.id = feature.id;
+                    //начало блока всплывающего окна
                     let popupContent = document.createElement('div');
                     let calcNDVI = document.getElementById('calcNdvi').cloneNode(true);
                     calcNDVI.id='calcNdviClone';
                     popupContent.appendChild(document.createTextNode("Это поле"));
                     popupContent.appendChild(calcNDVI);
-                    
+                    calcNDVI.addEventListener("click",function(){
+                        calcNdvi(layer);
+                    });
                     let deleteB = document.getElementById('deleteButton').cloneNode(true);
                     deleteB.id='deleteBClone';
                     deleteB.addEventListener("click", function() {
                         deletePolygon(layer);
                     });
+                    let editB = document.getElementById("editButton").cloneNode(true);
+                    editB.id = "editBClone";
+                    editB.addEventListener("click", function(){
+                        enableEdit(layer);
+                    })
                     popupContent.appendChild(deleteB);
+                    popupContent.appendChild(editB);
                     layer.bindPopup(popupContent);
+                    //конец блока всплывающего окна
                 }
             }
+            //добавляем полигон на слой
         }).addTo(polygonLayerGroup);
     }
-    //удаление полигона
 
+    //удаление полигона
     function deletePolygon(layer){
         fetch('delete-polygon/', {
             method: 'POST',
@@ -80,72 +155,128 @@ function initMap() {
         });
     }
     
+    //функция создания полигона
     function createpoligon(){
-        document.getElementById("createbutton").style.display = "none"
+        //манипуляции с кнопками в правой части экрана
+        document.getElementById("createButton").style.display = "none"
         document.getElementById("finishButton").style.display = "block"
         document.getElementById("cancelButton").style.display = "block"
+        //создание пустого полигона и линий предпросмотра
         let latLng = [];
         let newfield = L.polygon(latLng, { color: 'deepskyblue', dashArray: "10, 5" }).addTo(map);
-        let tempLine = L.polyline([],{color:'gray',dashArray: "10, 5"}).addTo(map);//костина шиза
+        let tempLine = L.polyline([],{color:'gray',dashArray: "10, 5"}).addTo(map);
         
 
         // Меняем курсор при старте создания полигона
         map.getContainer().style.cursor = 'crosshair';
 
+        //добавляем обработчик для кликов
          function onMapClick(e) {
-            latLng.push(e.latlng); // Добавляем координаты клика в массив
-            newfield.setLatLngs(latLng); // Обновляем полигон с новыми координатами
-            tempLine.setLatLngs([e.latLng,e.latLng]);//Костина шиза
+            // Добавляем координаты клика в массив
+            latLng.push(e.latlng); 
+            // Обновляем полигон с новыми координатами
+            newfield.setLatLngs(latLng); 
+            //задаём точку для линии предпросмотра
+            tempLine.setLatLngs([e.latLng,e.latLng]);
         }
 
-        //Костина шиза функция
+        //функция обработчика движения мышкой
         function onMapMouseMove(e){
-            if (latLng.length >0){
+            //начинаем предпросмотр, если есть хотябы 1 точка
+            if (latLng.length > 0){
+                let lastPoint = latLng[latLng.length - 1];
+                tempLine.setLatLngs([lastPoint,e.latlng]);
+            }
+            //в случае двух, если есть хотя-бы 2 точки, ведём линию ещё и к первой
+            if (latLng.length > 1){
                 let lastPoint = latLng[latLng.length - 1];
                 let firstPoint = latLng[0];
                 tempLine.setLatLngs([lastPoint,e.latlng,firstPoint]);
             }
         }
 
-        map.on('click', onMapClick); // Включаем обработчик кликов
-        map.on('mousemove', onMapMouseMove);//обработчик шизы
+        // Включаем обработчик кликов
+        map.on('click', onMapClick); 
+        //включаем обработчик движения мышью
+        map.on('mousemove', onMapMouseMove);
 
+        //добавляем кнопке "Применить" функционал
         document.getElementById("finishButton").onclick = function() {
+            //если у полигона больше 2 точек
             if (latLng.length >= 3){
+                //убираем пунктир у границ полигона
                 const newStyle = {dashArray: "0, 0"};
                 newfield.setStyle(newStyle);
-                map.off('click', onMapClick); // Отключаем обработчик кликов
-                map.off('mousemove',onMapMouseMove);//Выключиие шизы
-                map.getContainer().style.cursor = ''; // Возвращаем курсор в исходное состояние
+                // Отключаем обработчик кликов
+                map.off('click', onMapClick);
+                //Выключиие обработчика движения мыши
+                map.off('mousemove',onMapMouseMove);
+                // Возвращаем курсор в исходное состояние
+                map.getContainer().style.cursor = ''; 
+                //манипулируем кнопками на правой панели
                 document.getElementById("finishButton").style.display = "none"
                 document.getElementById("cancelButton").style.display = "none"
-                document.getElementById("createbutton").style.display = "block"
+                document.getElementById("createButton").style.display = "block"
+                //формируем json
                 let geojson = newfield.toGeoJSON();
+                //отправляем json в django
                 savePolygon(geojson);
+                //удаляем локальный полигон и линии предпросмотра
                 newfield.remove();
                 tempLine.remove();
             }else{
+                //если у полигона меньше 3х точек
                 alert("У поля должно быть минимум 3 угла!")
             }
         };
         
+        //добавляем функционал кнопке отмены
         document.getElementById("cancelButton").onclick = function(){
+            //выключаем обработчик кликов
             map.off('click', onMapClick);
-            map.off('mousemove',onMapMouseMove);//Выключиие шизы
+            //выключаем обработчик движения мышью
+            map.off('mousemove',onMapMouseMove);
+            //возвращаем курсор в исходное состояние
             map.getContainer().style.cursor = '';
+            //манипулируем кнопками в правой части экрана
             document.getElementById("finishButton").style.display = "none"
             document.getElementById("cancelButton").style.display = "none"
-            document.getElementById("createbutton").style.display = "block"
+            document.getElementById("createButton").style.display = "block"
+            //удаляем поле и линии предпросмотра
             newfield.remove();
             tempLine.remove();
         }
     }
 
-    document.getElementById("createbutton").onclick = function(){
+    //добавляем функцию кнопке "Создать"
+    document.getElementById("createButton").onclick = function(){
         createpoligon();
     }
 
+    //функция обновления полигона
+    async function updetePolygon(layer) {
+        data = {
+            LatLngs: layer.getLatLngs(),
+            id: layer.id
+        };
+        console.log (JSON.stringify(data))
+        fetch('updete-polygon/',{
+            method: 'POST',
+            headers:{
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify(data)
+        })
+        .then(function(response){
+            return response.json();
+        });
+        await delay(200);
+        console.log("обновляем полигоны");
+        getPolygons();
+    }
 
+    //Функция сохранения полигона
     async function savePolygon(geojson){
         fetch('create-polygon/', {
             method: 'POST',
@@ -164,21 +295,11 @@ function initMap() {
         .catch(function(error) {
             console.error('Error:', error);
         });
-        await delay(25);
+        await delay(200);
         console.log("обновляем полигоны");
         getPolygons();
     }
 }
-
-function calcNDVI(){
-    alert("Функция в разработке");
-}
-
-document.addEventListener("click", function(event){
-    if (event.target && event.target.id.startsWith("calcNdviClone")){
-        calcNDVI();
-    }
-})
 
 // Функция для переключения бокового меню
 function toggleSidebar() {
@@ -227,7 +348,8 @@ function showRegistrationForm() {
         var confirmPassword = document.getElementById("passwordConfirmation").value;
         if (password !== confirmPassword) {
             alert("Пароли не совпадают!");
-            event.preventDefault(); // Предотвращаем отправку формы
+            // Предотвращаем отправку формы
+            event.preventDefault();
         }
     });
 }
@@ -241,12 +363,14 @@ function bindValidation() {
             var confirmPassword = document.getElementById("passwordConfirmation").value;
             if (password !== confirmPassword) {
                 alert("Пароли не совпадают!");
-                event.preventDefault(); // Предотвращаем отправку формы
+                // Предотвращаем отправку формы
+                event.preventDefault();
             }
         });
     }
 }
 
+//функция для тех, кто открывает запрещённые разделы
 function bulling(){
     if (permition_access == "True"){
         alert("Куда ты лезешь?!");
@@ -266,7 +390,7 @@ document.addEventListener("DOMContentLoaded", function() {
     bindValidation();
     function switchsidebarcontent(){
         if (authcheck == "False"){
-            document.getElementById("createbutton").style.display = "none";
+            document.getElementById("createButton").style.display = "none";
             document.getElementById("loggedinbuttons").style.display = "none";
             document.getElementById("defoltview").style.display = "block";
         }else{
