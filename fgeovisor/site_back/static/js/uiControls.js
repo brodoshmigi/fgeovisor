@@ -77,10 +77,7 @@ function switchsidebarcontent(){
         }else{
             document.getElementById("superuser").style.display = "block";
         }
-        const buttons = document.getElementsByClassName('ui-button');
-        for (let i = 0; i < buttons.length; i++) {
-            buttons[i].style.display = "block";
-        }
+        document.getElementById('ui-button').style.display = "block";
     }
     if (loginerror == "True"){
         showLoginForm();
