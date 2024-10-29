@@ -99,30 +99,29 @@ function createPolygon(){
     //создание пустого полигона и линий предпросмотра
     let latLng = [];
     let newfield = L.polygon(latLng, { color: 'deepskyblue', dashArray: "10, 5" }).addTo(map);
-    let tempLine = L.polyline([],{color:'gray',dashArray: "10, 5"}).addTo(map);
-    
+    let tempLine = L.polyline([], { color: 'gray', dashArray: "10, 5" }).addTo(map);
 
     // Меняем курсор при старте создания полигона
     map.getContainer().style.cursor = 'crosshair';
 
-    //добавляем обработчик для кликов
-     function onMapClick(e) {
+    // Обработчик для кликов
+    function onMapClick(e) {
         // Добавляем координаты клика в массив
         latLng.push(e.latlng); 
         // Обновляем полигон с новыми координатами
         newfield.setLatLngs(latLng); 
-        //задаём точку для линии предпросмотра
-        tempLine.setLatLngs([e.latLng,e.latLng]);
+        // Задаем точку для линии предпросмотра
+        tempLine.setLatLngs([e.latlng, e.latlng]); // Исправлено e.latLng на e.latlng
     }
 
-    //функция обработчика движения мышкой
-    function onMapMouseMove(e){
-        //начинаем предпросмотр, если есть хотябы 1 точка
-        if (latLng.length > 0){
-            tempLine.setLatLngs([latLng[latLng.length - 1], e.latlng]);
+    // Функция обработчика движения мышкой
+    function onMapMouseMove(e) {
+        // Начинаем предпросмотр, если есть хотя бы 1 точка
+        if (latLng.length > 0) {
+            tempLine.setLatLngs([latLng[latLng.length - 1], e.latlng]); // Исправлено e.latLng на e.latlng
         }
-        //в случае двух, если есть хотя-бы 2 точки, ведём линию ещё и к первой
-        if (latLng.length > 1){
+        // В случае двух, если есть хотя бы 2 точки, ведем линию ещё и к первой
+        if (latLng.length > 1) {
             tempLine.setLatLngs([latLng[latLng.length - 1], e.latlng, latLng[0]]);
         }
     }
@@ -206,6 +205,7 @@ async function updatePolygon(layer) {
 
 //Функция сохранения полигона
 async function savePolygon(geojson){
+    console.log(geojson);
     fetch('create-polygon/', {
         method: 'POST',
         headers: {

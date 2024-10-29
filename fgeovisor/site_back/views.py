@@ -101,7 +101,7 @@ class CreatePolygon(APIView):
         polygonInstance = Polygon(login=user, polygon_data=str(
                                     request.data['geometry']))
         polygonInstance.save()
-        return Response({Polygon.objects.get(login=user).polygon_id})
+        return Response({'success': polygonInstance.polygon_id})
 
     def get(self, request):
         My_errors.tmp_context['create_error'] = True
