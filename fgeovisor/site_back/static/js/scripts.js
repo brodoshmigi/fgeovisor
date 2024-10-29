@@ -27,21 +27,26 @@ function initMap() {
             return response.json();
             })
             .then(function(data){
-                displayPoligons(data);
+                displayPolygons(data);
             })
     }
 
     //Массив с полигонами, нужен для корректного отображения полигонов при работе с ними
     let polygonLayerGroup  = L.layerGroup().addTo(map);
 
+    function toggleButtonDisplay(createVisible, finishVisible, cancelVisible) {
+        document.getElementById("createButton").style.display = createVisible ? "block" : "none";
+        document.getElementById("finishButton").style.display = finishVisible ? "block" : "none";
+        document.getElementById("cancelButton").style.display = cancelVisible ? "block" : "none";
+    }
+
     //Функция для редактирования полигонов
     function enableEdit(layer){
         layer.enableEdit(); //включаем редактирование для элемента
         layer.closePopup();// закрываемвсплывающее окно
         //проводим манипуляции с кнопками в првой части экрана
-        document.getElementById("createButton").style.display = "none"
-        document.getElementById("finishButton").style.display = "block"
-        document.getElementById("cancelButton").style.display = "block"
+        toggleButtonDisplay(false, true, true);
+
         //назначаем кнопкам функции
         document.getElementById("finishButton").onclick = function(){
             finishEdit(layer);
@@ -50,22 +55,20 @@ function initMap() {
             cancelEdit(layer);
             getPolygons();
         };
+
         //функция для применения изменений
         function finishEdit(layer){
             //выключаем редактирование
             layer.disableEdit();
             //фиксируем изменения как новый полигон и удаляем старый
             console.log(layer.id)
-            updetePolygon(layer);
-            document.getElementById("createButton").style.display = "block"
-            document.getElementById("finishButton").style.display = "none"
-            document.getElementById("cancelButton").style.display = "none"
+            updatePolygon(layer);
+            toggleButtonDisplay(true, false, false);
         }
+
         //функция  отмены изменений
         function cancelEdit(layer){
-            document.getElementById("createButton").style.display = "block"
-            document.getElementById("finishButton").style.display = "none"
-            document.getElementById("cancelButton").style.display = "none"
+            toggleButtonDisplay(true, false, false);
             layer.disableEdit();
         }
     };
@@ -90,8 +93,33 @@ function initMap() {
        alert("Функция в разработке!")
     }
     
+    function calculatePolygonArea(latlngs) {
+        let area = 0;
+        const radius = 6371228; // Радиус Земли в метрах
+    
+        // Проходимся по всем точкам полигона
+        for (let i = 0; i < latlngs.length; i++) {
+            // Текущая точка
+            const p1 = latlngs[i];
+            // Следующая точка, если текущая - последняя, берем первую точку, чтобы замкнуть полигон
+            const p2 = latlngs[(i + 1) % latlngs.length];
+            
+            // Преобразуем широту точек из градусов в радианы
+            const lat1 = p1.lat * Math.PI / 180;
+            const lat2 = p2.lat * Math.PI / 180;
+            // Преобразуем разницу долгот между двумя соседними точками в радианы
+            const deltaLng = (p2.lng - p1.lng) * Math.PI / 180;
+            
+            // Добавляем к общей площади слагаемое, зависящее от разности долгот и широт точек для вычисления площади на сфере
+            area += (deltaLng) * (2 + Math.sin(lat1) + Math.sin(lat2));
+        }
+    
+        area = Math.abs((area * radius * radius / 2.0) / 10000);
+        return area; // Площадь в квадратных метрах
+    }
+
     //функция отображения политгонов из БД
-    function displayPoligons(geojsonData){
+    function displayPolygons(geojsonData){
         //очищаем слой полигонов во избежание фатомных элементов
         polygonLayerGroup.clearLayers();
         //Создаём полигон по заданным в файле параметрам
@@ -103,20 +131,34 @@ function initMap() {
             onEachFeature:function(feature,layer){
                 if (feature.properties && feature.id){
                     layer.id = feature.id;
+                    
+                    // Расчет площади
+                    const latlngs = layer.getLatLngs()[0]; // Предполагается, что у нас только один полигон (без дыр)
+                    const area = calculatePolygonArea(latlngs);
+
                     //начало блока всплывающего окна
                     let popupContent = document.createElement('div');
+                    popupContent.appendChild(document.createTextNode("Это поле."));
+                    
+                    // Добавляем площадь в popup
+                    let areaText = document.createElement('p');
+                    areaText.textContent = `Площадь: ${area.toFixed(2)} га`;
+                    popupContent.appendChild(areaText);
+
+                    // Добавляем кнопки calcNdvi, deleteButton и editButton в popup
                     let calcNDVI = document.getElementById('calcNdvi').cloneNode(true);
                     calcNDVI.id='calcNdviClone';
-                    popupContent.appendChild(document.createTextNode("Это поле"));
                     popupContent.appendChild(calcNDVI);
                     calcNDVI.addEventListener("click",function(){
                         calcNdvi(layer);
                     });
+                    
                     let deleteB = document.getElementById('deleteButton').cloneNode(true);
                     deleteB.id='deleteBClone';
                     deleteB.addEventListener("click", function() {
                         deletePolygon(layer);
                     });
+
                     let editB = document.getElementById("editButton").cloneNode(true);
                     editB.id = "editBClone";
                     editB.addEventListener("click", function(){
@@ -156,11 +198,10 @@ function initMap() {
     }
     
     //функция создания полигона
-    function createpoligon(){
+    function createPolygon(){
         //манипуляции с кнопками в правой части экрана
-        document.getElementById("createButton").style.display = "none"
-        document.getElementById("finishButton").style.display = "block"
-        document.getElementById("cancelButton").style.display = "block"
+        toggleButtonDisplay(false, true, true);
+
         //создание пустого полигона и линий предпросмотра
         let latLng = [];
         let newfield = L.polygon(latLng, { color: 'deepskyblue', dashArray: "10, 5" }).addTo(map);
@@ -184,14 +225,11 @@ function initMap() {
         function onMapMouseMove(e){
             //начинаем предпросмотр, если есть хотябы 1 точка
             if (latLng.length > 0){
-                let lastPoint = latLng[latLng.length - 1];
-                tempLine.setLatLngs([lastPoint,e.latlng]);
+                tempLine.setLatLngs([latLng[latLng.length - 1], e.latlng]);
             }
             //в случае двух, если есть хотя-бы 2 точки, ведём линию ещё и к первой
             if (latLng.length > 1){
-                let lastPoint = latLng[latLng.length - 1];
-                let firstPoint = latLng[0];
-                tempLine.setLatLngs([lastPoint,e.latlng,firstPoint]);
+                tempLine.setLatLngs([latLng[latLng.length - 1], e.latlng, latLng[0]]);
             }
         }
 
@@ -214,9 +252,7 @@ function initMap() {
                 // Возвращаем курсор в исходное состояние
                 map.getContainer().style.cursor = ''; 
                 //манипулируем кнопками на правой панели
-                document.getElementById("finishButton").style.display = "none"
-                document.getElementById("cancelButton").style.display = "none"
-                document.getElementById("createButton").style.display = "block"
+                toggleButtonDisplay(true, false, false);
                 //формируем json
                 let geojson = newfield.toGeoJSON();
                 //отправляем json в django
@@ -239,9 +275,7 @@ function initMap() {
             //возвращаем курсор в исходное состояние
             map.getContainer().style.cursor = '';
             //манипулируем кнопками в правой части экрана
-            document.getElementById("finishButton").style.display = "none"
-            document.getElementById("cancelButton").style.display = "none"
-            document.getElementById("createButton").style.display = "block"
+            toggleButtonDisplay(true, false, false);
             //удаляем поле и линии предпросмотра
             newfield.remove();
             tempLine.remove();
@@ -250,11 +284,11 @@ function initMap() {
 
     //добавляем функцию кнопке "Создать"
     document.getElementById("createButton").onclick = function(){
-        createpoligon();
+        createPolygon();
     }
 
     //функция обновления полигона
-    async function updetePolygon(layer) {
+    async function updatePolygon(layer) {
         data = {
             LatLngs: layer.getLatLngs(),
             id: layer.id
