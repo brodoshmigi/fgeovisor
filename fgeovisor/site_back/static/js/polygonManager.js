@@ -31,6 +31,7 @@ function displayPolygons(geojsonData){
 
                 //начало блока всплывающего окна
                 let popupContent = document.createElement('div');
+                popupContent.className = "popup-content"
                 popupContent.appendChild(document.createTextNode("Это поле."));
                 
                 // Добавляем площадь в popup

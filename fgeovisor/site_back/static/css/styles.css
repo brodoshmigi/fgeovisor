@@ -83,13 +83,13 @@ body {
     right: 20px;
     z-index: 2;
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     width: auto;
     min-width: 50px;
     transition: background-color 0.3s;
 }
 
 .ui-button button {
+    border-radius: 10px;
     margin-top: 10px;
     background-color: #38393c;
     font-family: Arial, sans-serif;
