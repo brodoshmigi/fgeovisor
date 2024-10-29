@@ -506,7 +506,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 .leaflet-popup-tip {
 	background: #38393c;
 	color: #ffffff
-	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
 	}
 .leaflet-container a.leaflet-popup-close-button {
 	position: absolute;
@@ -532,9 +531,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	border-top: 1px solid #ddd;
 	}
 
-.leaflet-oldie .leaflet-popup-content-wrapper {
-	-ms-zoom: 1;
-	}
 .leaflet-oldie .leaflet-popup-tip {
 	width: 24px;
 	margin: 0 auto;
