@@ -101,7 +101,7 @@ class CreatePolygon(APIView):
         polygonInstance = Polygon(login=user, polygon_data=str(
                                     request.data['geometry']))
         polygonInstance.save()
-        return Response({'status': 'Polygon saved!'})
+        return Response({Polygon.objects.get(login=user).polygon_id})
 
     def get(self, request):
         My_errors.tmp_context['create_error'] = True
@@ -125,8 +125,9 @@ class DeletePolygon(APIView):
     
     def post(self, request):
         Polygons = Polygon.objects.filter(login=self.request.user.id)
+        res=Polygons.get(polygon_id=request.data).polygon_id
         Polygons.get(polygon_id=request.data).delete()
-        return Response({"success": True})
+        return Response({"success": res})
 
 
 def logoutView(request):
