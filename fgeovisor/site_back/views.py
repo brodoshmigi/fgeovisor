@@ -98,7 +98,7 @@ class CreatePolygon(APIView):
         """
         # Обрабатываем GeoJSON здесь
         user = self.request.user
-        polygonInstance = Polygon(login=user, polygon_data=str(
+        polygonInstance = Polygon(owner=user, polygon_data=str(
                                     request.data['geometry']))
         polygonInstance.save()
         return Response({'success': polygonInstance.polygon_id})
@@ -124,11 +124,19 @@ class DeletePolygon(APIView):
     permission_classes = [rp.IsAuthenticated]
     
     def post(self, request):
-        Polygons = Polygon.objects.filter(login=self.request.user.id)
-        res=Polygons.get(polygon_id=request.data).polygon_id
+        Polygons = Polygon.objects.filter(owner=self.request.user.id)
         Polygons.get(polygon_id=request.data).delete()
-        return Response({"success": res})
+        return Response({"success": "deleted"})
 
+class UpdatePolygon(APIView):
+    
+    permission_classes = [rp.IsAuthenticated]
+
+    def post(self, request):
+        polygon = Polygon.objects.get(polygon_id=request.data['id'])
+        polygon.polygon_data=str(request.data['geometry'])
+        polygon.save()
+        return Response({'success': 'updated'})
 
 def logoutView(request):
     """
