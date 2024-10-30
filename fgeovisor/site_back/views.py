@@ -129,7 +129,9 @@ class DeletePolygon(APIView):
         return Response({"success": "deleted"})
 
 class UpdatePolygon(APIView):
-    
+    """
+    Обновляет полигон по запросу с фронта
+    """
     permission_classes = [rp.IsAuthenticated]
 
     def post(self, request):
