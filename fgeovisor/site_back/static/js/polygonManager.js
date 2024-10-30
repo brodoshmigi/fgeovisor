@@ -181,23 +181,21 @@ document.getElementById("createButton").onclick = function(){
 }
 
 //функция обновления полигона
-async function updatePolygon(layer) {
-    data = {
-        LatLngs: layer.getLatLngs(),
-        id: layer.id
-    };
-    console.log (JSON.stringify(data))
-    fetch('updete-polygon/',{
+async function updatePolygon(geojson) {
+    fetch('update-polygon/',{
         method: 'POST',
         headers:{
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(geojson)
     })
     .then(function(response){
         return response.json();
-    });
+    })
+    .then(function(data) {
+        console.log('Success:', data);
+    })
     await delay(200);
     console.log("обновляем полигоны");
     getPolygons();
@@ -251,7 +249,8 @@ function enableEdit(layer){
         layer.disableEdit();
         //фиксируем изменения как новый полигон и удаляем старый
         console.log(layer.id)
-        updatePolygon(layer);
+        geojson = layer.toGeoJSON();
+        updatePolygon(geojson);
         toggleButtonDisplay(true, false, false);
     }
 
