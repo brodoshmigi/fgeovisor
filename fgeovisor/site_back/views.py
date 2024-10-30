@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from .models import Polygon
-from .serializators import (UserRegistrationSerializator, UserLoginSerializator,)
+from .serializators import (UserRegistrationSerializator, UserLoginSerializator, PolygonFromDbSerializer)
 from .staff import My_errors, get_polygons
 
 
@@ -101,7 +101,7 @@ class CreatePolygon(APIView):
         polygonInstance = Polygon(login=user, polygon_data=str(
                                     request.data['geometry']))
         polygonInstance.save()
-        return Response({Polygon.objects.get(login=user).polygon_id})
+        return Response(request.data)
 
     def get(self, request):
         My_errors.tmp_context['create_error'] = True
@@ -128,6 +128,16 @@ class DeletePolygon(APIView):
         res=Polygons.get(polygon_id=request.data).polygon_id
         Polygons.get(polygon_id=request.data).delete()
         return Response({"success": res})
+
+class UpdatePolygon(APIView):
+    
+    permission_classes = [rp.IsAuthenticated]
+
+    def post(self, request):
+        polygon = Polygon.objects.get(polygon_id=request.data['id'])
+        polygon.polygon_data=str(request.data['geometry'])
+        polygon.save()
+        return Response({'success': 'updated'})
 
 
 def logoutView(request):
