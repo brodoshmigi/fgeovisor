@@ -74,25 +74,25 @@ body {
 }
 
 .ui-button {
-    font-size: 20px;
-    background-color: #38393c;
+    background-color: #38393c00;
     color: white;
-    margin-top: 20px;
-    padding: 5px 10px;
+    margin-top: 10px;
     cursor: pointer;
     position: fixed;
     top: 20px;
     right: 20px;
     z-index: 2;
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     width: auto;
     min-width: 50px;
     transition: background-color 0.3s;
 }
 
-.ui-button[id="cancelButton"]{
-    top: 80px;
+.ui-button button {
+    border-radius: 10px;
+    margin-top: 10px;
+    background-color: #38393c;
+    font-family: Arial, sans-serif;
 }
 
 /* Модальное окно */

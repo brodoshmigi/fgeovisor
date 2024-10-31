@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Карта с OpenStreetMap</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+    <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
 </head>
 <body>
 
@@ -24,12 +24,19 @@
         </div>
     </div>
 
-    <button id="createButton" class="ui-button">Добавить поле</button>
-    <button id="calcNdvi" class="popup-button">Рассчитать NDVI</button>
-    <button id="deleteButton" class="popup-button">Удалить</button>
-    <button id="editButton" class="popup-button">Изменить</button>
-    <button id="finishButton" class="ui-button" style="display: none;">Применить</button>
-    <button id="cancelButton" class="ui-button" style="display: none;">Отменить</button>
+    <div class="popup-button">
+        <button id="calcNdvi">Рассчитать NDVI</button>
+        <button id="deleteButton">Удалить</button>
+        <button id="editButton">Изменить</button>
+        <button id="uploadButton">Загрузить снимки</button>
+        <input type="file" class="upload" id="photo-upload-1" style="display: none;"/>
+        <input type="file" class="upload" id="photo-upload-2" style="display: none;"/>
+    </div>
+    <div class="ui-button" id="ui-button">
+        <button id="createButton">Добавить поле</button>
+        <button id="finishButton" style="display: none;">Применить</button>
+        <button id="cancelButton" style="display: none;">Отменить</button>
+    </div>
     <!-- Карта -->
     <div id="map" onmousedown="document.getElementById('sidebar').style.width='0px'" ontouchstart ="document.getElementById('sidebar').style.width='0px'"></div>
 
