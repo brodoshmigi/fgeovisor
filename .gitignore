@@ -1,13 +1,12 @@
 venv
 geodjangorainmarker_venv/
+geodjrep_venv/
 fgeovisor/siteback/__pycache__/
 pycache/
 fgeovisor/siteback/migrations/
 fgeovisor/visorbend_site/settings.py
 prac\prac-env\pyvenv.cfg
 prac
-py_venv_installer_and_django_start_server
-py_venv_installer_and_django_start_server.bat
 geodjangorainmarker
 geodjango
 *.pyc
