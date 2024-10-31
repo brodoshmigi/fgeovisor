@@ -50,69 +50,66 @@ function displayPolygons(geojsonData){
                 let uploadB = document.getElementById('uploadButton').cloneNode(true);
                 uploadB.id = 'uploadBClone';
 
-                 // Поля для выбора файлов
-                 const fileInput1 = document.createElement('input');
-                 fileInput1.type = "file";
-                 //fileInput1.accept = ".tif, .tiff, .jpg, .jpeg, .png, .geojson";
-                 fileInput1.style.display = "none";
- 
-                 const fileInput2 = document.createElement('input');
-                 fileInput2.type = "file";
-                 //fileInput2.accept = ".tif, .tiff, .jpg, .jpeg, .png, .geojson";
-                 fileInput2.style.display = "none";
- 
-                 // Добавляем обработчики для выбора файлов
-                 uploadB.addEventListener("click", () => {
-                     // Открываем выбор первого файла
-                     fileInput1.click();
-                 });
- 
-                 fileInput1.addEventListener("change", () => {
-                     // Открываем выбор второго файла после выбора первого
-                     fileInput2.click();
-                 });
- 
-                 fileInput2.addEventListener("change", async function() {
-                     const file1 = fileInput1.files[0];
-                     const file2 = fileInput2.files[0];
- 
-                     if (!file1 || !file2) {
-                         alert("Ошибка, выберите два изображения для загрузки.");
-                         return;
-                     }
- 
-                     const formData = new FormData();
-                     formData.append('image1', file1);
-                     formData.append('image2', file2);
-                     data = {
-                        "img": FormData,
-                        "id": layer.id
-                     }
-                     console.log(data);
-                     try {
-                         const response = await fetch("/upload-img/", {
-                             method: "POST",
-                             headers: {
-                                 'X-CSRFToken': csrfToken,
-                             },
-                             body: data,
-                         });
- 
-                         if (response.ok) {
-                             const result = await response.json();
-                             alert("Загрузка успешна: " + result.message);
-                         } else {
-                             alert("Ошибка при загрузке изображений.");
-                         }
-                     } catch (error) {
-                         console.error("Ошибка:", error);
-                     }
-                 });
- 
-                 popupContent.appendChild(uploadB);
-                 popupContent.appendChild(fileInput1);
-                 popupContent.appendChild(fileInput2);
+                // Поля для выбора файлов
+                const fileInput1 = document.createElement('input');
+                fileInput1.type = "file";
+                fileInput1.accept = ".tif, .tiff, .jpg, .jpeg, .png, .geojson";
+                fileInput1.style.display = "none";
 
+                const fileInput2 = document.createElement('input');
+                fileInput2.type = "file";
+                fileInput2.accept = ".tif, .tiff, .jpg, .jpeg, .png, .geojson";
+                fileInput2.style.display = "none";
+
+                // Добавляем обработчики для выбора файлов
+                uploadB.addEventListener("click", () => {
+                    // Открываем выбор первого файла
+                    fileInput1.click();
+                });
+
+                fileInput1.addEventListener("change", () => {
+                    // Открываем выбор второго файла после выбора первого
+                    fileInput2.click();
+                });
+
+                fileInput2.addEventListener("change", async function() {
+                    const file1 = fileInput1.files[0];
+                    const file2 = fileInput2.files[0];
+
+                    if (!file1 || !file2) {
+                        alert("Ошибка, выберите два изображения для загрузки.");
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append("id", layer.id);
+                    formData.append('image1', file1);
+                    formData.append('image2', file2);
+                    
+                    console.log(formData);
+                    try {
+                        const response = await fetch("upload-img/", {
+                            method: "POST",
+                            headers: {
+                                'X-CSRFToken': csrfToken,
+                            },
+                            body: formData,
+                        });
+
+                        if (response.ok) {
+                            const result = await response.json();
+                            console.log(result);
+                        } else {
+                            alert("Ошибка при загрузке изображений.");
+                        }
+                    } catch (error) {
+                        console.error("Ошибка:", error);
+                    }
+                });
+
+                popupContent.appendChild(uploadB);
+                popupContent.appendChild(fileInput1);
+                popupContent.appendChild(fileInput2);
                 let deleteB = document.getElementById('deleteButton').cloneNode(true);
                 deleteB.id='deleteBClone';
                 deleteB.addEventListener("click", function() {

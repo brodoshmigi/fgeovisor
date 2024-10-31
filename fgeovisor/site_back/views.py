@@ -6,8 +6,8 @@ from django.contrib.auth.models import AnonymousUser, User
 from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
-from .models import Polygon
-from .serializators import (UserRegistrationSerializator, UserLoginSerializator,)
+from .models import (Polygon, Image)
+from .serializators import (UserRegistrationSerializator, UserLoginSerializator, PolygonFromDbSerializer)
 from .staff import My_errors, get_polygons
 
 
@@ -98,10 +98,10 @@ class CreatePolygon(APIView):
         """
         # Обрабатываем GeoJSON здесь
         user = self.request.user
-        polygonInstance = Polygon(login=user, polygon_data=str(
+        polygonInstance = Polygon(owner=user, polygon_data=str(
                                     request.data['geometry']))
         polygonInstance.save()
-        return Response({'success': polygonInstance.polygon_id})
+        return Response(request.data)
 
     def get(self, request):
         My_errors.tmp_context['create_error'] = True
@@ -122,22 +122,46 @@ class DeletePolygon(APIView):
     Удаляет полигоны по запросу с фронта по id полигона, т.к. у юзера есть доступ только к своему полигону
     """
     permission_classes = [rp.IsAuthenticated]
-    
     def post(self, request):
-        Polygons = Polygon.objects.filter(login=self.request.user.id)
-        res=Polygons.get(polygon_id=request.data).polygon_id
+        Polygons = Polygon.objects.filter(owner=self.request.user.id)
         Polygons.get(polygon_id=request.data).delete()
-        return Response({"success": res})
+        return Response({"success": 'deleted'})
 
 class UpdatePolygon(APIView):
+    '''
+    Функция изменения полигонов
+    '''
     
     permission_classes = [rp.IsAuthenticated]
 
     def post(self, request):
-        polygon = Polygon.objects.get(polygon_id=request.data['id'])
-        polygon.polygon_data=str(request.data['geometry'])
-        polygon.save()
-        return Response({'success': 'updated'})
+        try:
+            
+            polygon = Polygon.objects.get(polygon_id=request.data['id'])
+            polygon.polygon_data=str(request.data['geometry'])
+            polygon.save()
+            return Response({'success': 'updated'})
+        except Exception:
+            return Response({'lost': Exception})
+
+
+class UploadImg(APIView):
+    '''
+    Функция добавления фото
+    '''
+    permission_classes = [rp.IsAuthenticated]
+
+    def post(self, request):
+        if len(request.data.keys()) == 3:
+            polygon = Polygon.objects.get(polygon_id=request.data['id'])
+            img1 = request.data['image1']
+            #img2 = request.data['image2']
+            images_instance = Image(polygon=polygon, url=img1)
+            images_instance.save()
+            return Response({'succes': 'saved'})
+        else:
+            return Response({'fail': 'must 3 arguments'})
+
 
 def logoutView(request):
     """

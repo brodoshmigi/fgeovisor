@@ -1,6 +1,7 @@
 from copy import copy
 from .models import Polygon
 from .serializators import PolygonFromDbSerializer
+from PIL import Image
 
 """
 Аналог utils.py. Тут храним вспомогательный код.
@@ -35,7 +36,7 @@ def get_polygons(user_id):
         """
         Отправляем запрос в БД, формируем список из пользовательских полигонов
         """
-        polygons = Polygon.objects.filter(login=user_id)
+        polygons = Polygon.objects.filter(owner=user_id)
         tmp = []
         for objects in polygons: 
             tmp.append(PolygonFromDbSerializer(objects).data)
