@@ -12,14 +12,13 @@ if %ERRORLEVEL% equ 0 (
 echo Выполняется код для первого запуска...
 echo Инициализируем Python virtual environment...
 python -m venv "%folder_name%_venv"
-call geodjangorainmarker_venv\Scripts\activate.bat
+call %folder_name%_venv\Scripts\activate.bat
 python -m pip install --upgrade pip
 pip install -r "requirements.txt"
-python libgdal_version_add.py
-python fgeovisor\manage.py migrate
+python libgdal_verison_add.py
 python fgeovisor\manage.py makemigrations
 python fgeovisor\manage.py migrate
 reg add "%regKey%" /v "%regValue%" /t REG_SZ /d "Запущен %date% %time%" /f
 :end
-call geodjangorainmarker_venv\Scripts\activate.bat
-python fgeovisor\manage.py runserver 192.168.1.122:8001
+call %folder_name%_venv\Scripts\activate.bat
+python fgeovisor\manage.py runserver 8000

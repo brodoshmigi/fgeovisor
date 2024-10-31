@@ -162,6 +162,17 @@ class UploadImg(APIView):
         else:
             return Response({'fail': 'must 3 arguments'})
 
+class UpdatePolygon(APIView):
+    """
+    Обновляет полигон по запросу с фронта
+    """
+    permission_classes = [rp.IsAuthenticated]
+
+    def post(self, request):
+        polygon = Polygon.objects.get(polygon_id=request.data['id'])
+        polygon.polygon_data=str(request.data['geometry'])
+        polygon.save()
+        return Response({'success': 'updated'})
 
 def logoutView(request):
     """

@@ -1,5 +1,6 @@
 venv
 geodjangorainmarker_venv/
+geodjrep_venv/
 fgeovisor/siteback/__pycache__/
 pycache/
 fgeovisor/siteback/migrations/
