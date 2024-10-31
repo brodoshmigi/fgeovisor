@@ -1,6 +1,7 @@
 from copy import copy
 from .models import Polygon
 from .serializators import PolygonFromDbSerializer
+from PIL import Image
 
 """
 Аналог utils.py. Тут храним вспомогательный код.

@@ -10,12 +10,12 @@ function getPolygons(){
         })
 }
 
-//функция отображения политгонов из БД
+// функция отображения политгонов из БД
 
 function displayPolygons(geojsonData){
-    //очищаем слой полигонов во избежание фатомных элементов
+    // очищаем слой полигонов во избежание фатомных элементов
     polygonLayerGroup.clearLayers();
-    //Создаём полигон по заданным в файле параметрам
+    // создаём полигон по заданным в файле параметрам
     L.geoJSON(geojsonData,{
         style: function(){
             return {color:"deepskyblue"}
@@ -25,21 +25,21 @@ function displayPolygons(geojsonData){
             if (feature.properties && feature.id){
                 layer.id = feature.id;
                 
-                // Расчет площади
-                const latlngs = layer.getLatLngs()[0]; // Предполагается, что у нас только один полигон (без дыр)
+                // расчет площади
+                const latlngs = layer.getLatLngs()[0]; // предполагается, что у нас только один полигон (без дыр)
                 const area = calculatePolygonArea(latlngs);
 
-                //начало блока всплывающего окна
+                // начало блока всплывающего окна
                 let popupContent = document.createElement('div');
                 popupContent.className = "popup-content"
                 popupContent.appendChild(document.createTextNode("Это поле."));
                 
-                // Добавляем площадь в popup
+                // добавляем площадь в popup
                 let areaText = document.createElement('p');
                 areaText.textContent = `Площадь: ${area.toFixed(2)} га`;
                 popupContent.appendChild(areaText);
 
-                // Добавляем кнопки calcNdvi, deleteButton и editButton в popup
+                // добавляем кнопки calcNdvi, deleteButton и editButton в popup
                 let calcNDVI = document.getElementById('calcNdvi').cloneNode(true);
                 calcNDVI.id='calcNdviClone';
                 popupContent.appendChild(calcNDVI);
@@ -47,6 +47,69 @@ function displayPolygons(geojsonData){
                     calcNdvi(layer);
                 });
                 
+                let uploadB = document.getElementById('uploadButton').cloneNode(true);
+                uploadB.id = 'uploadBClone';
+
+                // Поля для выбора файлов
+                const fileInput1 = document.createElement('input');
+                fileInput1.type = "file";
+                fileInput1.accept = ".tif, .tiff, .jpg, .jpeg, .png, .geojson";
+                fileInput1.style.display = "none";
+
+                const fileInput2 = document.createElement('input');
+                fileInput2.type = "file";
+                fileInput2.accept = ".tif, .tiff, .jpg, .jpeg, .png, .geojson";
+                fileInput2.style.display = "none";
+
+                // Добавляем обработчики для выбора файлов
+                uploadB.addEventListener("click", () => {
+                    // Открываем выбор первого файла
+                    fileInput1.click();
+                });
+
+                fileInput1.addEventListener("change", () => {
+                    // Открываем выбор второго файла после выбора первого
+                    fileInput2.click();
+                });
+
+                fileInput2.addEventListener("change", async function() {
+                    const file1 = fileInput1.files[0];
+                    const file2 = fileInput2.files[0];
+
+                    if (!file1 || !file2) {
+                        alert("Ошибка, выберите два изображения для загрузки.");
+                        return;
+                    }
+
+                    const formData = new FormData();
+                    formData.append("id", layer.id);
+                    formData.append('image1', file1);
+                    formData.append('image2', file2);
+                    
+                    console.log(formData);
+                    try {
+                        const response = await fetch("upload-img/", {
+                            method: "POST",
+                            headers: {
+                                'X-CSRFToken': csrfToken,
+                            },
+                            body: formData,
+                        });
+
+                        if (response.ok) {
+                            const result = await response.json();
+                            console.log(result);
+                        } else {
+                            alert("Ошибка при загрузке изображений.");
+                        }
+                    } catch (error) {
+                        console.error("Ошибка:", error);
+                    }
+                });
+
+                popupContent.appendChild(uploadB);
+                popupContent.appendChild(fileInput1);
+                popupContent.appendChild(fileInput2);
                 let deleteB = document.getElementById('deleteButton').cloneNode(true);
                 deleteB.id='deleteBClone';
                 deleteB.addEventListener("click", function() {
@@ -60,6 +123,7 @@ function displayPolygons(geojsonData){
                 })
                 popupContent.appendChild(deleteB);
                 popupContent.appendChild(editB);
+                popupContent.appendChild(uploadB);
                 layer.bindPopup(popupContent);
                 //конец блока всплывающего окна
             }
@@ -134,7 +198,7 @@ function createPolygon(){
     //добавляем кнопке "Применить" функционал
     document.getElementById("finishButton").onclick = function() {
         //если у полигона больше 2 точек
-        if (latLng.length >= 3){
+        if (latLng.length >= 3 && latLng.length < 21){
             //убираем пунктир у границ полигона
             const newStyle = {dashArray: "0, 0"};
             newfield.setStyle(newStyle);
@@ -153,6 +217,9 @@ function createPolygon(){
             //удаляем локальный полигон и линии предпросмотра
             newfield.remove();
             tempLine.remove();
+        }else if (latLng.length > 20){
+            //если у полигона больше 20 точек
+            alert("У поля должно быть меньше 20 углов!")
         }else{
             //если у полигона меньше 3х точек
             alert("У поля должно быть минимум 3 угла!")
