@@ -1,4 +1,6 @@
 @echo off
+if not defined DJANGO_RUNSERVER_ADDR set DJANGO_RUNSERVER_ADDR=127.0.0.1
+if not defined DJANGO_RUNSERVER_PORT set DJANGO_RUNSERVER_PORT=8000
 set "current_dir=%~dp0"
 set "current_dir=%current_dir:~0,-1%"
 for %%a in ("%current_dir%") do set folder_name=%%~nxa
@@ -21,4 +23,4 @@ python fgeovisor\manage.py migrate
 reg add "%regKey%" /v "%regValue%" /t REG_SZ /d "Запущен %date% %time%" /f
 :end
 call %folder_name%_venv\Scripts\activate.bat
-python fgeovisor\manage.py runserver 8000
+python fgeovisor\manage.py runserver %DJANGO_RUNSERVER_ADDR%:%DJANGO_RUNSERVER_PORT%

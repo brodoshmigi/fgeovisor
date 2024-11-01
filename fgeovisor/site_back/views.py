@@ -128,9 +128,9 @@ class DeletePolygon(APIView):
         return Response({"success": 'deleted'})
 
 class UpdatePolygon(APIView):
-    '''
+    """
     Функция изменения полигонов
-    '''
+    """
     
     permission_classes = [rp.IsAuthenticated]
 
@@ -146,9 +146,9 @@ class UpdatePolygon(APIView):
 
 
 class UploadImg(APIView):
-    '''
+    """
     Функция добавления фото
-    '''
+    """
     permission_classes = [rp.IsAuthenticated]
 
     def post(self, request):
