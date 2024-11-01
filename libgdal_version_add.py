@@ -29,7 +29,8 @@ for path in venv_path:
     else: 
         path_name = 'prac'
 
-with open(f'{path_name}/Lib/site-packages/django/contrib/gis/gdal/libgdal.py', 'r', encoding='utf-8') as FILE:
+with open(f'{path_name}/Lib/site-packages/django/contrib/gis/gdal/libgdal.py',
+           'r', encoding='utf-8') as FILE:
     file_data = FILE.readlines()
     new_libgdal_file = copy(file_data)
 
@@ -40,5 +41,6 @@ for line in file_data:
 
 new_libgdal_file.insert(index, str_sample)
 
-with open(f'{path_name}/Lib/site-packages/django/contrib/gis/gdal/libgdal.py', 'w', encoding='utf-8') as FILE:
+with open(f'{path_name}/Lib/site-packages/django/contrib/gis/gdal/libgdal.py', 
+          'w', encoding='utf-8') as FILE:
     FILE.writelines(new_libgdal_file)

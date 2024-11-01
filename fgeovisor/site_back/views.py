@@ -7,7 +7,8 @@ from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from .models import (Polygon, Image)
-from .serializators import (UserRegistrationSerializator, UserLoginSerializator, PolygonFromDbSerializer)
+from .serializators import (UserRegistrationSerializator, UserLoginSerializator, 
+                            PolygonFromDbSerializer)
 from .staff import My_errors, get_polygons
 
 
@@ -28,13 +29,15 @@ class MapView(APIView):
         if user.username == AnonymousUser.username:
             # описание состояния пользователя дл js
             context['auth_check'] = False
-            return render(request, 'site_back/map_over_osm.html', context=My_errors.error_send())
+            return render(request, 'site_back/map_over_osm.html', 
+                          context=My_errors.error_send())
             #return Response(My_errors.error_send())
         else:
             # описание состояния пользователя дл js
             context['auth_check'] = True
             context['is_staff'] = user.is_staff
-            return render(request, 'site_back/map_over_osm.html', context=My_errors.error_send())
+            return render(request, 'site_back/map_over_osm.html', 
+                          context=My_errors.error_send())
 
 class RegistrationView(APIView):
     """
@@ -92,9 +95,9 @@ class CreatePolygon(APIView):
         """
         Желательно переписать по умному потом пж _(-_-)_ 
         Обясняю почему: мы получаем юзера, т.к. определяем его выше,
-        потом отрезаем от полученного geodjson только нужную часть
-        и потом преобразуем его в str потому что gdal/geos принимает...
-        строку...
+        Потом отрезаем от полученного geodjson только нужную часть
+        И потом преобразуем его в str потому что gdal/geos принимает...
+        Строку...
         """
         # Обрабатываем GeoJSON здесь
         user = self.request.user
@@ -119,7 +122,8 @@ class GetPolygons(APIView):
 
 class DeletePolygon(APIView):
     """
-    Удаляет полигоны по запросу с фронта по id полигона, т.к. у юзера есть доступ только к своему полигону
+    Удаляет полигоны по запросу с фронта по id полигона, 
+    т.к. у юзера есть доступ только к своему полигону
     """
     permission_classes = [rp.IsAuthenticated]
     def post(self, request):
