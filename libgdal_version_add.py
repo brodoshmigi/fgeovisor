@@ -3,20 +3,18 @@
 которые не добавлены стандартной реализацией geodjango
 """
 
-import io
 import os
 from copy import copy
 
 index = 0
+venv_path = os.listdir('.')
+tmp_name = 'venv'
 """
 libgdal для win nt хранится в условном блоке,
 поэтому мы сохранем его с двумя табуляциями,
 да, обязательно удалив лишний пробле, который
 появляется при первой табуляции.
-"""
-venv_path = os.listdir('.')
-tmp_name = 'venv'
-"""
+
 Формат ввода версий гдал в функцию sample := '       ""', ''
 """
 sample = ['        "gdal309"', '']

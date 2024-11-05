@@ -95,7 +95,7 @@ class CreatePolygon(APIView):
         """
         Желательно переписать по умному потом пж _(-_-)_ 
         Обясняю почему: мы получаем юзера, т.к. определяем его выше,
-        Потом отрезаем от полученного geodjson только нужную часть
+        Потом отрезаем от полученного geojson только нужную часть
         И потом преобразуем его в str потому что gdal/geos принимает...
         Строку...
         """
@@ -126,21 +126,22 @@ class DeletePolygon(APIView):
     т.к. у юзера есть доступ только к своему полигону
     """
     permission_classes = [rp.IsAuthenticated]
+    
     def post(self, request):
         Polygons = Polygon.objects.filter(owner=self.request.user.id)
-        Polygons.get(polygon_id=request.data).delete()
+        # id должен быть, т.к. js отсылает тупо строчку - это неправильно
+        # тесты с этим также не провести, и + в будущем нужно будет токен иметь
+        Polygons.get(polygon_id=request.data["id"]).delete()
         return Response({"success": 'deleted'})
 
 class UpdatePolygon(APIView):
     """
     Функция изменения полигонов
     """
-    
     permission_classes = [rp.IsAuthenticated]
 
     def post(self, request):
         try:
-            
             polygon = Polygon.objects.get(polygon_id=request.data['id'])
             polygon.polygon_data=str(request.data['geometry'])
             polygon.save()
