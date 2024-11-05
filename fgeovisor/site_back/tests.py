@@ -260,6 +260,6 @@ class BaseUrlsTests(TestCase):
             "id": polygon_instance.pk,
             "image1": '/IMAGES/unnamed.jpg'
         }
-        response = self.client.post(reverse('upload-img'), data=post_data, 
+        response = self.client.post('/upload-img/', data=post_data, 
                                     content_type='application/json')
         self.assertEqual(response.status_code, 200)
