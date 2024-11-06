@@ -134,13 +134,16 @@ function displayPolygons(geojsonData){
 
 //удаление полигона
 function deletePolygon(layer){
+    data = {
+        'id': layer.id
+    };
     fetch('delete-polygon/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken // Добавляем CSRF-токен
         },
-        body: JSON.stringify(layer.id)
+        body: JSON.stringify(data)
     })
     .then(function(response) { //перехват респонса из джанго
         return response.json();
