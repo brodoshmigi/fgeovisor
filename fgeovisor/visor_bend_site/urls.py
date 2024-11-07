@@ -20,10 +20,10 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
-import site_back.views as views
+import web_interface.views as views
 
 
 urlpatterns = [
     path('secretadmin/', admin.site.urls, name="admin"),
-    path('', include('site_back.urls'), name="api"),
+    path('', include('web_interface.urls'), name="api"),
 ]
