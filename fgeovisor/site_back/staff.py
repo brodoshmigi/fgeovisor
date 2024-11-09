@@ -31,14 +31,3 @@ class My_errors():
         #сбрасывает временную переменную 
         My_errors.tmp_context = copy(My_errors.error_wordbook) 
         return(final)
-
-
-def get_polygons(user_id):
-        """
-        Отправляем запрос в БД, формируем список из пользовательских полигонов
-        """
-        polygons = Polygon.objects.filter(owner=user_id)
-        tmp = []
-        for objects in polygons: 
-            tmp.append(PolygonFromDbSerializer(objects).data)
-        return tmp

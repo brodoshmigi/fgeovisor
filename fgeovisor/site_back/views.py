@@ -117,8 +117,10 @@ class GetPolygons(APIView):
     permission_classes = [rp.IsAuthenticated]
 
     def get(self, request):
-        polygons = get_polygons(self.request.user.id)
-        return Response(polygons)
+        polygons_objects = Polygon.objects.filter(owner=self.request.user.id)
+        polygons_objects = PolygonFromDbSerializer(polygons_objects, many=True)
+        # polygons = get_polygons(self.request.user.id)
+        return Response(polygons_objects.data)
 
 class DeletePolygon(APIView):
     """
