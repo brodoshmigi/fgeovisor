@@ -26,4 +26,6 @@ import web_interface.views as views
 urlpatterns = [
     path('secretadmin/', admin.site.urls, name="admin"),
     path('', include('web_interface.urls'), name="api"),
+    path('', include('polygons.urls'), name='api_poly'),
+    path('', include('images.urls'), name='api_img'),
 ]

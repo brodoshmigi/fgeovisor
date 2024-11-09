@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from web_interface.models import Polygon, Image
+from images.models import Image
+from polygons.models import Polygon
 
 
 """
