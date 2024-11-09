@@ -1,7 +1,9 @@
 from django.contrib import admin
 from django.contrib.gis import admin
 from django.contrib.gis.forms.widgets import OSMWidget
-from .models import Polygon, Image, SessionStorage, ActivityLog
+from .models import SessionStorage, ActivityLog
+from polygons.models import Polygon
+from images.models import Image
 
 # Добавление моделей через декоратор, + вывод карты, если модель имеет такое поле
 @admin.register(Polygon, Image)

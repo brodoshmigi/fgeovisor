@@ -1,6 +1,4 @@
 from copy import copy
-from .models import Polygon
-from .serializators import PolygonFromDbSerializer
 from PIL import Image
 
 """
