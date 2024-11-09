@@ -2,9 +2,9 @@ import React, {useState} from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css'
 import * as calculations from './calculations';
-import { toggleButtonDisplay }from './uiControls';
 import { delay } from './utils';
 import { setCreateButtonHandler, setFinishButtonHandler, setCancelButtonHandler } from '../components/customButtons';
+import { toggleButtonDisplay } from './uiControls';
 
 var data;
 export function getPolygons(){

@@ -1,18 +1,19 @@
-// src/components/Modal.js
+// Modal.js
 import React from 'react';
-import { closeModal } from '../scripts/uiControls.js';
+import '../styles/styles.css'
+import Sidebar from './Sidebar';
 
-function Modal({ children }) {
+const Modal = ({ isOpen, onClose, children }) => {
+    if (!isOpen) return null; // Если окно не открыто, ничего не рендерим
+
     return (
-        <div id="modal" className="modal" onClick={() => closeModal()}>
+        <div className="modal-overlay">
             <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                <span className="close" onClick={() => closeModal()}>&times;</span>
-                <div className="modalBody" id="modalBody">
-                    {children}
-                </div>
+                <button className="close" onClick={onClose}>X</button>
+                {children}
             </div>
         </div>
     );
-}
+};
 
 export default Modal;

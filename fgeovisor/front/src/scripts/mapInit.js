@@ -3,7 +3,7 @@ import 'leaflet/dist/leaflet.js'
 import 'leaflet/dist/leaflet.css'
 import { getPolygons } from './polygonManager';
 import * as utils from './utils'
-import { switchsidebarcontent } from './uiControls';
+
 
 export function initMap(container) {
     if (window.map){
