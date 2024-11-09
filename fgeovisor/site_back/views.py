@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from .models import (Polygon, Image)
 from .serializators import (UserRegistrationSerializator, UserLoginSerializator, 
                             PolygonFromDbSerializer)
-from .staff import My_errors, get_polygons
+from .staff import My_errors
 
 
 """
@@ -119,7 +119,6 @@ class GetPolygons(APIView):
     def get(self, request):
         polygons_objects = Polygon.objects.filter(owner=self.request.user.id)
         polygons_objects = PolygonFromDbSerializer(polygons_objects, many=True)
-        # polygons = get_polygons(self.request.user.id)
         return Response(polygons_objects.data)
 
 class DeletePolygon(APIView):
