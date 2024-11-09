@@ -40,7 +40,10 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "rest_framework",
     "rest_framework_gis",
-    "site_back.apps.SiteBackConfig",
+    #"site_back.apps.SiteBackConfig",
+    "web_interface.apps.WebInterfaceConfig",
+    "images.apps.ImagesConfig",
+    "polygons.apps.PolygonsConfig"
 ]
 
 MIDDLEWARE = [
