@@ -1,7 +1,17 @@
 // src/components/LoginForm.js
-import React from 'react';
+import React, { useRef } from 'react';
+import '../styles/styles.css'
+import Sidebar from './Sidebar';
+import RegistrationForm from './RegistrationForm';
 
-function LoginForm() {
+export const LoginForm = (sidebarRef) => {
+    const openModalInSidebar = () => {
+        if(sidebarRef.current){
+            sidebarRef.current.openModal(<RegistrationForm />)
+        }else{
+            console.error('no sidebar ref')
+        }
+    }
     return (
         <div id="loginForm">
             <div className="errormsg" id="errormsg"><p>Неправильное имя пользователя или пароль</p></div>
@@ -11,7 +21,7 @@ function LoginForm() {
                 <input placeholder="Введите пароль" type="password" id="password" name="password" required />
                 <button type="submit">Войти</button>
                 <div className="login-help">
-                    <a href='#' onClick={() => console.log("Переход к регистрации")}>Нет аккаунта</a>
+                    <a href='#' onClick={openModalInSidebar}>Нет аккаунта</a>
                 </div>
             </form>
         </div>
