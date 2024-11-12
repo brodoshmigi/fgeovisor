@@ -266,7 +266,7 @@ async function updatePolygon(geojson) {
     .then(function(data) {
         console.log('Success:', data);
     })
-    await delay(200);
+    await delay(50);
     console.log("обновляем полигоны");
     getPolygons();
 }
@@ -291,7 +291,7 @@ async function savePolygon(geojson){
     .catch(function(error) {
         console.error('Error:', error);
     });
-    await delay(200);
+    await delay(50);
     console.log("обновляем полигоны");
     getPolygons();
 }
