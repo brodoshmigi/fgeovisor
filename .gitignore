@@ -1,24 +1,23 @@
-venv
-geodjangorainmarker_venv/
-geodjrep_venv/
-fgeovisor/siteback/__pycache__/
-pycache/
-fgeovisor/siteback/migrations/
-fgeovisor/visor_bend_site/settings.py
-prac\prac-env\pyvenv.cfg
-prac
-geodjangorainmarker
-geodjango
-*.pyc
-__pycache__
-__pycache__/
-fgeovisor\visor_bend_site__pycache__
-fgeovisor\visor_bend_site_pycache\
-fgeovisor/visor_bend_site/pycache/
-fgeovisor/visor_bend_site/pycache
-__pycache__\
-*.py[cod]
-*$py.class
-site_back\migrations
-site_back/migrations
-migrations
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
