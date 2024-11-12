@@ -20,7 +20,9 @@ function initMap() {
 
     //подгрузка полигонов из БД
     polygonLayerGroup  = L.layerGroup().addTo(map);
-    getPolygons();
+    if (authcheck == true){
+        getPolygons();
+    }
     bindValidation();
 }
 
