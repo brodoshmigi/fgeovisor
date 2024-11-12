@@ -18,7 +18,7 @@ export const LoginForm = (sidebarRef) => {
             <h2>Вход</h2>
             <form method="post" action="/login">
                 <input placeholder="Введите login" type="text" id="username" name="username" required />
-                <input placeholder="Введите пароль" type="password" id="password" name="password" required />
+                <input style={{width: "99%"}} placeholder="Введите пароль" type="password" id="password" name="password" required />
                 <button type="submit">Войти</button>
                 <div className="login-help">
                     <a href='#' onClick={openModalInSidebar}>Нет аккаунта</a>
