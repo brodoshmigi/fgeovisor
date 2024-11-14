@@ -1,6 +1,6 @@
  //Функция рассчёта NDVI
 
-export function calcNdvi(layer){
+ function calcNdvi(layer){
     /*fetch('calc-NDVI/',{
         method: 'Post',
         headers:{
@@ -20,7 +20,7 @@ export function calcNdvi(layer){
 
 //Функция рассчёта площади поля
 
-export function calculatePolygonArea(latlngs) {
+function calculatePolygonArea(latlngs) {
     let area = 0;
     const radius = 6371228; // Радиус Земли в метрах
 

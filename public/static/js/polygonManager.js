@@ -1,13 +1,6 @@
-import React, {useState} from 'react';
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css'
-import * as calculations from './calculations';
-import { delay } from './utils';
-import { setCreateButtonHandler, setFinishButtonHandler, setCancelButtonHandler } from '../components/customButtons';
-import { toggleButtonDisplay } from './uiControls';
-
-var data;
-export function getPolygons(){
+//Достаём полигоны из БД
+let polygonLayerGroup;
+function getPolygons(){
     fetch("get-polygons/")
         .then(function(response){
         return response.json();
@@ -21,7 +14,7 @@ export function getPolygons(){
 
 function displayPolygons(geojsonData){
     // очищаем слой полигонов во избежание фатомных элементов
-    window.polygonLayerGroup.clearLayers();
+    polygonLayerGroup.clearLayers();
     // создаём полигон по заданным в файле параметрам
     L.geoJSON(geojsonData,{
         style: function(){
@@ -34,9 +27,9 @@ function displayPolygons(geojsonData){
                 
                 // расчет площади
                 const latlngs = layer.getLatLngs()[0]; // предполагается, что у нас только один полигон (без дыр)
-                const area = calculations.calculatePolygonArea(latlngs);
+                const area = calculatePolygonArea(latlngs);
 
-                //начало блока всплывающего окна
+                // начало блока всплывающего окна
                 let popupContent = document.createElement('div');
                 popupContent.className = "popup-content"
                 popupContent.appendChild(document.createTextNode("Это поле."));
@@ -51,7 +44,7 @@ function displayPolygons(geojsonData){
                 calcNDVI.id='calcNdviClone';
                 popupContent.appendChild(calcNDVI);
                 calcNDVI.addEventListener("click",function(){
-                    calculations.calcNdvi(layer);
+                    calcNdvi(layer);
                 });
                 
                 let uploadB = document.getElementById('uploadButton').cloneNode(true);
@@ -98,7 +91,7 @@ function displayPolygons(geojsonData){
                         const response = await fetch("upload-img/", {
                             method: "POST",
                             headers: {
-                                'X-CSRFToken':window.csrfToken,
+                                'X-CSRFToken': csrfToken,
                             },
                             body: formData,
                         });
@@ -136,7 +129,7 @@ function displayPolygons(geojsonData){
             }
         }
         //добавляем полигон на слой
-    }).addTo(window.polygonLayerGroup);
+    }).addTo(polygonLayerGroup);
 }
 
 //удаление полигона
@@ -148,7 +141,7 @@ function deletePolygon(layer){
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken':window.csrfToken // Добавляем CSRF-токен
+            'X-CSRFToken': csrfToken // Добавляем CSRF-токен
         },
         body: JSON.stringify(data)
     })
@@ -166,16 +159,17 @@ function deletePolygon(layer){
 }
 
 //функция создания полигона
-export function createPolygon(){
+function createPolygon(){
     //манипуляции с кнопками в правой части экрана
+    toggleButtonDisplay(false, true, true);
 
     //создание пустого полигона и линий предпросмотра
     let latLng = [];
-    let newfield = L.polygon(latLng, { color: 'deepskyblue', dashArray: "10, 5" }).addTo(window.map);
-    let tempLine = L.polyline([], { color: 'gray', dashArray: "10, 5" }).addTo(window.map);
+    let newfield = L.polygon(latLng, { color: 'deepskyblue', dashArray: "10, 5" }).addTo(map);
+    let tempLine = L.polyline([], { color: 'gray', dashArray: "10, 5" }).addTo(map);
 
     // Меняем курсор при старте создания полигона
-    window.map.getContainer().style.cursor = 'crosshair';
+    map.getContainer().style.cursor = 'crosshair';
 
     // Обработчик для кликов
     function onMapClick(e) {
@@ -200,23 +194,23 @@ export function createPolygon(){
     }
 
     // Включаем обработчик кликов
-    window.map.on('click', onMapClick); 
+    map.on('click', onMapClick); 
     //включаем обработчик движения мышью
-    window.map.on('mousemove', onMapMouseMove);
+    map.on('mousemove', onMapMouseMove);
 
     //добавляем кнопке "Применить" функционал
-    setFinishButtonHandler(() =>{
-        if (latLng.length >= 3 && latLng.length < 21){
+    document.getElementById("finishButton").onclick = function() {
         //если у полигона больше 2 точек
-        //убираем пунктир у границ полигона
+        if (latLng.length >= 3 && latLng.length < 21){
+            //убираем пунктир у границ полигона
             const newStyle = {dashArray: "0, 0"};
             newfield.setStyle(newStyle);
             // Отключаем обработчик кликов
-            window.map.off('click', onMapClick);
+            map.off('click', onMapClick);
             //Выключиие обработчика движения мыши
-            window.map.off('mousemove',onMapMouseMove);
+            map.off('mousemove',onMapMouseMove);
             // Возвращаем курсор в исходное состояние
-            window.map.getContainer().style.cursor = ''; 
+            map.getContainer().style.cursor = ''; 
             //манипулируем кнопками на правой панели
             toggleButtonDisplay(true, false, false);
             //формируем json
@@ -233,29 +227,28 @@ export function createPolygon(){
             //если у полигона меньше 3х точек
             alert("У поля должно быть минимум 3 угла!")
         }
-    });
+    };
     
-    setCancelButtonHandler(() => {
     //добавляем функционал кнопке отмены
-    //выключаем обработчик кликов
-    window.map.off('click', onMapClick);
-    //выключаем обработчик движения мышью
-        window.map.off('mousemove',onMapMouseMove);
+    document.getElementById("cancelButton").onclick = function(){
+        //выключаем обработчик кликов
+        map.off('click', onMapClick);
+        //выключаем обработчик движения мышью
+        map.off('mousemove',onMapMouseMove);
         //возвращаем курсор в исходное состояние
-        window.map.getContainer().style.cursor = '';
+        map.getContainer().style.cursor = '';
         //манипулируем кнопками в правой части экрана
         toggleButtonDisplay(true, false, false);
         //удаляем поле и линии предпросмотра
         newfield.remove();
         tempLine.remove();
-        })
+    }
 }
 
 //добавляем функцию кнопке "Создать"
-setCreateButtonHandler(() =>{
+document.getElementById("createButton").onclick = function(){
     createPolygon();
-})
-
+}
 
 //функция обновления полигона
 async function updatePolygon(geojson) {
@@ -263,7 +256,7 @@ async function updatePolygon(geojson) {
         method: 'POST',
         headers:{
             'Content-Type': 'application/json',
-            'X-CSRFToken':window.csrfToken
+            'X-CSRFToken': csrfToken
         },
         body: JSON.stringify(geojson)
     })
@@ -273,7 +266,7 @@ async function updatePolygon(geojson) {
     .then(function(data) {
         console.log('Success:', data);
     })
-    await delay(200);
+    await delay(50);
     console.log("обновляем полигоны");
     getPolygons();
 }
@@ -285,7 +278,7 @@ async function savePolygon(geojson){
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken':window.csrfToken // Добавляем CSRF-токен
+            'X-CSRFToken': csrfToken // Добавляем CSRF-токен
         },
         body: JSON.stringify(geojson)
     })
@@ -298,28 +291,27 @@ async function savePolygon(geojson){
     .catch(function(error) {
         console.error('Error:', error);
     });
-    await delay(200);
+    await delay(50);
     console.log("обновляем полигоны");
     getPolygons();
 }
 
 //Функция для редаактирования полигонов
 
-export function enableEdit(layer){
+function enableEdit(layer){
     layer.enableEdit(); //включаем редактирование для элемента
     layer.closePopup();// закрываемвсплывающее окно
     //проводим манипуляции с кнопками в првой части экрана
     toggleButtonDisplay(false, true, true);
 
     //назначаем кнопкам функции
-    setFinishButtonHandler(() => {
+    document.getElementById("finishButton").onclick = function(){
         finishEdit(layer);
-    })
-    setCancelButtonHandler(()=>{
+    };
+    document.getElementById("cancelButton").onclick = function(){
         cancelEdit(layer);
         getPolygons();
-    })
-
+    };
 
     //функция для применения изменений
     function finishEdit(layer){
@@ -327,7 +319,7 @@ export function enableEdit(layer){
         layer.disableEdit();
         //фиксируем изменения как новый полигон и удаляем старый
         console.log(layer.id)
-        let geojson = layer.toGeoJSON();
+        geojson = layer.toGeoJSON();
         updatePolygon(geojson);
         toggleButtonDisplay(true, false, false);
     }

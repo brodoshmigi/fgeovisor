@@ -27,7 +27,7 @@ body {
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 85px;
-    z-index: 9998;
+    z-index: 1;
     white-space: nowrap;
 }
 
@@ -52,7 +52,6 @@ body {
 
 /* Кнопка открытия меню */
 .menu-button {
-    z-index: 9999;
     font-size: 20px;
     background-color: #38393c;
     color: white;
@@ -62,6 +61,7 @@ body {
     position: fixed;
     top: 20px;
     left: 20px;
+    z-index: 2;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     width: auto;
@@ -96,39 +96,42 @@ body {
 }
 
 /* Модальное окно */
-.modal-overlay {
+.modal {
+    display: none; /* Скрыто по умолчанию */
     position: fixed;
-    top: 0;
+    z-index: 2; /* Поверх карты */
     left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный черный фон */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Чтобы быть выше остального контента */
-}
-
-.modal-content {
-    color: white;
-    background-color: #38393c;
-    padding: 20px;
-    border-radius: 8px;
-    position: relative;
-    max-width: 500px;
+    top: 0;
     width: 100%;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
 }
 
-.modal-close {
-    position: absolute;
-    top: 10px;
-    right: 20px;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    width: 40px;
+/* Контент модального окна */
+.modal-content {
+    background-color: #38393c; /* Цвет фона формы */
+    margin: auto; /* Центрируем по горизонтали */
+    width: 700px; /* Максимальная ширина 700 пикселей */
+    height: 400px; /* Высота модального окна */
+    border: 1px solid #888;
+    border-radius: 10px; /* Закругленные углы */
+    position: relative; /* Устанавливаем позицию относительно окна */
+    top: 50%; /* Сдвигаем вниз на 50% высоты окна */
+    transform: translateY(-50%); /* Сдвигаем вверх на 50% высоты окна */
+}
+
+.modalBody{
+    margin: auto;
+    width: 90%;
+    height: 100%;
+}
+/* Заголовок модального окна */
+.modal-content h2 {
+    margin-top: 30px;
+    text-align: center; /* Центрируем заголовок */
+    color: #ffffff; /* Цвет заголовка */    left: 0%;
+    font-size: 28px; /* Увеличенный размер шрифта */
 }
 
 /* Поля ввода */
