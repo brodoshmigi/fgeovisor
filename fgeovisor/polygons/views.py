@@ -28,7 +28,7 @@ class CreatePolygon(APIView):
         polygonInstance = Polygon(owner=user, polygon_data=str(
                                     request.data['geometry']))
         polygonInstance.save()
-        return Response(request.data)
+        return Response(request.data, content_type='application/json')
 
     def get(self, request):
         My_errors.tmp_context['create_error'] = True
@@ -43,7 +43,7 @@ class GetPolygons(APIView):
     def get(self, request):
         polygons_objects = Polygon.objects.filter(owner=self.request.user.id).all()
         polygons_objects = PolygonFromDbSerializer(polygons_objects, many=True)
-        return Response(polygons_objects.data)
+        return Response(polygons_objects.data, content_type='application/json')
 
 class DeletePolygon(APIView):
     """
@@ -57,7 +57,7 @@ class DeletePolygon(APIView):
         # id должен быть, т.к. js отсылает тупо строчку - это неправильно
         # тесты с этим также не провести, и + в будущем нужно будет токен иметь
         Polygons.get(polygon_id=request.data["id"]).delete()
-        return Response({"success": 'deleted'})
+        return Response({"success": 'deleted'}, content_type='application/json')
 
 class UpdatePolygon(APIView):
     """
@@ -70,7 +70,7 @@ class UpdatePolygon(APIView):
             polygon = Polygon.objects.get(polygon_id=request.data['id'])
             polygon.polygon_data=str(request.data['geometry'])
             polygon.save()
-            return Response({'success': 'updated'})
+            return Response({'success': 'updated'}, content_type='application/json')
         except Exception:
-            return Response({'lost': Exception})
+            return Response({'lost': Exception}, content_type='application/json')
 
