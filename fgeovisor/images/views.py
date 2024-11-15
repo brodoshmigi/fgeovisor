@@ -21,6 +21,6 @@ class UploadImg(APIView):
             #img2 = request.data['image2']
             images_instance = Image(polygon=polygon, url=img1)
             images_instance.save()
-            return Response({'succes': 'saved'})
+            return Response({'succes': 'saved'}, content_type='application/json')
         else:
-            return Response({'fail': 'must 3 arguments'})
+            return Response({'fail': 'must 3 arguments'}, content_type='application/json')

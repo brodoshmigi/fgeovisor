@@ -8,6 +8,7 @@ from .models import Polygon
 from images.models import Image
 from .serializators import PolygonFromDbSerializer
 from web_interface.staff import My_errors
+from images.staff import Image_From_GEE
 
 class CreatePolygon(APIView):
     """
@@ -28,6 +29,9 @@ class CreatePolygon(APIView):
         polygonInstance = Polygon(owner=user, polygon_data=str(
                                     request.data['geometry']))
         polygonInstance.save()
+        polygon_image = Image_From_GEE(polygonInstance)
+        polygon_image.download_image()
+        polygon_image.visualization()
         return Response(request.data)
 
     def get(self, request):
