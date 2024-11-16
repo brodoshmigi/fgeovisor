@@ -16,6 +16,31 @@ body {
     z-index: 0;
 }
 
+.progress-container{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: auto;
+    width: 700px;
+    background-color: #38303c;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin: 20px 10px;
+}
+
+.progress-bar{
+    overflow: auto;
+    display: none;
+    margin: 20px 10px;
+    width: 0%;
+    height: 20px;
+    background-color: crimson;
+    color: #ccc;
+    line-height: 20px;
+    border-radius: 10px;
+}
+
 /* Боковое меню */
 .sidebar {
     height: 100%;
