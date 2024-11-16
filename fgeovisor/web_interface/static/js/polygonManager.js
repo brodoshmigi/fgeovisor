@@ -110,6 +110,7 @@ function displayPolygons(geojsonData){
                 popupContent.appendChild(uploadB);
                 popupContent.appendChild(fileInput1);
                 popupContent.appendChild(fileInput2);
+
                 let deleteB = document.getElementById('deleteButton').cloneNode(true);
                 deleteB.id='deleteBClone';
                 deleteB.addEventListener("click", function() {
@@ -266,7 +267,7 @@ async function updatePolygon(geojson) {
     .then(function(data) {
         console.log('Success:', data);
     })
-    await delay(50);
+    await delay(100);
     console.log("обновляем полигоны");
     getPolygons();
 }
@@ -291,7 +292,7 @@ async function savePolygon(geojson){
     .catch(function(error) {
         console.error('Error:', error);
     });
-    await delay(50);
+    await showProgressBar();
     console.log("обновляем полигоны");
     getPolygons();
 }

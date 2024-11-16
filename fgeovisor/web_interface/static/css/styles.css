@@ -44,6 +44,26 @@ body {
     background-color: #434853;
 }
 
+#progressContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 20px;
+    background: #38393c;
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+#progressBar {
+    height: 100%;
+    width: 0%;
+    background: deepskyblue;
+    transition: width 0.4s ease-in-out;
+}
+
 .errormsg{
     text-align: center;
     color: red;

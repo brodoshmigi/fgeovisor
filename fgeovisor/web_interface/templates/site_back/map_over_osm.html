@@ -42,13 +42,17 @@
 
     <!-- Кнопка открытия меню -->
     <button id="menuButton" class="menu-button" onmousedown="toggleSidebar()">☰</button>
-
+    
     <!-- Модальное окно для форм -->
     <div id="modal" class="modal">
         <div class="modal-content" onclick="event.stopPropagation();">
             <span class="close" onclick="closeModal()">&times;</span>
             <div class="modalBody" id="modalBody"></div>
         </div>
+    </div>
+
+    <div id="progressContainer" style="display: none;">
+        <div id="progressBar"></div>
     </div>
 
     <!-- Встраиваем формы в скрытые элементы -->

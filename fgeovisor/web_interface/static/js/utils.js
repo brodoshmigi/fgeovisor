@@ -27,3 +27,30 @@ function delay(ms){
         setTimeout(resolve,ms);
     })
 }
+
+
+function showProgressBar() { 
+    return new Promise((resolve) => {
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+
+        // Показываем прогресс-бар
+        progressContainer.style.display = 'block';
+        progressBar.style.width = '0%';
+
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += 10; // Увеличиваем прогресс каждые 400 мс
+            progressBar.style.width = progress + "%";
+
+            if (progress >= 100) {
+                clearInterval(interval);
+                // Скрываем прогресс-бар через 1 секунду после завершения
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                    resolve(); // Уведомляем, что прогресс-бар завершён
+                }, 1000);
+            }
+        }, 400);
+    });
+}
