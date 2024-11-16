@@ -24,14 +24,13 @@
             <a href="{% url 'log-out' %}">Выйти</a>
         </div>
     </div>
+    <div id="progress-container">
+        <div id="progress-bar">0%</div>
+    </div>
 
     <div class="popup-button">
-        <button id="calcNdvi">Рассчитать NDVI</button>
         <button id="deleteButton">Удалить</button>
         <button id="editButton">Изменить</button>
-        <button id="uploadButton">Загрузить снимки</button>
-        <input type="file" class="upload" id="photo-upload-1" style="display: none;"/>
-        <input type="file" class="upload" id="photo-upload-2" style="display: none;"/>
     </div>
     <div class="ui-button" id="ui-button">
         <button id="createButton">Добавить поле</button>
@@ -46,8 +45,8 @@
 
     <!-- Модальное окно для форм -->
     <div id="modal" class="modal">
-        <div class="modal-content" onclick="event.stopPropagation();">
-            <span class="close" onclick="closeModal()">&times;</span>
+        <div class="modal-content" id="modal-content" onclick="event.stopPropagation();">
+            <span id="span" class="close" onclick="closeModal()">&times;</span>
             <div class="modalBody" id="modalBody"></div>
         </div>
     </div>

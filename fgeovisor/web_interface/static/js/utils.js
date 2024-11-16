@@ -27,3 +27,21 @@ function delay(ms){
         setTimeout(resolve,ms);
     })
 }
+
+function progressBar(){
+    let progressBar = document.getElementById("progress-container");
+    let duration = 4200;
+    let intervalTime = 20;
+    let steps = duration/intervalTime;
+    let increment = 100/steps
+    let width = 0;
+    progressBar.style.display = "block";
+    let interal = setInterval(() => {
+        if (width < 100){
+            width += increment;
+            progressBar.style.width = width + "%"
+        }else {
+            clearInterval(interal)
+        }
+    }, intervalTime)
+}
