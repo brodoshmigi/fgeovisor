@@ -30,9 +30,13 @@ class CreatePolygon(APIView):
                                     request.data['geometry']))
         polygonInstance.save()
         polygon_image = Image_From_GEE(polygonInstance)
-        polygon_image.download_image()
-        polygon_image.visualization()
-        return Response(request.data)
+        try:
+            polygon_image.download_image()
+            polygon_image.visualization()
+            My_errors.tmp_context['photo'] = True
+        except Exception:
+            pass
+        return Response(My_errors.error_send())
 
     def get(self, request):
         My_errors.tmp_context['create_error'] = True

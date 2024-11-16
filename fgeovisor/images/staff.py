@@ -8,6 +8,7 @@ from numpy import seterr, nanmax
 from .models import Image
 from matplotlib.pyplot import(imshow, imsave)
 from polygons.serializators import PolygonFromDbSerializer
+from web_interface.staff import My_errors
 
 #ee.Authenticate()
 ee.Initialize(project='ee-cocafin1595')
@@ -18,7 +19,6 @@ class Image_From_GEE():
     
     def __init__(self, polygon, dir=IMAGE_DIR + '/' + 'image' + str(len(listdir(IMAGE_DIR)) + 1),
                   date_start='2023-01-01', date_end=str(datetime.date.today())):
-        print(PolygonFromDbSerializer(polygon).data['geometry']['coordinates'])
         self.polygon = polygon
         self.coords = ee.Geometry.Polygon(PolygonFromDbSerializer(polygon).data['geometry']['coordinates'])
         self.dir = dir
