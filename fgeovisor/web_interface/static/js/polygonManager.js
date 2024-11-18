@@ -38,6 +38,12 @@ function displayPolygons(geojsonData){
                 areaText.textContent = `Площадь: ${area.toFixed(2)} га`;
                 popupContent.appendChild(areaText);
 
+                let calcB = document.getElementById('calcNDVI').cloneNode(true);
+                calcB.id ='calcBClone'
+                calcB.addEventListener("click",function(){
+                    calcNdvi(layer);
+                })
+
                 let deleteB = document.getElementById('deleteButton').cloneNode(true);
                 deleteB.id='deleteBClone';
                 deleteB.addEventListener("click", function() {
@@ -49,6 +55,7 @@ function displayPolygons(geojsonData){
                 editB.addEventListener("click", function(){
                     enableEdit(layer);
                 })
+                popupContent.appendChild(calcB);
                 popupContent.appendChild(deleteB);
                 popupContent.appendChild(editB);
                 layer.bindPopup(popupContent);

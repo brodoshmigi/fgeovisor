@@ -1,21 +1,9 @@
  //Функция рассчёта NDVI
 
- function calcNdvi(layer){
-    /*fetch('calc-NDVI/',{
-        method: 'Post',
-        headers:{
-            'content-Type': 'application/json',
-            'X-CSRFToken': csrfToken
-        },
-        body: JSON.stringify(layer.id)
-    })
-    .then(function(response){
-
-    })
-    .catch(function(error){
-
-    })*/
-   alert("Функция в разработке!")
+function calcNdvi(layer){
+    latlngBounds = layer.getLatLngs();
+    console.log(latlngBounds);
+    L.imageOverlay("static/IMAGES/image.png",latlngBounds).addTo(map);
 }
 
 //Функция рассчёта площади поля
