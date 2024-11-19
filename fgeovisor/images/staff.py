@@ -7,10 +7,12 @@ from zipfile import ZipFile
 from numpy import seterr, nanmax
 from .models import Image
 from matplotlib.pyplot import(imshow, imsave)
+from matplotlib import use
 from polygons.serializators import PolygonFromDbSerializer
 
-#ee.Authenticate()
-ee.Initialize(project='ee-cocafin1595')
+
+ee.Authenticate()
+ee.Initialize(project='ee-nezhentsev2017')
 IMAGE_DIR = path.dirname(path.abspath(__file__)) + '/IMAGES'
 
 
@@ -18,13 +20,13 @@ class Image_From_GEE():
     
     def __init__(self, polygon,
                   date_start='2023-01-01', date_end=str(datetime.date.today())):
-        print(listdir(IMAGE_DIR))
         self.polygon = polygon
         self.coords = ee.Geometry.Polygon(PolygonFromDbSerializer(polygon).data['geometry']['coordinates'])
-        self.dir = IMAGE_DIR + '/image' + str(len(listdir(IMAGE_DIR)) + 1)
+        self.dir = IMAGE_DIR + ('/image' + str(len(listdir(IMAGE_DIR)) + 1))
         self.date_start = date_start
         self.date_end = date_end
-        
+        print(listdir(IMAGE_DIR))
+        print(self.dir)
     
     def get_download_url(self):
         sentinel_image = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED') \
@@ -53,6 +55,7 @@ class Image_From_GEE():
         seterr(divide='ignore', invalid='ignore')
         ndvi = (nir - red) / (nir + red) 
         ndvi = ndvi / nanmax(ndvi)
+        use('agg')
         valid_array = imshow(ndvi).get_array()
         imsave((self.dir + '/' + 'ndvi.png'), valid_array)
         image_DB = Image(polygon=self.polygon, url=(self.dir + '/' + 'ndvi.png'))

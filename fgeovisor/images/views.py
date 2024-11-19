@@ -1,12 +1,10 @@
 import rest_framework.permissions as rp
-from django.shortcuts import render, redirect
-from django.urls import reverse
 from rest_framework.views import APIView
-from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from polygons.models import Polygon
 from .models import Image
-from web_interface.staff import My_errors
+from .serializators import ImageSerializator
+
 
 class UploadImg(APIView):
     """
@@ -14,13 +12,9 @@ class UploadImg(APIView):
     """
     permission_classes = [rp.IsAuthenticated]
 
-    def post(self, request):
-        if len(request.data.keys()) == 3:
-            polygon = Polygon.objects.get(polygon_id=request.data['id'])
-            img1 = request.data['image1']
-            #img2 = request.data['image2']
-            images_instance = Image(polygon=polygon, url=img1)
-            images_instance.save()
-            return Response({'succes': 'saved'}, content_type='application/json')
-        else:
-            return Response({'fail': 'must 3 arguments'}, content_type='application/json')
+    def get(self, request, id):
+        polygons = Polygon.objects.filter(owner=self.request.user.id)
+        polygon_instance = polygons.get(polygon_id=id)
+        url = Image.objects.get(polygon=polygon_instance)
+        image_serializator = ImageSerializator(url)
+        return Response(image_serializator.data)
