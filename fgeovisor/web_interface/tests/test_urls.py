@@ -58,6 +58,9 @@ class BaseUrlsTests(TestCase):
         user.save()
         polygon_instance = Polygon.objects.create(owner=user, polygon_data=wkt)
         polygon_instance.save()
+        image_instance = Image.objects.create(polygon=polygon_instance, 
+                                              url='1_32MUupS.jpg')
+        image_instance.save()
 
     def test_map_reverse_url_get_access(self):
         response = self.client.get(reverse('map'))
@@ -203,22 +206,14 @@ class BaseUrlsTests(TestCase):
                                     content_type='application/json')
         self.assertEqual(response.status_code, 200)
 
-    def test_for_upload_img_post_request_reverse(self):
+    def test_for_upload_img_get_request_reverse(self):
         authentificate = self.client.force_login(user=user)
-        post_data = {
-            "id": polygon_instance.pk,
-            "image1": '/IMAGES/unnamed.jpg'
-        }
-        response = self.client.post(reverse('upload-img'), data=post_data, 
+        response = self.client.get(reverse('get-img', kwargs={'id': polygon_instance.pk}),
                                     content_type='application/json')
         self.assertEqual(response.status_code, 200)
 
-    def test_for_upload_img_post_request_raw(self):
+    def test_for_upload_img_get_request_raw(self):
         authentificate = self.client.force_login(user=user)
-        post_data = {
-            "id": polygon_instance.pk,
-            "image1": '/IMAGES/unnamed.jpg'
-        }
-        response = self.client.post('/upload-img/', data=post_data, 
+        response = self.client.get(f'/get-img/{polygon_instance.pk}',
                                     content_type='application/json')
         self.assertEqual(response.status_code, 200)

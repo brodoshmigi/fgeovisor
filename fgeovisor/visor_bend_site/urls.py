@@ -20,6 +20,8 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 import web_interface.views as views
 
 
@@ -28,4 +30,4 @@ urlpatterns = [
     path('', include('web_interface.urls'), name="api"),
     path('', include('polygons.urls'), name='api_poly'),
     path('', include('images.urls'), name='api_img'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
