@@ -1,37 +1,42 @@
 import ee 
 import datetime
 import requests
-from os import makedirs, remove, path, listdir
-from zipfile import ZipFile
+from os import (makedirs, remove, path, listdir)
 from django.contrib.gis.gdal.raster.source import GDALRaster
+from zipfile import ZipFile
 from numpy import seterr, nanmax
+from .models import Image
 from matplotlib.pyplot import(imshow, imsave)
+from matplotlib import use
+from polygons.serializators import PolygonFromDbSerializer
 
 
 ee.Authenticate()
 ee.Initialize(project='ee-cocafin1595')
-IMAGE_DIR = path.dirname(path.abspath(__file__)) + '\\IMAGES'
+IMAGE_DIR = path.dirname(path.abspath(__file__)) + '/IMAGES'
 
 
 class Image_From_GEE():
-    '''
-    Класс загрузки фрагментов спутниковых снимков, с заданным полем из запасо Google Earth Engine
-    '''
-    def __init__(self, polygon, dir=(IMAGE_DIR + '\\' + str(len(listdir(IMAGE_DIR)))), date_start='2023-01-01', date_end=str(datetime.date.today())):
+    
+    def __init__(self, polygon,
+                  date_start='2023-01-01', date_end=str(datetime.date.today())):
         self.polygon = polygon
-        self.dir = dir
+        self.coords = ee.Geometry.Polygon(PolygonFromDbSerializer(polygon).data['geometry']['coordinates'])
+        self.dir = IMAGE_DIR + ('/image' + str(len(listdir(IMAGE_DIR)) + 1))
         self.date_start = date_start
         self.date_end = date_end
-
+        print(listdir(IMAGE_DIR))
+        print(self.dir)
+    
     def get_download_url(self):
         sentinel_image = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED') \
             .filterDate(self.date_start, self.date_end) \
-            .filterBounds(self.polygon) \
+            .filterBounds(self.coords) \
             .filter(ee.Filter.lt('CLOUD_COVERAGE_ASSESSMENT', 10)) \
             .select(['B4', 'B8']) \
             .first()
-        return sentinel_image.clip(self.polygon).getDownloadURL()
-    
+        return sentinel_image.clip(self.coords).getDownloadURL()
+
     def download_image(self):
         response = requests.get(self.get_download_url())
         path = self.dir + '.zip'
@@ -45,10 +50,13 @@ class Image_From_GEE():
 
     def visualization(self):
         list_of_rasters = listdir(self.dir)
-        red = GDALRaster((path + '\\' +list_of_rasters[0]))
-        nir = GDALRaster((path + '\\' +list_of_rasters[1]))
+        red = GDALRaster(self.dir + '/' + list_of_rasters[0]).bands[0].data()
+        nir = GDALRaster(self.dir + '/' + list_of_rasters[1]).bands[0].data()
         seterr(divide='ignore', invalid='ignore')
         ndvi = (nir - red) / (nir + red) 
         ndvi = ndvi / nanmax(ndvi)
+        use('agg')
         valid_array = imshow(ndvi).get_array()
-        imsave((path + '\\' + 'ndvi.png'), valid_array)
+        imsave((self.dir + '/' + 'ndvi.png'), valid_array)
+        image_DB = Image(polygon=self.polygon, url=(self.dir + '/' + 'ndvi.png'))
+        image_DB.save()

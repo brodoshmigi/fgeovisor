@@ -20,6 +20,7 @@ class My_errors():
             'is_vallid_error': False,
             'login_error': False,
             'create_error': False,
+            'photo' : False
             }
     
     tmp_context = copy(error_wordbook)
