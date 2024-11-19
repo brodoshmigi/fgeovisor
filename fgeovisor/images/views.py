@@ -1,12 +1,10 @@
 import rest_framework.permissions as rp
-from django.shortcuts import render, redirect, HttpResponse
-from django.urls import reverse
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from polygons.models import Polygon
 from .models import Image
 from .serializators import ImageSerializator
-from web_interface.staff import My_errors
+
 
 class UploadImg(APIView):
     """
