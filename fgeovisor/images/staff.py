@@ -16,12 +16,12 @@ IMAGE_DIR = path.dirname(path.abspath(__file__)) + '/IMAGES'
 
 class Image_From_GEE():
     
-    def __init__(self, polygon, dir=IMAGE_DIR + '/' + 'image' + str(len(listdir(IMAGE_DIR)) + 1),
+    def __init__(self, polygon,
                   date_start='2023-01-01', date_end=str(datetime.date.today())):
         print(listdir(IMAGE_DIR))
         self.polygon = polygon
         self.coords = ee.Geometry.Polygon(PolygonFromDbSerializer(polygon).data['geometry']['coordinates'])
-        self.dir = dir
+        self.dir = IMAGE_DIR + '/image' + str(len(listdir(IMAGE_DIR)) + 1)
         self.date_start = date_start
         self.date_end = date_end
         
