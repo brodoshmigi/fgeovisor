@@ -3,7 +3,21 @@
 function calcNdvi(layer){
     latlngBounds = layer.getLatLngs();
     console.log(latlngBounds);
-    L.imageOverlay("static/IMAGES/image.png",latlngBounds).addTo(map);
+    const requestURL = '/get-img/' + layer.id;
+    const response = fetch(requestURL,  {   
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken // Добавляем CSRF-токен
+            },
+        })
+        .then(response => {
+            return response.json()
+        })
+        .then(data => {
+            const {id, url} = data
+            L.imageOverlay(url, latlngBounds).addTo(map);
+        })
+        /* Боже сохрани Promise!!! Да спасет java script Иисус Христос */
 }
 
 //Функция рассчёта площади поля
