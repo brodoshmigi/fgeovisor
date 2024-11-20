@@ -4,7 +4,6 @@ import requests
 import time
 import pystac_client
 import pystac as stac
-import geopandas as gpd
 from functools import lru_cache
 from pystac_client.client import Client
 from os import (makedirs, remove, path, listdir)
@@ -18,7 +17,7 @@ from polygons.serializators import PolygonFromDbSerializer
 
 
 ee.Authenticate()
-ee.Initialize(project='ee-eshii1859')
+ee.Initialize(project='ee-nezhentsev2017')
 IMAGE_DIR = path.dirname(path.abspath(__file__)) + '/IMAGES'
 
 
