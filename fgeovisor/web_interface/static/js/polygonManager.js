@@ -41,7 +41,7 @@ function displayPolygons(geojsonData){
                 let calcB = document.getElementById('calcNDVI').cloneNode(true);
                 calcB.id ='calcBClone'
                 calcB.addEventListener("click",function(){
-                    calcNdvi(layer);
+                    calcNdvi(layer, false);
                 })
 
                 let deleteB = document.getElementById('deleteButton').cloneNode(true);
@@ -67,30 +67,28 @@ function displayPolygons(geojsonData){
 }
 
 //удаление полигона
-function deletePolygon(layer){
-    data = {
+async function deletePolygon(layer) {
+    const data = {
         'id': layer.id
     };
-    fetch('delete-polygon/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken // Добавляем CSRF-токен
-        },
-        body: JSON.stringify(data)
-    })
-    .then(function(response) { //перехват респонса из джанго
-        return response.json();
-    })
-    .then(function(data) {
-        console.log('Success:', data);
+    try {
+        const response = await fetch('delete-polygon/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken // Добавляем CSRF-токен
+            },
+            body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        console.log('Success:', result);
+        await calcNdvi(layer, true);
         layer.remove();
-
-    })
-    .catch(function(error) {
+    } catch (error) {
         console.error('Error:', error);
-    });
+    }
 }
+
 
 //функция создания полигона
 function createPolygon(){

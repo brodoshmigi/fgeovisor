@@ -1,24 +1,45 @@
  //Функция рассчёта NDVI
 
-function calcNdvi(layer){
-    latlngBounds = layer.getLatLngs();
-    console.log(latlngBounds);
-    const requestURL = '/get-img/' + layer.id;
-    const response = fetch(requestURL,  {   
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken // Добавляем CSRF-токен
-            },
+function calcNdvi(layer,del) {
+    var layerID = 'ndviLayer_' + layer.id;
+    var isPhotoRendered = map._layers[layerID];
+    if (del === true){
+        return new Promise((resolve) => {
+            if (isPhotoRendered){
+                map.removeLayer(isPhotoRendered);
+            }
+            resolve();
         })
-        .then(response => {
-            return response.json()
-        })
-        .then(data => {
-            const {id, url} = data
-            L.imageOverlay(url, latlngBounds).addTo(map);
-        })
-        /* Боже сохрани Promise!!! Да спасет java script Иисус Христос */
-}
+    }else{
+        if (isPhotoRendered) {
+            map.removeLayer(isPhotoRendered);
+            layer.setStyle({
+                fillOpacity: 0.2
+            });
+            delete map._layers[layerID];
+        }else{
+            latlngBounds = layer.getLatLngs();
+            const requestURL = '/get-img/' + layer.id;
+            fetch(requestURL, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken // Добавляем CSRF-токен
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const { id, url } = data;
+                layer.setStyle({
+                    fillOpacity: 0
+                });
+                var ndviLayer = L.imageOverlay(url, latlngBounds);
+                ndviLayer.addTo(map);
+                map._layers[layerID] = ndviLayer;
+            })
+        }
+    }
+ }
+
 
 //Функция рассчёта площади поля
 
