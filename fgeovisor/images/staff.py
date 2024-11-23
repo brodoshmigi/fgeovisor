@@ -185,12 +185,12 @@ class ImageFromCMRStac:
             yield data
 
 def delete_image(polygon):
-    url = Image.objects.get(polygon=polygon).url
-    remove(str(url))
+    ImageInstance = Image.objects.get(polygon=polygon)
+    remove(str(ImageInstance.url))
+    ImageInstance.delete()
 
 def update_image_GEE(polygon):
     delete_image(polygon)
-    image = Image_From_GEE(polygon)
-    image.download_image()
-    image.visualization()
-    pass
+    new_image = Image_From_GEE(polygon)
+    new_image.download_image()
+    new_image.visualization()

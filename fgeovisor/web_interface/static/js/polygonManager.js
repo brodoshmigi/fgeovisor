@@ -198,7 +198,7 @@ async function updatePolygon(geojson) {
     .then(function(data) {
         console.log('Success:', data);
     })
-    await delay(100);
+    await showProgressBar();
     console.log("обновляем полигоны");
     getPolygons();
 }
