@@ -8,7 +8,7 @@ from .models import Polygon
 from images.models import Image
 from .serializators import PolygonFromDbSerializer
 from web_interface.staff import My_errors
-from images.staff import Image_From_GEE
+from images.staff import (Image_From_GEE, delete_image, update_image_GEE)
 
 class CreatePolygon(APIView):
     """
@@ -64,7 +64,9 @@ class DeletePolygon(APIView):
         Polygons = Polygon.objects.filter(owner=self.request.user.id)
         # id должен быть, т.к. js отсылает тупо строчку - это неправильно
         # тесты с этим также не провести, и + в будущем нужно будет токен иметь
-        Polygons.get(polygon_id=request.data["id"]).delete()
+        PolygonInstance = Polygons.get(polygon_id=request.data["id"])
+        delete_image(PolygonInstance)
+        PolygonInstance.delete()
         return Response({"success": 'deleted'})
 
 class UpdatePolygon(APIView):
@@ -78,6 +80,7 @@ class UpdatePolygon(APIView):
             polygon = Polygon.objects.get(polygon_id=request.data['id'])
             polygon.polygon_data=str(request.data['geometry'])
             polygon.save()
+            update_image_GEE(polygon)
             return Response({'success': 'updated'})
         except Exception:
             return Response({'lost': Exception})

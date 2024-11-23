@@ -8,7 +8,7 @@ import pystac_client
 import pystac as stac
 from functools import lru_cache
 from pystac_client.client import Client
-from os import (makedirs, remove, path, listdir)
+from os import (makedirs, remove, path, listdir, rmdir)
 from django.contrib.gis.gdal.raster.source import GDALRaster
 from zipfile import ZipFile
 from numpy import seterr, nanmax
@@ -32,8 +32,6 @@ class Image_From_GEE():
         self.dir = IMAGE_DIR + ('/image' + str(len(listdir(IMAGE_DIR)) + 1))
         self.date_start = date_start
         self.date_end = date_end
-        print(listdir(IMAGE_DIR))
-        print(self.dir)
     
     def get_download_url(self):
         sentinel_image = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED') \
@@ -64,9 +62,12 @@ class Image_From_GEE():
         ndvi = ndvi / nanmax(ndvi)
         use('agg')
         valid_array = imshow(ndvi).get_array()
-        imsave((self.dir + '/' + 'ndvi.png'), valid_array)
-        image_DB = Image(polygon=self.polygon, url=(self.dir + '/' + 'ndvi.png'))
+        imsave((self.dir + '.png'), valid_array)
+        image_DB = Image(polygon=self.polygon, url=(self.dir + '.png'))
         image_DB.save()
+        remove(self.dir + '/' + listdir(self.dir)[0])        
+        remove(self.dir + '/' + listdir(self.dir)[0])
+        rmdir(self.dir)
 
 
 class ImageFromCMRStac:
@@ -182,3 +183,14 @@ class ImageFromCMRStac:
                 datetime=self.datetime)
             data = np.array([item.id for item in item_search.items()])
             yield data
+
+def delete_image(polygon):
+    url = Image.objects.get(polygon=polygon).url
+    remove(str(url))
+
+def update_image_GEE(polygon):
+    delete_image(polygon)
+    image = Image_From_GEE(polygon)
+    image.download_image()
+    image.visualization()
+    pass
