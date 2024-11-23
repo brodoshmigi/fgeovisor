@@ -1,6 +1,6 @@
  //Функция рассчёта NDVI
 
- function calcNdvi(layer,del) {
+function calcNdvi(layer,del) {
     var layerID = 'ndviLayer_' + layer.id;
     var isPhotoRendered = map._layers[layerID];
     if (del === true){
@@ -13,6 +13,9 @@
     }else{
         if (isPhotoRendered) {
             map.removeLayer(isPhotoRendered);
+            layer.setStyle({
+                fillOpacity: 0.2
+            });
             delete map._layers[layerID];
         }else{
             latlngBounds = layer.getLatLngs();
@@ -26,6 +29,9 @@
             .then(response => response.json())
             .then(data => {
                 const { id, url } = data;
+                layer.setStyle({
+                    fillOpacity: 0
+                });
                 var ndviLayer = L.imageOverlay(url, latlngBounds);
                 ndviLayer.addTo(map);
                 map._layers[layerID] = ndviLayer;
