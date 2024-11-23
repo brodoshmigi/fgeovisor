@@ -20,6 +20,7 @@ from polygons.serializators import PolygonFromDbSerializer
 
 ee.Authenticate()
 ee.Initialize(project='ee-cocafin1595')
+ee.Initialize(project='ee-cocafin1595')
 IMAGE_DIR = path.dirname(path.abspath(__file__)) + '/IMAGES'
 
 
