@@ -83,5 +83,5 @@ class UpdatePolygon(APIView):
             update_image_GEE(polygon)
             return Response({'success': 'updated'})
         except Exception:
-            return Response({'lost': Exception})
+            return Response({'lost': str(Exception)})
 
