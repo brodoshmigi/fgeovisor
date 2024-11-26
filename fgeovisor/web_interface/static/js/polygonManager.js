@@ -24,7 +24,12 @@ function displayPolygons(geojsonData){
         onEachFeature:function(feature,layer){
             if (feature.properties && feature.id){
                 layer.id = feature.id;
-                
+                var layerID = 'ndviLayer_' + layer.id;
+                if (map._layers[layerID]){
+                    layer.setStyle({
+                        fillOpacity: 0
+                    })
+                }
                 // расчет площади
                 const latlngs = layer.getLatLngs()[0]; // предполагается, что у нас только один полигон (без дыр)
                 const area = calculatePolygonArea(latlngs);
@@ -231,6 +236,7 @@ async function savePolygon(geojson){
 //Функция для редаактирования полигонов
 
 function enableEdit(layer){
+    calcNdvi(layer, true);
     layer.enableEdit(); //включаем редактирование для элемента
     layer.closePopup();// закрываемвсплывающее окно
     //проводим манипуляции с кнопками в првой части экрана
