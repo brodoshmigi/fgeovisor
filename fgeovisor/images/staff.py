@@ -20,7 +20,6 @@ from polygons.serializators import PolygonFromDbSerializer
 
 ee.Authenticate()
 ee.Initialize(project='ee-cocafin1595')
-ee.Initialize(project='ee-cocafin1595')
 IMAGE_DIR = path.dirname(path.abspath(__file__)) + '/IMAGES'
 
 
@@ -174,13 +173,21 @@ class ImageFromCMRStac:
                                           filtered['href']])
         return true_collections
 
-    def get_items(self):
+    def get_items(self, 
+                  intersects = None, 
+                  query = None):
         """
         Ищет объекты, которые соответствуют нашему запросу.
             
         Способы оптимизации:
             - Указание способов фильтрации в параметрах /search
             - Использование Numpy
+
+        Args:
+            inersects (GeoJson or str or Dict):
+                Создает область интереса для поиска объектов
+            query (List of JSON query params):
+                Фильтрует изображения по заданым параметрам (ускоряет в 2 раза) 
 
         Returns:
             Iterator (NDarray[Any]):
@@ -202,7 +209,22 @@ class ImageFromCMRStac:
 
             yield data
 
-    def download_image(self, item: str):
+    def download_image(self, item_href: str):
+        """
+        Скачивает изображение по выданному ассету или объекту
+
+        Сейчас время выполнения составляет вместе с поиском от 15 до 30 секунд.
+
+        Args:
+            item_href (str):
+                Принимает в себя ссылку на изображение, однако, именно на конретное (uri)
+
+        Returns:
+            Image (byte):
+                Возвращает сообщение о успешном скачивании и скачивает изображение в директорию
+
+        """
+        # Истекает через 2 месяца
         token = 'eyJ0eXAiOiJKV1QiLCJvcmlnaW4iOiJFYXJ0aGRhdGEgTG9naW4iLC'\
         + 'JzaWciOiJlZGxqd3RwdWJrZXlfb3BzIiwiYWxnIjoiUlMyNTYifQ'\
         + '.eyJ0eXBlIjoiVXNlciIsInVpZCI6InNoaWkiLCJleHAiOjE3Mzc4MDExMDIsImlhdCI6MT'\
@@ -215,13 +237,16 @@ class ImageFromCMRStac:
         + 'jgp97fOs9__Gd4Iq3aaEc8RlHU6uyi3KDP-XKyJtdcS0VKisohcM'\
         + 'rztKYt3SbMLYq9XQlFLn-6Tb7OnJ-kDdiyyxA440bcBBEQAKGA'
 
+        # ### Нужно еще на забыть указать здесь папку
         head = {'Authorization': f'Bearer {token}'}
-        try:
-            response = requests.get(url=item, headers=head)
-            return response.status_code
-        except Exception:
-            pass
-
+        response = requests.get(url=item_href, headers=head)
+        if response.status_code == 200:
+            with open('1.tiff', 'wb') as image:
+                image.write(response.content)
+            return f'Complete'
+        else:
+            return 'Cannot download an image'
+        
     def save_catalog(self):
         pass
 
