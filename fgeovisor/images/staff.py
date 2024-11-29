@@ -1,7 +1,7 @@
 import ee 
+import time
 import datetime
 import requests
-import time
 import numpy as np
 import pandas as pd
 import pystac_client
@@ -178,8 +178,8 @@ class ImageFromCMRStac:
         return true_collections
 
     def get_items(self, 
-                  intersects = None, 
-                  query = None):
+                  intersects: str|dict = None, 
+                  query: dict = None):
         """
         Ищет объекты, которые соответствуют нашему запросу.
             
@@ -212,6 +212,14 @@ class ImageFromCMRStac:
             data = np.array([item.assets['B04'] for item in item_search.items()])
 
             yield data
+
+    def get_one_item(self,
+                     intersects: str|dict = None,
+                     query: dict = None):
+        """
+        Поиск только одного объекта. Ради оптимизации...
+        """
+        pass
 
     def download_image(self, item_href: str):
         """
@@ -251,12 +259,22 @@ class ImageFromCMRStac:
             return 'Cannot download an image'
         
     def save_catalog(self):
+        """
+        Нужно для сохранения данных в локальный репозиторий. Оптимизирует.
+        """
         pass
 
     def check_catalog_contains_in_uri(self):
+        """
+        Функция проверки существует ли каталог в нашем локальном репозитории.
+        """
         pass
 
     def search_interface(self):
+        """
+        Объединенный интерфейс вызова функций.
+        Нужен, чтобы проверять условия и вызывать соответствующие функции.
+        """
         pass
 
 def gdal_rast_handler(*args: str, datetime: str) -> GDALRaster:
