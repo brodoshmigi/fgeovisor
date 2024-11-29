@@ -241,8 +241,7 @@ class ImageFromCMRStac:
         head = {'Authorization': f'Bearer {token}'}
         response = requests.get(url=item_href, headers=head)
         if response.status_code == 200:
-            with open('1.tiff', 'wb') as image:
-                image.write(response.content)
+            gdal_rast_handler(response.content, datetime='123')
             return f'Complete'
         else:
             return 'Cannot download an image'
@@ -255,6 +254,48 @@ class ImageFromCMRStac:
 
     def search_interface(self):
         pass
+
+def gdal_rast_handler(*args: str, datetime: str) -> GDALRaster:
+    """
+    Создает .tif файл из виртуальных .tif файлов
+    
+    Или может создать один .tif с несколькими каналами из нескольких .tif с одним каналом
+
+    Args:
+        *args (str):
+            Принмает в себя ссылки на .tif файл.
+        datetime (str):
+            Задает имя снимку исходя из даты его создания
+    Returns:
+        Image (byte or .tif):
+            Возвращает созданный/объединенный .tif новым файлов
+            и в течении сессии сохраняется в оперативной памяти.
+    """
+    img_list_handler = []
+    for value in args:
+        value = GDALRaster(value)
+        img_list_handler.append(value)
+
+    source = img_list_handler[0]
+    source_driver = source.driver
+
+    # в name указывается имя директории, в которую сохранится файл
+    raster_create = GDALRaster(
+        {
+            'srid': source.srid,
+            'width': source.width,
+            'height': source.height,
+            'driver': str(source_driver),
+            'name': f'{str(datetime)}.tif',
+            'datatype': source.bands[0].datatype(),
+            'nr_of_bands': len(img_list_handler),
+        }
+    )
+
+    for y in range(len(img_list_handler)):
+        raster_create.bands[y].data(img_list_handler[y].bands[0].data())
+    
+    return raster_create
 
 def delete_image(polygon):
     ImageInstance = Image.objects.get(polygon=polygon)
