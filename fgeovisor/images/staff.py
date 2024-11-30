@@ -1,5 +1,6 @@
 import ee 
 import time
+import urllib3
 import datetime
 import requests
 import numpy as np
@@ -266,12 +267,14 @@ class ImageFromCMRStac:
 
         # ### Нужно еще на забыть указать здесь папку
         head = {'Authorization': f'Bearer {token}'}
-        response = requests.get(url=item_href, headers=head)
-        if response.status_code == 200:
-            gdal_rast_handler(response.content, datetime='123')
+        response = urllib3.PoolManager().request("GET", url=item_href, headers=head)
+        if response.status == 200:
+            gdal_rast_handler(response.data, datetime='123')
+            response.close()
             return f'Complete'
-        else:
-            return 'Cannot download an image'
+        else: 
+            response.close()
+            return f'Cant connect to this uri'
         
     def save_catalog(self):
         """
@@ -323,7 +326,7 @@ def gdal_rast_handler(*args: str, datetime: str) -> GDALRaster:
             'width': source.width,
             'height': source.height,
             'driver': str(source_driver),
-            'name': f'{str(datetime)}.tif',
+            'name': f'IMAGES/{str(datetime)}.tif',
             'datatype': source.bands[0].datatype(),
             'nr_of_bands': len(img_list_handler),
         }
