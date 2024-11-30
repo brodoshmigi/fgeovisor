@@ -178,7 +178,7 @@ class ImageFromCMRStac:
         return true_collections
 
     def get_items(self, 
-                  intersects: str|dict = None, 
+                  intersect: str|dict = None, 
                   query: dict = None):
         """
         Ищет объекты, которые соответствуют нашему запросу.
@@ -188,7 +188,7 @@ class ImageFromCMRStac:
             - Использование Numpy
 
         Args:
-            inersects (GeoJson or str or Dict):
+            inersects (GeoJson or Dict GeoJsonLike):
                 Создает область интереса для поиска объектов
             query (List of JSON query params):
                 Фильтрует изображения по заданым параметрам (ускоряет в 2 раза) 
@@ -213,13 +213,28 @@ class ImageFromCMRStac:
 
             yield data
 
-    def get_one_item(self,
+    def get_first_item(self,
                      intersects: str|dict = None,
                      query: dict = None):
         """
         Поиск только одного объекта. Ради оптимизации...
         """
-        pass
+        true_collections = self.search_org_catalogs()
+        links = true_collections['href'].drop_duplicates().dropna().tolist()
+        ids = true_collections['id'].dropna().tolist()
+        for link in links:
+            items = self._open_client(link)
+            item_search = items.search(
+                max_items=1,
+                collections=ids,
+                bbox=self.bbox,
+                datetime=self.datetime,
+                limit=50,
+                query={"eo:cloud_cover": {"lt": 10}}
+                )
+            data = np.array([item.assets['B04'] for item in item_search.items()])
+
+            yield data
 
     def download_image(self, item_href: str):
         """
