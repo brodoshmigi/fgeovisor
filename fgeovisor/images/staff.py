@@ -180,7 +180,8 @@ class ImageFromCMRStac:
 
     def get_items(self, 
                   intersect: str|dict = None, 
-                  query: dict = None):
+                  query: dict = None,
+                  max_items: int = None):
         """
         Ищет объекты, которые соответствуют нашему запросу.
             
@@ -192,7 +193,11 @@ class ImageFromCMRStac:
             inersects (GeoJson or Dict GeoJsonLike):
                 Создает область интереса для поиска объектов
             query (List of JSON query params):
-                Фильтрует изображения по заданым параметрам (ускоряет в 2 раза) 
+                Фильтрует изображения по заданым параметрам (ускоряет в 2 раза)
+            max_items (int):
+                Количество объектов, которое необходимо получить.
+
+                Чем ближе значение к 1, или =1, тем быстрее выполняется скрипт. 
 
         Returns:
             Iterator (NDarray[Any]):
@@ -204,29 +209,7 @@ class ImageFromCMRStac:
         for link in links:
             items = self._open_client(link)
             item_search = items.search(
-                collections=ids,
-                bbox=self.bbox,
-                datetime=self.datetime,
-                limit=50,
-                query={"eo:cloud_cover": {"lt": 10}}
-                )
-            data = np.array([item.assets['B04'] for item in item_search.items()])
-
-            yield data
-
-    def get_first_item(self,
-                     intersects: str|dict = None,
-                     query: dict = None):
-        """
-        Поиск только одного объекта. Ради оптимизации...
-        """
-        true_collections = self.search_org_catalogs()
-        links = true_collections['href'].drop_duplicates().dropna().tolist()
-        ids = true_collections['id'].dropna().tolist()
-        for link in links:
-            items = self._open_client(link)
-            item_search = items.search(
-                max_items=1,
+                max_items=max_items,
                 collections=ids,
                 bbox=self.bbox,
                 datetime=self.datetime,
