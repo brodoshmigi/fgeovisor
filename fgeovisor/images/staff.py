@@ -75,8 +75,7 @@ class ImageFromCMRStac:
     
     def __init__(self, href = 'https://cmr.earthdata.nasa.gov/stac', 
                  satelite_names: list = ['landsat'], bbox: list[float] = None, 
-                 datetime: str = None, catalog_list: list = None, 
-                 DIR_NAME: str = None, headers: dict = None):
+                 datetime: str = None, catalog_list: list = None):
         """
         Класс поиска и загрузи .tif файлов из CMR NASA
 
@@ -103,15 +102,12 @@ class ImageFromCMRStac:
                 - пример за 3 месяца 2024-09/2024-11
             catalog_list (catalog_list):
                 RU: список организаций для поиска по ним
-            DIR_NAME (DIR_NAME):
-                RU: для сохранения имаге
         """
         self.href = stac.Link('root', href)
         self.satelite_names = satelite_names
         self.bbox = bbox
         self.datetime = datetime
         self.catalog_list = catalog_list
-        self.DIR_NAME = DIR_NAME
         # Создаем экземпляр pystac.Catalog
         self.stack_obj = self.href.resolve_stac_object()
         self.root_catalog = stac.Catalog.from_file(self.stack_obj)
@@ -220,7 +216,7 @@ class ImageFromCMRStac:
 
             yield data
 
-    def download_image(self, item_href: str):
+    def download_image(self, item_href: str, DIR_NAME: str = None):
         """
         Скачивает изображение по выданному ассету или объекту
 
@@ -229,6 +225,8 @@ class ImageFromCMRStac:
         Args:
             item_href (str):
                 Принимает в себя ссылку на изображение, однако, именно на конретное (uri)
+            DIR_NAME (str):
+                Место для сохранения изображения.
 
         Returns:
             Image (byte):
