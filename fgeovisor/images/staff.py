@@ -8,6 +8,7 @@ import pandas as pd
 import pystac_client
 import pystac as stac
 from functools import lru_cache
+from typing import Optional
 from pystac_client.client import Client
 from os import (makedirs, remove, path, listdir, rmdir)
 from django.contrib.gis.gdal.raster.source import GDALRaster
@@ -77,7 +78,7 @@ class ImageFromCMRStac:
                  satelite_names: list = ['landsat'], bbox: list[float] = None, 
                  datetime: str = None, catalog_list: list = None):
         """
-        Класс поиска и загрузи .tif файлов из CMR NASA
+        **Класс поиска и загрузи .tif файлов из CMR NASA**
 
         Оптимизация:
             - Ускорение при помощи Pandas|Numpy
@@ -143,7 +144,7 @@ class ImageFromCMRStac:
 
     def search_org_catalogs(self):
         """
-        Ищет каталоги, которые соответствуют нашему запросу.
+        **Ищет каталоги, которые соответствуют нашему запросу.**
         
         Способы оптимизации:
             - Указание способов фильтрации в параметрах /search
@@ -163,9 +164,9 @@ class ImageFromCMRStac:
                                                 datetime=self.datetime)
             data = pd.DataFrame([
                 {
-                    'id': collection.id,
-                    'href': collection.get_root_link().href
-                } for collection in search_collections.collections()
+                    'id': collection['id'],
+                    'href': link
+                } for collection in search_collections.collections_as_dicts()
             ])
             filtered = data[data['id'].str.lower().apply(
                         lambda x: any(search in x for search in SEARCH_LIST))]
@@ -174,12 +175,13 @@ class ImageFromCMRStac:
                                           filtered['href']])
         return true_collections
 
-    def get_items(self, 
+    def get_items(self,
+                  collections: Optional[pd.DataFrame] = None, 
                   intersect: str|dict = None, 
                   query: dict = None,
                   max_items: int = None):
         """
-        Ищет объекты, которые соответствуют нашему запросу.
+        **Ищет объекты, которые соответствуют нашему запросу.**
             
         Способы оптимизации:
             - Указание способов фильтрации в параметрах /search
@@ -199,7 +201,7 @@ class ImageFromCMRStac:
             Iterator (NDarray[Any]):
                 Возвращает iterator с numpy массивом из объектов
         """
-        true_collections = self.search_org_catalogs()
+        true_collections = collections
         links = true_collections['href'].drop_duplicates().dropna().tolist()
         ids = true_collections['id'].dropna().tolist()
         for link in links:
@@ -212,15 +214,20 @@ class ImageFromCMRStac:
                 limit=50,
                 query={"eo:cloud_cover": {"lt": 10}}
                 )
-            data = np.array([item.assets['B04'] for item in item_search.items()])
+            data = np.array([item['assets']['B04']['href']
+                              for item in item_search.items_as_dicts()])
 
             yield data
 
     def download_image(self, item_href: str, DIR_NAME: str = None):
         """
-        Скачивает изображение по выданному ассету или объекту
+        **Скачивает изображение по выданному ссылке(в будущем по выданному ассету или объекту)**
 
-        Сейчас время выполнения составляет вместе с поиском от 15 до 30 секунд.
+        Сейчас время выполнения для одного изображения 6 сек. 
+        (используя get_items(max_items = 1))
+
+        Полное время выполнения, включая search_org_catalogs и get_items() - больше минуты.
+        Но, это с учетом того, что скачивается больше 20 изображений  
 
         Args:
             item_href (str):
@@ -259,19 +266,19 @@ class ImageFromCMRStac:
         
     def save_catalog(self):
         """
-        Нужно для сохранения данных в локальный репозиторий. Оптимизирует.
+        **Нужно для сохранения данных в локальный репозиторий. SQL.**
         """
         pass
 
     def check_catalog_contains_in_uri(self):
         """
-        Функция проверки существует ли каталог в нашем локальном репозитории.
+        **Функция проверки существует ли каталог в нашем локальном репозитории.**
         """
         pass
 
     def search_interface(self):
         """
-        Объединенный интерфейс вызова функций.
+        **Объединенный интерфейс вызова функций.**
         Нужен, чтобы проверять условия и вызывать соответствующие функции.
         """
         pass
