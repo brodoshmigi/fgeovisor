@@ -1,3 +1,5 @@
+var savedTheme = localStorage.getItem('them');
+
 export function toggleButtonDisplay(createVisible, finishVisible, cancelVisible) {
     document.getElementById("createButton").style.display = createVisible ? "block" : "none";
     document.getElementById("finishButton").style.display = finishVisible ? "block" : "none";
@@ -10,7 +12,15 @@ window.toggleButtonDisplay = toggleButtonDisplay;
 
 export function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
+    const menuButton = document.getElementById("menuButton");
     sidebar.style.width = sidebar.style.width === "250px" ? "0" : "250px";
+    if (savedTheme){
+        if (savedTheme === "light"){
+            menuButton.style.border = sidebar.style.width === "250px" ? "0px solid #20bab0" : "1px solid #20bab0";
+        }else{
+            menuButton.style.border = "0px solid #20bab0";
+        }
+    }
 }
 
 window.toggleSidebar = toggleSidebar;
@@ -105,10 +115,12 @@ export function switchTheme() {
     if (currentTheme.includes('light.css')) {
         themeLink.setAttribute('href', staticUrls.dark);
         localStorage.setItem('them','dark');
+        savedTheme = "dark";
         document.getElementById("themeButton").innerHTML = "🌙";
     } else {
         themeLink.setAttribute('href', staticUrls.light);
         localStorage.setItem('them','light');
+        savedTheme = "light";
         document.getElementById("themeButton").innerHTML="🔆";
     }
 }
@@ -117,7 +129,6 @@ window.switchTheme = switchTheme;
 
 export function autoSwitchTheme() {
     const themeLink = document.getElementById('theme');
-    const savedTheme = localStorage.getItem('them');
     if (savedTheme){
         if (savedTheme === 'dark') {
             themeLink.setAttribute('href', staticUrls.dark);
