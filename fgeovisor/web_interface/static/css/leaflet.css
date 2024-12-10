@@ -469,7 +469,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	border-radius: 12px;
 	}
 .leaflet-popup-content {
-    color: #ffffff;
 	margin: 13px 19px;
 	line-height: 1.4;
 	}
@@ -496,11 +495,6 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	   -moz-transform: rotate(45deg);
 	    -ms-transform: rotate(45deg);
 	        transform: rotate(45deg);
-	}
-.leaflet-popup-content-wrapper,
-.leaflet-popup-tip {
-	background: #38393c;
-	color: #ffffff
 	}
 .leaflet-container a.leaflet-popup-close-button {
 	position: absolute;

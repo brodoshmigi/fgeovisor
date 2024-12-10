@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
     <title>Карта с OpenStreetMap</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link id="theme" rel="stylesheet" href="{% static 'css/light.css' %}">
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
 </head>
 <body>
@@ -23,6 +23,7 @@
             </div>
             <a href="{% url 'log-out' %}">Выйти</a>
         </div>
+        <a href="#" id="themeButton" onclick="switchTheme()"></a>
     </div>
 
     <div class="popup-button">
@@ -91,14 +92,18 @@
         var loginerror = "{{login_error | safe}}"
         var regerror = "{{is_vallid_error | safe}}"
         var permition_access = "{{create_error | safe}}"
+        const staticUrls = {
+            light: "{% static 'css/light.css' %}",
+            dark: "{% static 'css/dark.css' %}"
+        };
     </script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-editable@1.2.0/src/Leaflet.Editable.js"></script>
-    <script src="static/js/mapInit.js"></script>
+    <script type="module" src="static/js/mapInit.js"></script>
     <script src="static/js/utils.js"></script>
     <script src="static/js/polygonManager.js"></script>
     <script src="static/js/calculations.js"></script>
-    <script src="static/js/uiControls.js"></script>
+    <script type="module" src="static/js/uiControls.js"></script>
 
 </body>
 </html>

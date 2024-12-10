@@ -1,0 +1,292 @@
+/* Общие стили для body */
+body {
+    overflow-x: hidden;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: white; /* Цвет фона */
+}
+
+/* Стили для карты */
+#map {
+    height: 100vh;
+    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
+}
+
+.progress-container{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    overflow: auto;
+    width: 700px;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    margin: 20px 10px;
+}
+
+.progress-bar{
+    overflow: auto;
+    display: none;
+    margin: 20px 10px;
+    width: 0%;
+    height: 20px;
+    background-color: crimson;
+    color: #282c34;
+    line-height: 20px;
+    border-radius: 10px;
+}
+
+/* Боковое меню */
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: white;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 85px;
+    z-index: 1;
+    white-space: nowrap;
+}
+
+.sidebar a {
+    padding: 10px 25px;
+    text-decoration: none;
+    font-size: 20px;
+    color: white;
+    display: block;
+    transition: 0.3s;
+}
+
+.sidebar a:hover {
+    background-color: #434853;
+}
+
+#progressContainer {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    height: 20px;
+    background: #ccc;
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 1000;
+}
+
+#progressBar {
+    height: 100%;
+    width: 0%;
+    background: deepskyblue;
+    transition: width 0.4s ease-in-out;
+}
+
+.errormsg{
+    text-align: center;
+    color: red;
+    display: none;
+}
+
+/* Кнопка открытия меню */
+.menu-button {
+    font-size: 20px;
+    background-color: white;
+    color: #38393c;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 2;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    width: auto;
+    min-width: 50px;
+    transition: background-color 0.3s;
+}
+
+.menu-button:hover {
+    background-color: deepskyblue;
+}
+
+.ui-button {
+    background-color: rgba(255, 255, 255, 0);
+    color: black;
+    margin-top: 10px;
+    cursor: pointer;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 2;
+    border-radius: 10px;
+    width: auto;
+    min-width: 50px;
+    transition: background-color 0.3s;
+}
+
+.ui-button button {
+    border-radius: 10px;
+    margin-top: 10px;
+    background-color: white;
+    font-family: Arial, sans-serif;
+}
+
+/* Модальное окно */
+.modal {
+    display: none; /* Скрыто по умолчанию */
+    position: fixed;
+    z-index: 2; /* Поверх карты */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
+}
+
+/* Контент модального окна */
+.modal-content {
+    background-color: white; /* Цвет фона формы */
+    margin: auto; /* Центрируем по горизонтали */
+    width: 700px; /* Максимальная ширина 700 пикселей */
+    height: 400px; /* Высота модального окна */
+    border: 1px solid #888;
+    border-radius: 10px; /* Закругленные углы */
+    position: relative; /* Устанавливаем позицию относительно окна */
+    top: 50%; /* Сдвигаем вниз на 50% высоты окна */
+    transform: translateY(-50%); /* Сдвигаем вверх на 50% высоты окна */
+}
+
+.modalBody{
+    margin: auto;
+    width: 90%;
+    height: 100%;
+}
+/* Заголовок модального окна */
+.modal-content h2 {
+    margin-top: 30px;
+    text-align: center; /* Центрируем заголовок */
+    color: #38393c; /* Цвет заголовка */    left: 0%;
+    font-size: 28px; /* Увеличенный размер шрифта */
+}
+
+/* Поля ввода */
+input{
+    margin-bottom: 20px;
+    height: 40px; /* Высота полей ввода */
+    border: 1px solid #38393c; /* Цвет границы */
+    border-radius: 5px; /* Закругленные углы */
+    font-size: 16px; /* Размер шрифта */
+    transition: border 0.3s, box-shadow 0.3s; /* Плавный переход при фокусировке */
+}
+
+input[type="text"]{
+    width: 99%;
+}
+
+input[type="password"] {
+    float: left;
+    width: 49%;
+    margin-right: 2%;
+    box-sizing: border-box;
+}
+
+input[type="password"]:last-of-type{
+    margin-right: 0;
+}
+
+/* Эффект фокуса на полях ввода */
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border: 1px solid #4a90e2; /* Цвет границы при фокусировке */
+    outline: none; /* Убираем стандартное выделение */
+    box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* Тень при фокусировке */
+}
+
+/* Кнопка отправки */
+button {
+    width: 100%; /* Занимаем 100% ширины контейнера */
+    height: 40px; /* Высота кнопки */
+    background-color: #4a90e2; /* Цвет кнопки */
+    color: 38393c; /* Цвет текста кнопки */
+    border: none; /* Убираем границу */
+    border-radius: 5px; /* Закругленные углы */
+    font-size: 16px; /* Размер шрифта */
+    cursor: pointer; /* Курсор в виде указателя */
+    transition: background-color 0.3s, transform 0.2s; /* Плавные переходы */
+    margin-top: 20px; /* Отступ сверху для кнопки */
+}
+
+/* Эффект наведения на кнопку */
+button:hover {
+    background-color: #357ab8; /* Цвет кнопки при наведении */
+    transform: translateY(-2px); /* Легкий эффект поднятия при наведении */
+}
+
+/* Стили для кнопки закрытия модального окна */
+.close {
+    margin-right: 10px;
+    margin-top: 5px;
+    color: 38393c; /* Цвет текста кнопки закрытия */
+    float: right; /* Выравнивание справа */
+    font-size: 32px; /* Размер шрифта */
+    font-weight: bold; /* Жирный текст */
+    cursor: pointer; /* Курсор в виде указателя */
+}
+
+.close:hover,
+.close:focus {
+    color: #38393c; /* Цвет текста при наведении */
+    text-decoration: none; /* Убираем подчеркивание */
+    cursor: pointer; /* Курсор в виде указателя */
+}
+
+.a:link{
+    color: #38393c;
+}
+
+
+a:visited{
+    color: #38393c;
+}
+
+a:hover{
+    color:deepskyblue;
+}
+
+.login-help{
+    margin-top: 30px;
+    text-align: end;
+    font-size: 18px;
+}
+
+#themeButton {
+    position: absolute; /* Фиксирует кнопку относительно экрана */
+    bottom: 95px;
+    width: 100%;
+    text-align: left;
+    background-color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#themeButton:hover {
+    background-color: #434853; /* Цвет при наведении */
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+    background: #ffffff;
+	color: #38393c;
+	}

@@ -1,15 +1,19 @@
-function toggleButtonDisplay(createVisible, finishVisible, cancelVisible) {
+export function toggleButtonDisplay(createVisible, finishVisible, cancelVisible) {
     document.getElementById("createButton").style.display = createVisible ? "block" : "none";
     document.getElementById("finishButton").style.display = finishVisible ? "block" : "none";
     document.getElementById("cancelButton").style.display = cancelVisible ? "block" : "none";
 }
 
+window.toggleButtonDisplay = toggleButtonDisplay;
+
 // Функция для переключения бокового меню
 
-function toggleSidebar() {
+export function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
     sidebar.style.width = sidebar.style.width === "250px" ? "0" : "250px";
 }
+
+window.toggleSidebar = toggleSidebar;
 
 // Функция для открытия модального окна
 
@@ -20,7 +24,7 @@ function openModal() {
 
 // Функция для закрытия модального окна
 
-function closeModal() {
+export function closeModal() {
     const modal = document.getElementById("modal");
     modal.style.display = "none"; // Скрываем модальное окно
     document.getElementById("modalBody").innerHTML = ""; // Очищаем содержимое модального окна
@@ -28,9 +32,11 @@ function closeModal() {
     regerror = "False"
 }
 
+window.closeModal = closeModal;
+
 // Функция для отображения формы входа
 
-function showLoginForm() {
+export function showLoginForm() {
     document.getElementById("modalBody").innerHTML = document.getElementById("loginForm").innerHTML; // Загружаем содержимое формы входа
     if (loginerror == "True"){
         document.getElementById("errormsg").style.display = "block";
@@ -42,9 +48,11 @@ function showLoginForm() {
     });
 }
 
+window.showLoginForm = showLoginForm;
+
 // Функция для отображения формы регистрации
 
-function showRegistrationForm() {
+export function showRegistrationForm() {
     document.getElementById("modalBody").innerHTML = document.getElementById("registrationForm").innerHTML; // Загружаем содержимое формы регистрации
     if (regerror == "True"){
         document.getElementById("errorrg").style.display = "block";
@@ -62,9 +70,11 @@ function showRegistrationForm() {
     });
 }
 
+window.showRegistrationForm = showRegistrationForm;
+
 //Смена бокового меню для пользователя
 
-function switchsidebarcontent(){
+export function switchsidebarcontent(){
     if (authcheck == "False"){
         document.getElementById("createButton").style.display = "none";
         document.getElementById("loggedinbuttons").style.display = "none";
@@ -84,5 +94,45 @@ function switchsidebarcontent(){
     }
     if (regerror == "True"){
         showRegistrationForm();
+    }
+}
+
+// темы и всё, что с ними связано
+
+export function switchTheme() {
+    const themeLink = document.getElementById('theme');
+    const currentTheme = themeLink.getAttribute('href');
+    if (currentTheme.includes('light.css')) {
+        themeLink.setAttribute('href', staticUrls.dark);
+        localStorage.setItem('them','dark');
+        document.getElementById("themeButton").innerHTML = "🌙";
+    } else {
+        themeLink.setAttribute('href', staticUrls.light);
+        localStorage.setItem('them','light');
+        document.getElementById("themeButton").innerHTML="🔆";
+    }
+}
+
+window.switchTheme = switchTheme;
+
+export function autoSwitchTheme() {
+    const themeLink = document.getElementById('theme');
+    const savedTheme = localStorage.getItem('them');
+    if (savedTheme){
+        if (savedTheme === 'dark') {
+            themeLink.setAttribute('href', staticUrls.dark);
+            document.getElementById("themeButton").innerHTML = "🌙";  // Иконка для темной темы
+        } else {
+            themeLink.setAttribute('href', staticUrls.light);
+            document.getElementById("themeButton").innerHTML = "🔆";  // Иконка для светлой темы
+        }
+    }else{
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            themeLink.setAttribute('href', staticUrls.dark);
+            document.getElementById("themeButton").innerHTML="🌙"
+        } else {
+            themeLink.setAttribute('href', staticUrls.light);
+            document.getElementById("themeButton").innerHTML="🔆"
+        }
     }
 }
