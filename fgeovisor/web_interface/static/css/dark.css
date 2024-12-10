@@ -133,6 +133,7 @@ body {
     transition: background-color 0.3s;
 }
 
+
 .ui-button button {
     border-radius: 10px;
     margin-top: 10px;
@@ -268,3 +269,25 @@ a:hover{
     text-align: end;
     font-size: 18px;
 }
+
+#themeButton {
+    position: absolute; /* Фиксирует кнопку относительно экрана */
+    bottom: 95px;
+    width: 100%;
+    text-align: left;
+    background-color: #38393c;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#themeButton:hover {
+    background-color: #434853; /* Цвет при наведении */
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: #38393c;
+	color: #ffffff
+	}

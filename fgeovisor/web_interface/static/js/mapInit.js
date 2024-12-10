@@ -1,3 +1,5 @@
+import { autoSwitchTheme, switchsidebarcontent } from './uiControls.js';
+
 var map;
 function initMap() {
     var southWest = L.latLng(-85.0511287798, -180),
@@ -17,6 +19,7 @@ function initMap() {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
 
+    window.map = map;
 
     //подгрузка полигонов из БД
     polygonLayerGroup  = L.layerGroup().addTo(map);
@@ -32,4 +35,5 @@ document.addEventListener("DOMContentLoaded", function() {
     bindValidation();
     bulling();
     switchsidebarcontent();
+    autoSwitchTheme();
 });
