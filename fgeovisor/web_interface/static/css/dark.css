@@ -16,6 +16,10 @@ body {
     z-index: 0;
 }
 
+.leaflet-layer{
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
 .progress-container{
     position: absolute;
     top: 50%;
@@ -246,7 +250,7 @@ button:hover {
 
 .close:hover,
 .close:focus {
-    color: #f1f1f1; /* Цвет текста при наведении */
+    color: deepskyblue; /* Цвет текста при наведении */
     text-decoration: none; /* Убираем подчеркивание */
     cursor: pointer; /* Курсор в виде указателя */
 }

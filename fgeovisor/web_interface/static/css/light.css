@@ -24,12 +24,13 @@ body {
     overflow: auto;
     width: 700px;
     background-color: white;
-    border: 1px solid #ccc;
+    border-color: 1px solid #20bab0;
     border-radius: 10px;
     margin: 20px 10px;
 }
 
 .progress-bar{
+    border-color: 1px solid #20bab0;
     overflow: auto;
     display: none;
     margin: 20px 10px;
@@ -60,13 +61,14 @@ body {
     padding: 10px 25px;
     text-decoration: none;
     font-size: 20px;
-    color: white;
+    color: #38393c;
     display: block;
     transition: 0.3s;
 }
 
 .sidebar a:hover {
-    background-color: #434853;
+    background-color: deepskyblue;
+    color: white;
 }
 
 #progressContainer {
@@ -76,7 +78,8 @@ body {
     transform: translate(-50%, -50%);
     width: 300px;
     height: 20px;
-    background: #ccc;
+    border: 1px solid #20bab0;
+    background: white;
     border-radius: 10px;
     overflow: hidden;
     z-index: 1000;
@@ -84,6 +87,7 @@ body {
 
 #progressBar {
     height: 100%;
+    border-color: 1px solid #20bab0;
     width: 0%;
     background: deepskyblue;
     transition: width 0.4s ease-in-out;
@@ -108,7 +112,7 @@ body {
     left: 20px;
     z-index: 2;
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border: 1px solid #20bab0;
     width: auto;
     min-width: 50px;
     transition: background-color 0.3s;
@@ -137,7 +141,13 @@ body {
     border-radius: 10px;
     margin-top: 10px;
     background-color: white;
+    color: #38393c;
     font-family: Arial, sans-serif;
+    border: 1px solid #20bab0;
+}
+
+.ui-button button:hover{
+    background-color: deepskyblue;
 }
 
 /* Модальное окно */
@@ -216,8 +226,8 @@ input[type="password"]:focus {
 button {
     width: 100%; /* Занимаем 100% ширины контейнера */
     height: 40px; /* Высота кнопки */
-    background-color: #4a90e2; /* Цвет кнопки */
-    color: 38393c; /* Цвет текста кнопки */
+    background-color: deepskyblue; /* Цвет кнопки */
+    color: white; /* Цвет текста кнопки */
     border: none; /* Убираем границу */
     border-radius: 5px; /* Закругленные углы */
     font-size: 16px; /* Размер шрифта */
@@ -245,7 +255,7 @@ button:hover {
 
 .close:hover,
 .close:focus {
-    color: #38393c; /* Цвет текста при наведении */
+    color: #20bab0; /* Цвет текста при наведении */
     text-decoration: none; /* Убираем подчеркивание */
     cursor: pointer; /* Курсор в виде указателя */
 }
@@ -282,7 +292,7 @@ a:hover{
 }
 
 #themeButton:hover {
-    background-color: #434853; /* Цвет при наведении */
+    background-color: #20bab0; /* Цвет при наведении */
 }
 
 .leaflet-popup-content-wrapper,
@@ -290,3 +300,8 @@ a:hover{
     background: #ffffff;
 	color: #38393c;
 	}
+
+.leaflet-popup-content-wrapper button{
+    background-color: deepskyblue;
+    color: white;
+}
