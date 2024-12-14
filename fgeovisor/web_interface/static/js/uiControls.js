@@ -19,6 +19,7 @@ export function toggleSidebar() {
             menuButton.style.border = sidebar.style.width === "250px" ? "0px solid #20bab0" : "1px solid #20bab0";
         }else{
             menuButton.style.border = "0px solid #20bab0";
+            menuButton.style.boxShadow = sidebar.style.width === "250px" ? "none" : "0 2px 5px rgba(0, 0, 0, 0.3)"
         }
     }
 }
