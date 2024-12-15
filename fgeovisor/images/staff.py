@@ -86,13 +86,13 @@ class ImageFromCMRStac:
             - Использование SQL... process
 
         Args:
-            href (href):
+            href (str):
                 RU: Ссылка на ***Родительский*** **стак** файл(каталог), может быть как **http(s)://** так и **C:/**
                 - пример: https://cmr.earthdata.nasa.gov/stac
-            satelite_names (satelite_names):
+            satelite_names (list):
                 RU: ищет по имени спутника
                 - пример: landsat, hlsl, sentinel, hlss
-            bbox (bbox):
+            bbox (list):
                 RU: Указывает зону интереса
                 - обычно список или кортеж, но желательно GEOJSON
             datetime (datetime):
@@ -101,7 +101,7 @@ class ImageFromCMRStac:
                 - указываем год и месяц: ищет за весь месяц в этом году
                 - указываем год, месяц и день: ищет за весь день в этом месяце этого года
                 - пример за 3 месяца 2024-09/2024-11
-            catalog_list (catalog_list):
+            catalog_list (list):
                 RU: список организаций для поиска по ним
         """
         self.href = stac.Link('root', href)
@@ -130,7 +130,7 @@ class ImageFromCMRStac:
 
     @lru_cache(maxsize=None)
     def _open_client(self, link):
-        return Client.from_file(link)
+        return Client.open(link)
     
     def _get_childs(self):
        return {link.get_href() for link in self.get_childs() if link.title in self.catalog_list}
@@ -219,7 +219,7 @@ class ImageFromCMRStac:
 
             yield data
 
-    def download_image(self, item_href: str, DIR_NAME: str = None):
+    def download_image(self, item_href: str, name: str = None):
         """
         **Скачивает изображение по выданному ссылке(в будущем по выданному ассету или объекту)**
 
@@ -238,7 +238,6 @@ class ImageFromCMRStac:
         Returns:
             Image (byte):
                 Возвращает сообщение о успешном скачивании и скачивает изображение в директорию
-
         """
         # Истекает через 2 месяца
         token = 'eyJ0eXAiOiJKV1QiLCJvcmlnaW4iOiJFYXJ0aGRhdGEgTG9naW4iLC'\
@@ -255,14 +254,14 @@ class ImageFromCMRStac:
 
         # ### Нужно еще на забыть указать здесь папку
         head = {'Authorization': f'Bearer {token}'}
-        response = urllib3.PoolManager().request("GET", url=item_href, headers=head)
+        response = urllib3.request("GET", url=item_href, headers=head)
         if response.status == 200:
-            gdal_rast_handler(response.data, datetime='123')
+            gdal_rast_handler(response.data, image_name='123')
             response.close()
             return f'Complete'
         else: 
             response.close()
-            return f'Cant connect to this uri'
+            return response.status
         
     def save_catalog(self):
         """
@@ -283,26 +282,24 @@ class ImageFromCMRStac:
         """
         pass
 
-def gdal_rast_handler(*args: str, datetime: str) -> GDALRaster:
+def gdal_rast_handler(*args: str, image_name: str) -> GDALRaster:
     """
     Создает .tif файл из виртуальных .tif файлов
-    
+
     Или может создать один .tif с несколькими каналами из нескольких .tif с одним каналом
 
     Args:
         *args (str):
             Принмает в себя ссылки на .tif файл.
-        datetime (str):
+        image_name (str):
             Задает имя снимку исходя из даты его создания
     Returns:
         Image (byte or .tif):
             Возвращает созданный/объединенный .tif новым файлов
             и в течении сессии сохраняется в оперативной памяти.
     """
-    img_list_handler = []
-    for value in args:
-        value = GDALRaster(value)
-        img_list_handler.append(value)
+    map_imgs = map(lambda value: GDALRaster(value), args)
+    img_list_handler = list(map_imgs)
 
     source = img_list_handler[0]
     source_driver = source.driver
@@ -314,7 +311,7 @@ def gdal_rast_handler(*args: str, datetime: str) -> GDALRaster:
             'width': source.width,
             'height': source.height,
             'driver': str(source_driver),
-            'name': f'IMAGES/{str(datetime)}.tif',
+            'name': f'{str(image_name)}.tif',
             'datatype': source.bands[0].datatype(),
             'nr_of_bands': len(img_list_handler),
         }
