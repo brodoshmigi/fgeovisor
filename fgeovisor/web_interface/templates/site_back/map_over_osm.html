@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link id="theme" rel="stylesheet" href="{% static 'css/light.css' %}">
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
+    <link rel="stylesheet" href="{% static 'css/mainColors.css' %}">
+    <link rel="stylesheet" id="colors" href="{% static 'css/deepskyblue.css' %}">
 </head>
 <body>
 
@@ -24,7 +26,28 @@
             </div>
             <a href="{% url 'log-out' %}">Выйти</a>
         </div>
-        <a href="#" id="themeButton" onclick="switchTheme()"></a>
+        <a href="#" id="themeButton" onclick="showThemeSettings()">Внешний вид</a>
+    </div>
+
+    <div id="themeSettings" style="display: none;">
+        <div class="settings-panel">
+            <div class="section">
+                <div class="section-title">Тема</div>
+                <div class="theme-toggle">
+                    <button class="button" onclick="switchTheme('dark')">Тёмная</button>
+                    <button class="button" onclick="switchTheme('light')">Светлая</button>
+                </div>
+            </div>
+            <div class="section">
+                <div class="section-title">Цвет акцента</div>
+                <div class="accent-colors">
+                    <button style="background-color: deepskyblue;" onclick="switchColor('blue')"></button>
+                    <button style="background-color: crimson;" onclick="switchColor('red')"></button>
+                    <button style="background-color: blueviolet;"onclick="switchColor('purple')"></button>
+                    <button style="background-color: gold;" onclick="switchColor('gold')"></button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="popup-button">
@@ -95,7 +118,11 @@
         var permition_access = "{{create_error | safe}}"
         const staticUrls = {
             light: "{% static 'css/light.css' %}",
-            dark: "{% static 'css/dark.css' %}"
+            dark: "{% static 'css/dark.css' %}",
+            deepskyblue: "{% static 'css/deepskyblue.css' %}",
+            crimson: "{% static 'css/crimson.css' %}",
+            gold: "{% static 'css/gold.css' %}",
+            blueviolet: "{% static 'css/blueviolet.css' %}"
         };
     </script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>

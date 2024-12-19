@@ -16,9 +16,12 @@ function displayPolygons(geojsonData){
     // очищаем слой полигонов во избежание фатомных элементов
     polygonLayerGroup.clearLayers();
     // создаём полигон по заданным в файле параметрам
-    L.geoJSON(geojsonData,{
-        style: function(){
-            return {color:"deepskyblue"}
+    const savedColor = localStorage.getItem('selectedColor') || 'deepskyblue';
+
+    // Создаем полигон с заданным цветом
+    L.geoJSON(geojsonData, {
+        style: function () {
+            return { color: savedColor }; // Используем сохраненный цвет
         },
         //для каждого элемента в файле JSON выполняем блок:
         onEachFeature:function(feature,layer){
@@ -99,10 +102,11 @@ async function deletePolygon(layer) {
 function createPolygon(){
     //манипуляции с кнопками в правой части экрана
     toggleButtonDisplay(false, true, true);
+    const savedColor = localStorage.getItem('selectedColor') || 'deepskyblue';
 
     //создание пустого полигона и линий предпросмотра
     let latLng = [];
-    let newfield = L.polygon(latLng, { color: 'deepskyblue', dashArray: "10, 5" }).addTo(map);
+    let newfield = L.polygon(latLng, { color: savedColor, dashArray: "10, 5" }).addTo(map);
     let tempLine = L.polyline([], { color: 'gray', dashArray: "10, 5" }).addTo(map);
 
     // Меняем курсор при старте создания полигона

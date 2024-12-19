@@ -1,0 +1,29 @@
+/* Акцентные цвета: Gold */
+
+/* Прогресс-бар */
+.progress-bar {
+    background-color: gold;
+}
+
+#progressBar {
+    background: gold;
+}
+
+/* Кнопка открытия меню при наведении */
+.menu-button:hover {
+    background-color: gold;
+}
+
+a:hover {
+    color: gold;
+}
+
+/* Кнопка внутри всплывающего окна */
+.leaflet-popup-content-wrapper button {
+    background-color: gold;
+    color: black;
+}
+
+button:hover{
+    background-color: gold;
+}
