@@ -33,12 +33,13 @@ function showProgressBar() {
     return new Promise((resolve) => {
         const progressContainer = document.getElementById('progressContainer');
         const progressBar = document.getElementById('progressBar');
-
+        const blocker = document.getElementById("blocker");
         // Показываем прогресс-бар
         progressContainer.style.display = 'block';
         progressBar.style.width = '0%';
 
         let progress = 0;
+        blocker.style.display = "block";
         const interval = setInterval(() => {
             progress += 10; // Увеличиваем прогресс каждые 400 мс
             progressBar.style.width = progress + "%";
@@ -50,6 +51,7 @@ function showProgressBar() {
                     progressContainer.style.display = 'none';
                     resolve(); // Уведомляем, что прогресс-бар завершён
                 }, 1000);
+                blocker.style.display = "none";
             }
         }, 400);
     });

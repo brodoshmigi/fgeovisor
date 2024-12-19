@@ -1,4 +1,4 @@
-var savedTheme = localStorage.getItem('them');
+var savedTheme = localStorage.getItem('theme');
 
 export function toggleButtonDisplay(createVisible, finishVisible, cancelVisible) {
     document.getElementById("createButton").style.display = createVisible ? "block" : "none";
@@ -31,6 +31,7 @@ window.toggleSidebar = toggleSidebar;
 function openModal() {
     const modal = document.getElementById("modal");
     modal.style.display = "block"; // Показываем модальное окно
+    modal.addEventListener("click", handleOutsideClick);
 }
 
 // Функция для закрытия модального окна
@@ -41,9 +42,17 @@ export function closeModal() {
     document.getElementById("modalBody").innerHTML = ""; // Очищаем содержимое модального окна
     loginerror = "False"
     regerror = "False"
+    modal.removeEventListener("click", handleOutsideClick);
 }
 
 window.closeModal = closeModal;
+
+function handleOutsideClick(event){
+    const modalContent = document.getElementById("modal-content");
+    if (!modalContent.contains(event.target)){
+        closeModal();
+    }
+}
 
 // Функция для отображения формы входа
 
@@ -120,11 +129,11 @@ export function switchTheme(themChoose) {
     const themeLink = document.getElementById('theme');
     if (themChoose === "dark"){
         themeLink.setAttribute("href",staticUrls.dark);
-        localStorage.setItem('them','dark');
+        localStorage.setItem('theme','dark');
         savedTheme = "dark";
     }else{
         themeLink.setAttribute("href",staticUrls.light);
-        localStorage.setItem('them','light');
+        localStorage.setItem('theme','light');
         savedTheme = "light";
     }
 }
