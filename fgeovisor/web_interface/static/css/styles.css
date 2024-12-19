@@ -216,7 +216,7 @@ button:hover {
 
 .close:hover,
 .close:focus {
-    color: deepskyblue; /* Цвет текста при наведении */
+    color: crimson; /* Цвет текста при наведении */
     text-decoration: none; /* Убираем подчеркивание */
     cursor: pointer; /* Курсор в виде указателя */
 }
@@ -240,4 +240,44 @@ a:hover{
     padding: 10px 20px;
     cursor: pointer;
     transition: background-color 0.3s;
+}
+
+.themeSettings{
+    text-align: center;
+}
+
+
+/* настройка тем */
+
+#themeSettings {
+    padding: 20px;
+}
+
+.settings-panel {
+    max-width: 300px;
+    margin: 0 auto; /* Центрирование панели */
+}
+
+.section {
+    margin-bottom: 20px;
+}
+
+.section-title {
+    margin-top: 10px; /* Отступ сверху */
+    text-align: center; /* Центрирование текста */
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.theme-toggle {
+    display: flex; /* Горизонтальное выравнивание кнопок */
+    justify-content: center; /* Центрирование кнопок */
+    gap: 10px; /* Расстояние между кнопками */
+}
+
+.accent-colors {
+    display: grid; /* Сетка для кнопок */
+    grid-template-columns: repeat(2, 1fr); /* Две колонки */
+    gap: 10px; /* Расстояние между кнопками */
+    justify-items: center; /* Центрирование кнопок внутри ячеек */
 }

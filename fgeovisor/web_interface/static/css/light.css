@@ -3,14 +3,13 @@ body {
     background-color: white; /* Цвет фона */
 }
 
-.progress-container{
+.progress-container {
     background-color: white;
-    border-color: 1px solid #20bab0;
+    border: 1px solid #ccc;
 }
 
-.progress-bar{
+.progress-bar {
     color: #282c34;
-    border-color: 1px solid #20bab0;
 }
 
 /* Боковое меню */
@@ -22,25 +21,17 @@ body {
     color: #38393c;
 }
 
-.sidebar a:hover {
-    background-color: deepskyblue;
-    color: white;
-}
-
+/* Контейнер прогресса */
 #progressContainer {
-    border: 1px solid #20bab0;
     background: white;
-}
-
-#progressBar {
-    border-color: 1px solid #20bab0;
+    border: 1px solid #ccc;
 }
 
 /* Кнопка открытия меню */
 .menu-button {
     background-color: white;
     color: #38393c;
-    border: 1px solid #20bab0;
+    border: 1px solid #ccc;
 }
 
 .ui-button {
@@ -51,11 +42,7 @@ body {
 .ui-button button {
     background-color: white;
     color: #38393c;
-    border: 1px solid #20bab0;
-}
-
-.ui-button button:hover{
-    background-color: deepskyblue;
+    border: 1px solid #ccc;
 }
 
 /* Контент модального окна */
@@ -65,11 +52,11 @@ body {
 
 /* Заголовок модального окна */
 .modal-content h2 {
-    color: #38393c; /* Цвет заголовка */    left: 0%;
+    color: #38393c; /* Цвет заголовка */
 }
 
 /* Поля ввода */
-input{
+input {
     border: 1px solid #38393c; /* Цвет границы */
 }
 
@@ -78,12 +65,11 @@ input{
     color: #38393c; /* Цвет текста кнопки закрытия */
 }
 
-.a:link{
+a:link {
     color: #38393c;
 }
 
-
-a:visited{
+a:visited {
     color: #38393c;
 }
 
@@ -91,17 +77,16 @@ a:visited{
     background-color: white;
 }
 
-#themeButton:hover {
-    background-color: #20bab0; /* Цвет при наведении */
-}
-
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
     background: #ffffff;
-	color: #38393c;
-	}
+    color: #38393c;
+}
 
-.leaflet-popup-content-wrapper button{
-    background-color: deepskyblue;
-    color: white;
+#themeSettings {
+    color: #38393c;
+}
+
+.section-title {
+    color: #38393c;
 }

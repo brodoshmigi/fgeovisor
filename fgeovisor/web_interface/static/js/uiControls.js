@@ -49,6 +49,9 @@ window.closeModal = closeModal;
 
 export function showLoginForm() {
     document.getElementById("modalBody").innerHTML = document.getElementById("loginForm").innerHTML; // Загружаем содержимое формы входа
+    const modal = document.getElementById("modal-content");
+    modal.style.width = "700px";
+    modal.style.height = "350px";
     if (loginerror == "True"){
         document.getElementById("errormsg").style.display = "block";
     }
@@ -68,6 +71,9 @@ export function showRegistrationForm() {
     if (regerror == "True"){
         document.getElementById("errorrg").style.display = "block";
     }
+    const modal = document.getElementById("modal-content");
+    modal.style.width = "700px";
+    modal.style.height = "350px";
     openModal(); // Открываем модальное окно
     var form = document.querySelector("form[action]");
     form.addEventListener("submit", function(event) {
@@ -110,19 +116,16 @@ export function switchsidebarcontent(){
 
 // темы и всё, что с ними связано
 
-export function switchTheme() {
+export function switchTheme(themChoose) {
     const themeLink = document.getElementById('theme');
-    const currentTheme = themeLink.getAttribute('href');
-    if (currentTheme.includes('light.css')) {
-        themeLink.setAttribute('href', staticUrls.dark);
+    if (themChoose === "dark"){
+        themeLink.setAttribute("href",staticUrls.dark);
         localStorage.setItem('them','dark');
         savedTheme = "dark";
-        document.getElementById("themeButton").innerHTML = "🌙";
-    } else {
-        themeLink.setAttribute('href', staticUrls.light);
+    }else{
+        themeLink.setAttribute("href",staticUrls.light);
         localStorage.setItem('them','light');
         savedTheme = "light";
-        document.getElementById("themeButton").innerHTML="🔆";
     }
 }
 
@@ -130,21 +133,64 @@ window.switchTheme = switchTheme;
 
 export function autoSwitchTheme() {
     const themeLink = document.getElementById('theme');
-    if (savedTheme){
+    const savedTheme = localStorage.getItem('theme');
+    const savedColor = localStorage.getItem('selectedColor');
+    if (savedTheme) {
         if (savedTheme === 'dark') {
             themeLink.setAttribute('href', staticUrls.dark);
-            document.getElementById("themeButton").innerHTML = "🌙";  // Иконка для темной темы
         } else {
             themeLink.setAttribute('href', staticUrls.light);
-            document.getElementById("themeButton").innerHTML = "🔆";  // Иконка для светлой темы
         }
-    }else{
+    } else {
         if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
             themeLink.setAttribute('href', staticUrls.dark);
-            document.getElementById("themeButton").innerHTML="🌙"
         } else {
             themeLink.setAttribute('href', staticUrls.light);
-            document.getElementById("themeButton").innerHTML="🔆"
         }
     }
+    if (savedColor) {
+        polygonLayerGroup.eachLayer(function(layer) {
+            layer.setStyle({ color: savedColor });
+        });
+
+        const colorLink = document.getElementById('colors');
+        colorLink.setAttribute('href', staticUrls[savedColor]);
+    }
 }
+
+
+window.autoSwitchTheme = autoSwitchTheme;
+
+export function switchColor(color) {
+    const colorLink = document.getElementById('colors');
+    let selectedColor;
+    if (color === "blue") {
+        colorLink.setAttribute("href", staticUrls.deepskyblue);
+        selectedColor = "deepskyblue";
+    } else if (color === "red") {
+        colorLink.setAttribute("href", staticUrls.crimson);
+        selectedColor = "crimson";
+    } else if (color === "gold") {
+        colorLink.setAttribute("href", staticUrls.gold);
+        selectedColor = "gold";
+    } else if (color === "purple") {
+        colorLink.setAttribute("href", staticUrls.blueviolet);
+        selectedColor = "blueviolet";
+    }
+    polygonLayerGroup.eachLayer(function(layer) {
+        layer.setStyle({ color: selectedColor });
+    });
+    localStorage.setItem('selectedColor', selectedColor);
+}
+
+window.switchColor = switchColor;
+
+export function showThemeSettings(){
+    document.getElementById("modalBody").innerHTML = document.getElementById("themeSettings").innerHTML;
+    const modal = document.getElementById("modal-content");
+    modal.style.width = "350px";
+    modal.style.height = "auto";
+    openModal();
+}
+
+window.showThemeSettings = showThemeSettings;
