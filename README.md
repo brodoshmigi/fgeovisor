@@ -29,6 +29,7 @@
 > Для баз данных не устанавливать версию PostgreSQL позже 16.4 - на нее нет PostGIS
 
 Установщик GDAL - [OsGEO4W](https://trac.osgeo.org/osgeo4w/)
+
 PostGIS устанавливается для win через appbuilder, который по умолчанию устанавливается вместе с [PostgreSQL](https://www.postgresql.org/)
 
 > [!TIP]
