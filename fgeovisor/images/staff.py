@@ -138,7 +138,7 @@ class ImageFromCMRStac:
     # это хренота пока не работает, но думаю если setter добавить оно пойдет
     def _get_satelite_name(self):
         if type(self.satelite_name) == type([]):
-            return self.satelite_name[0]
+            return self.satelite_names[0]
         else:
             return self.satelite_name
 
@@ -170,9 +170,7 @@ class ImageFromCMRStac:
             ])
             filtered = data[data['id'].str.lower().apply(
                         lambda x: any(search in x for search in SEARCH_LIST))]
-            true_collections = pd.concat([true_collections, 
-                                          filtered['id'],
-                                          filtered['href']])
+            true_collections = pd.concat([true_collections, filtered])
         return true_collections
 
     def get_items(self,
@@ -202,8 +200,8 @@ class ImageFromCMRStac:
                 Возвращает iterator с numpy массивом из объектов
         """
         true_collections = collections
-        links = true_collections['href'].drop_duplicates().dropna().tolist()
-        ids = true_collections['id'].dropna().tolist()
+        links = true_collections['href'].drop_duplicates().tolist()
+        ids = true_collections['id'].tolist()
         for link in links:
             items = self._open_client(link)
             item_search = items.search(
@@ -254,11 +252,12 @@ class ImageFromCMRStac:
 
         # ### Нужно еще на забыть указать здесь папку
         head = {'Authorization': f'Bearer {token}'}
-        response = urllib3.request("GET", url=item_href, headers=head)
+        http = urllib3.PoolManager()
+        response = http.request("GET", url=item_href, headers=head)
         if response.status == 200:
             gdal_rast_handler(response.data, image_name='123')
             response.close()
-            return f'Complete'
+            return 'Complete'
         else: 
             response.close()
             return response.status
@@ -298,8 +297,10 @@ def gdal_rast_handler(*args: str, image_name: str) -> GDALRaster:
             Возвращает созданный/объединенный .tif новым файлов
             и в течении сессии сохраняется в оперативной памяти.
     """
-    map_imgs = map(lambda value: GDALRaster(value), args)
-    img_list_handler = list(map_imgs)
+    if not args:
+        return 'At least one .tif file is required.'
+
+    img_list_handler = [GDALRaster(value) for value in args]
 
     source = img_list_handler[0]
     source_driver = source.driver
