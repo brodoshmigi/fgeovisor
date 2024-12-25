@@ -24,6 +24,10 @@ a:hover {
     color: white;
 }
 
+button{
+    background-color: rgb(228, 61, 94);
+}
+
 button:hover{
     background-color: crimson;
 }
