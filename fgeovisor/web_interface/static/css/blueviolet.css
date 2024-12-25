@@ -24,6 +24,10 @@ a:hover {
     color: white;
 }
 
+button{
+    background-color: rgb(141, 71, 206);
+}
+
 button:hover{
     background-color: blueviolet;
 }
