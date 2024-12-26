@@ -59,8 +59,8 @@ function handleOutsideClick(event){
 export function showLoginForm() {
     document.getElementById("modalBody").innerHTML = document.getElementById("loginForm").innerHTML; // Загружаем содержимое формы входа
     const modal = document.getElementById("modal-content");
-    modal.style.width = "700px";
-    modal.style.height = "350px";
+    modal.style.width = "35%%";
+    modal.style.height = "350px%";
     if (loginerror == "True"){
         document.getElementById("errormsg").style.display = "block";
     }
@@ -81,7 +81,7 @@ export function showRegistrationForm() {
         document.getElementById("errorrg").style.display = "block";
     }
     const modal = document.getElementById("modal-content");
-    modal.style.width = "700px";
+    modal.style.width = "36%";
     modal.style.height = "350px";
     openModal(); // Открываем модальное окно
     var form = document.querySelector("form[action]");
