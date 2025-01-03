@@ -192,13 +192,15 @@ class NasaAPICall():
         # Вместо прямого наследования просто добавляем методы в класс
         self.auth = auth
         self.api = NasaRequestAPI()
-
+        
+    @formater(True)
     def get_oauth_profile(self, utype: str = 'PROD'):
         return self.api.make_request('GET',
                                 '/oauth/userInfo',
                                 token=self.auth.get_bearer_token(),
                                 utype=utype)
     
+    @formater(True)
     def get_oauth_token(self):
         fields = {
             'grant_type': 'client_credentials'

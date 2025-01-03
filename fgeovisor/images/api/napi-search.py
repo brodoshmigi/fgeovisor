@@ -6,19 +6,20 @@ import time
 import uuid
 import datetime
 
-import urllib3
-
-import requests
-
 import numpy as np
 import pandas as pd
 
-import pystac_client
 import pystac as stac
 from pystac_client.client import Client
 
-from typing import Optional
-from functools import lru_cache
+from typing import (
+    Optional,
+    List,
+    Dict,
+    Set,
+    Tuple,
+    Generator
+    )
 
 
 '''
@@ -71,73 +72,36 @@ def gdal_rast_handler(*args: str, image_name: str) -> GDALRaster:
     
     return raster_create
 
-class ImageFromCMRStac:
+# TODO Нужно рассмотреть и по возможности применить
+# 1. Repository pattern for data access
+# 2. Implement Strategy Pattern for search alg
+# 3. Command Pattern for download op
+# Это поможет сделать структуру более абстрактной
+# И, соответственно, расширяемой и тестируемой
+# Будет проще понять и простить
+# Правда почему-то время испортилось и теперь оно 15 сек на поиск, а не 10, как раньше
+class SearchCatalog():
     
-    def __init__(self, href = 'https://cmr.earthdata.nasa.gov/stac', 
-                 satelite_names: list = ['landsat'], 
-                 bbox: list[float] = None, 
-                 datetime: str = None, 
-                 catalog_list: list = None,
-                 session = requests.Session):
-        """
-        **Класс поиска и загрузи .tif файлов из CMR NASA**
-
-        Оптимизация:
-            - Ускорение при помощи Pandas|Numpy
-            - Указание правильных параметров для /search
-            - Использование SQL... process
-
-        Args:
-            href (str):
-                RU: Ссылка на ***Родительский*** **стак** файл(каталог), может быть как **http(s)://** так и **C:/**
-                - пример: https://cmr.earthdata.nasa.gov/stac
-            satelite_names (list):
-                RU: ищет по имени спутника
-                - пример: landsat, hlsl, sentinel, hlss
-            bbox (list):
-                RU: Указывает зону интереса
-                - обычно список или кортеж, но желательно GEOJSON
-            datetime (datetime):
-                RU: указывает время для поиска по нему
-                - указываем год: ищет за весь год
-                - указываем год и месяц: ищет за весь месяц в этом году
-                - указываем год, месяц и день: ищет за весь день в этом месяце этого года
-                - пример за 3 месяца 2024-09/2024-11
-            catalog_list (list):
-                RU: список организаций для поиска по ним
-        """
-        self.href = stac.Link('root', href)
-        self.satelite_names = satelite_names
-        self.bbox = bbox
-        self.datetime = datetime
-        self.catalog_list = catalog_list
-        # Создаем экземпляр pystac.Catalog
-        self.stack_obj = self.href.resolve_stac_object()
+    def __init__(self, href: str = 'https://cmr.earthdata.nasa.gov/stac'):
+        # href сохраняется в self.root_catalog
+        self.stack_obj = stac.Link('root', href).resolve_stac_object()
         self.root_catalog = stac.Catalog.from_file(self.stack_obj)
-        self.session = session
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'ID: {self.root_catalog.id},\
                 \n |Title: {self.root_catalog.title}\
                 \n |Desciption: {self.root_catalog.description}'
-                
-    def get_root_catalog(self):
+
+    def get_catalog(self) -> stac.Catalog:
         return self.root_catalog
     
-    def get_childs(self):
+    def get_search_links(self) -> Set[stac.Link]:
         return set(self.root_catalog.get_child_links())
     
-    def get_childs_titles(self):
-        for link in self.get_childs():
+    def get_links_titles(self) -> Generator[str, str, str]:         
+        for link in self.get_search_links():
             yield link.title
 
-    @lru_cache(maxsize=None)
-    def _open_client(self, link):
-        return Client.open(link)
-    
-    def _get_childs(self):
-       return {link.get_href() for link in self.get_childs() if link.title in self.catalog_list}
-            
     # это хренота пока не работает, но думаю если setter добавить оно пойдет
     def _get_satelite_name(self):
         if type(self.satelite_names) == type([]):
@@ -145,7 +109,36 @@ class ImageFromCMRStac:
         else:
             return self.satelite_names
 
-    def search_org_catalogs(self):
+    def get_sort_childs(self, catalog_list: List[str]):
+       return {link.get_href() for link in self.get_search_links() if link.title in catalog_list}
+
+class ClientPool:
+
+    def __init__(self):
+        self.clients = {}
+
+    def get_client(self, link: str) -> Client:
+        if link not in self.clients:
+            self.clients[link] = Client.open(link)
+        return self.clients[link]
+
+class SearchEngine():
+    
+    def __init__(
+            self, 
+            satelite_names: List[str] = ['landsat'],
+            catalog_list: List[str] = None
+            ):
+        self.satelite_names = satelite_names
+        self.catalog_list = catalog_list
+        self.catalog = SearchCatalog().get_sort_childs(self.catalog_list)
+        self.client_pool = ClientPool()
+    
+    def search_org_catalogs(
+            self, 
+            area: Tuple | List = None, 
+            date: str = None
+            ) -> pd.DataFrame:
         """
         **Ищет каталоги, которые соответствуют нашему запросу.**
         
@@ -159,17 +152,19 @@ class ImageFromCMRStac:
         """
         true_collections = pd.DataFrame()
         SEARCH_LIST = set(map(lambda x: x, self.satelite_names))
-        for link in self._get_childs():
-            collections_client = self._open_client(link)
-            search_collections = collections_client\
-                                .collection_search(q='landsat',
-                                                bbox=self.bbox,
-                                                datetime=self.datetime)
+        for link in self.catalog:
+            client = self.client_pool.get_client(link)
+            collections = client.collection_search(
+                q='landsat',
+                bbox=area,
+                datetime=date
+                )
             data = pd.DataFrame([
                 {
-                    'id': collection['id'],
+                    'id': c['id'],
                     'href': link
-                } for collection in search_collections.collections_as_dicts()
+                } 
+                for c in collections.collections_as_dicts()
             ])
             filtered = data[data['id'].str.lower().apply(
                         lambda x: any(search in x for search in SEARCH_LIST))]
@@ -177,10 +172,12 @@ class ImageFromCMRStac:
         return true_collections
 
     def get_items(self,
-                  collections: Optional[pd.DataFrame] = None, 
-                  intersect: str|dict = None, 
-                  query: dict = None,
-                  max_items: int = None):
+                  collections: Optional[pd.DataFrame] = None,
+                  date: str = None,
+                  area: Tuple | List = None,
+                  orderby: Dict = None,
+                  max_items: int = None
+                  ):
         """
         **Ищет объекты, которые соответствуют нашему запросу.**
             
@@ -206,23 +203,44 @@ class ImageFromCMRStac:
         links = true_collections['href'].drop_duplicates().tolist()
         ids = true_collections['id'].tolist()
         for link in links:
-            items = self._open_client(link)
+            items = self.client_pool.get_client(link)
             item_search = items.search(
                 max_items=max_items,
                 collections=ids,
-                bbox=self.bbox,
-                datetime=self.datetime,
+                bbox=area,
+                datetime=date,
                 limit=50,
                 query={"eo:cloud_cover": {"lt": 10}}
                 )
             data = np.array([item['assets']['B04']['href']
                               for item in item_search.items_as_dicts()])
-
             yield data
 
-    def download_image(self, 
-                       item_href: str, 
-                       name: str = None,):
+class DBChecker():
+    pass
+
+class ISearch():
+    
+    def __init__(
+            self,
+            session: napi.NasaAPIBase = None,
+            ):
+        self.session = session.session()
+
+        self.session.create_session()
+
+    def search(
+            self,
+            satelite_names: List[str] = None,
+            catalog_list: List[str] = None
+            ) -> SearchEngine:
+        return SearchEngine(satelite_names, catalog_list)
+    
+    def download_image(
+            self, 
+            item_href: str, 
+            name: str = None
+            ) -> str | int:
         """
         **Скачивает изображение по выданному ссылке(в будущем по выданному ассету или объекту)**
 
@@ -243,29 +261,48 @@ class ImageFromCMRStac:
                 Возвращает сообщение о успешном скачивании и скачивает изображение в директорию
         """
 
-        # ### Нужно еще на забыть указать здесь папку
-        response = self.session.request("GET", url=item_href, stream=True, allow_redirects=True)
+        response = self.session.request(
+            "GET", 
+            url=item_href, 
+            stream=True, 
+            allow_redirects=True)
+        
         if response.status_code == 200:
             gdal_rast_handler(response.raw.data, image_name=name)
             return 'Complete'
         else: 
             return response.status_code
         
-    def save_catalog(self):
-        """
-        **Нужно для сохранения данных в локальный репозиторий. SQL.**
-        """
-        pass
 
-    def check_catalog_contains_in_uri(self):
-        """
-        **Функция проверки существует ли каталог в нашем локальном репозитории.**
-        """
-        pass
+# Нужно сделать разделение по функциональности.
+# Скачать и искать это разные функциональности.
+# Проверка или взаимодействие с Базами данных это разная функциональность.
+# И общий интерфейс для взаимодействия со всем этим добром.
+'''
+if __name__ == '__main__':
+    config = napiF.NasaAPIConfig('shii', '6451Yyul1234/')
+    base = napiF.NasaAPIBase(config=config)
 
-    def search_interface(self):
-        """
-        **Объединенный интерфейс вызова функций.**
-        Нужен, чтобы проверять условия и вызывать соответствующие функции.
-        """
-        pass
+    base = ISearch(session = base)
+    
+    api = base.search(
+        catalog_list = ['USGS_LTA', 'LPDAAC_ECS', 'LPCLOUD', 'ESA'],
+        satelite_names = ['landsat', 'hlsl', 'sentinel', 'hlss']
+        )
+
+    dt = api.search_org_catalogs(
+        area=(42.171192, 45.04739, 42.18441, 45.053151),
+        date='2024-09/2024-11'
+        )
+    
+    time2 = time.perf_counter()
+    print(f'{dt} \n {time2 - time1:0.4f}')
+
+    links = api.get_items(collections=dt, max_items=1)
+
+    for i in links:
+        print(i)
+
+    time3 = time.perf_counter()
+    print(f'{time3 - time1:0.4f}')
+'''
