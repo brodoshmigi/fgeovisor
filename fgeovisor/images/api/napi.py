@@ -13,6 +13,11 @@ from base64 import b64encode
 from typing import TypeVar, Dict, Optional, Set
 
 
+"""
+    Реализует основную функциональность по отношению к api Nasa.
+"""
+
+
 _N = TypeVar('_N')
 
 DEFAULT_HEADERS: Dict[str, str] = {'user-agent': 'python-urllib3/0.6'}
@@ -192,13 +197,15 @@ class NasaAPICall():
         # Вместо прямого наследования просто добавляем методы в класс
         self.auth = auth
         self.api = NasaRequestAPI()
-
+        
+    @formater(True)
     def get_oauth_profile(self, utype: str = 'PROD'):
         return self.api.make_request('GET',
                                 '/oauth/userInfo',
                                 token=self.auth.get_bearer_token(),
                                 utype=utype)
     
+    @formater(True)
     def get_oauth_token(self):
         fields = {
             'grant_type': 'client_credentials'
@@ -266,17 +273,10 @@ class NasaAPIBase():
     def session(self):
         return NasaSessionAPI(self.auth)
 
+"""
 time1 = time.perf_counter()
-
 # NICE WORKING BROOOOO!!!!
 if __name__ == '__main__':
-    """
-    Кстати это большой рофлз, но метод get_token вызывается раз 6
-
-    и...
-
-    Везде он разный!
-    """
     config = NasaAPIConfig('shii', '6451Yyul1234/')
     base = NasaAPIBase(config=config)
     session = base.session()
@@ -295,26 +295,4 @@ if __name__ == '__main__':
     # так как это планируется использовать в проде, нужно научить классы оптимизировать себя
     # либо делать это вручную, например чистить или удалять классы, которые уже не будут использоваться
     # или используются один раз, можно и кэшировать.
-    '''
-        if use_bearer:
-            self.set_bearer_auth(token)
-        else:
-            self.set_basic_auth(self.config.username, self.config.password)
-
-    def set_basic_auth(self, username: str, password: str) -> None:
-        self.auth_strategy = BasicAuth(username, password)
-        self.token = self.auth_strategy.get_token()
-
-    def set_bearer_auth(self, token: str) -> None:
-        self.auth_strategy = BearerAuth(token)
-        self.token = self.auth_strategy.get_token()
-
-        
-    def get_auth_strategy(self) -> Dict[str, str]:
-        if self.auth_strategy:
-            return self.auth_strategy
-        return {}
-
-    def get_token(self) -> Dict[str, str]:
-        return self.token
-    '''
+"""
