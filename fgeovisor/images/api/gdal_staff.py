@@ -5,7 +5,7 @@ from django.contrib.gis.gdal.raster.source import GDALRaster
     Т.е. отсюда тянем gdal.
 """
 
-def gdal_rast_handler(*args: str, image_name: str) -> GDALRaster:
+def tif_creator(*args: str, image_name: str) -> GDALRaster:
     """
     Создает .tif файл из виртуальных .tif файлов
 

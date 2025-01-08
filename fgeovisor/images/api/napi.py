@@ -1,16 +1,12 @@
 import time
-
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
+from base64 import b64encode
+from typing import TypeVar, Dict, Optional, Set
 
 import urllib3
 from urllib.parse import urljoin
-
 import requests
-
-from base64 import b64encode
-
-from typing import TypeVar, Dict, Optional, Set
 
 
 """
