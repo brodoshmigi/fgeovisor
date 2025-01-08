@@ -288,7 +288,7 @@ class ISearch():
     
     def loader(self, base) -> IDownload:
         return IDownload(base)
-
+'''
 def main():
     """
     Объясняю две вещи !!!
@@ -335,3 +335,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+'''
