@@ -318,7 +318,7 @@ def main():
     
     time2 = time.perf_counter()
 
-    config = napi.NasaAPIConfig('shii', '6451Yyul1234/')
+    config = napi.NasaAPIConfig('', '')
     client = napi.NasaAPIBase(config=config)
 
     api3 = base.loader(base=client)

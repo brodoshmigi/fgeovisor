@@ -273,7 +273,7 @@ class NasaAPIBase():
 time1 = time.perf_counter()
 # NICE WORKING BROOOOO!!!!
 if __name__ == '__main__':
-    config = NasaAPIConfig('shii', '6451Yyul1234/')
+    config = NasaAPIConfig('', '')
     base = NasaAPIBase(config=config)
     session = base.session()
     request = base.request()
