@@ -34,21 +34,23 @@ class formater(object):
     def __call__(self, func):
         if self.use:
             def inner(*args):
+                # urllib3 or requests returns dif data
+                # and response may not convert to json
                 returned_response = func(*args)
 
-                try:
-                    response = returned_response.json()
-                except Exception:
-                    response = returned_response.data.decode()
-
-                if returned_response.status == 200:
-                    return response
-                elif returned_response.status == 401:
-                    return f'status {returned_response.status}, {response}, url={returned_response.url}'
-                else:
-                    return f'status {returned_response.status}, url={returned_response.url}'        
+                if returned_response.status != 200:
+                    return f'status {returned_response.status}, url={returned_response.url}'
+                
+                return self.content_check(returned_response)
             return inner
         return func
+    
+    def content_check(self, response):
+        try:
+            result = response.json()
+        except Exception:
+            result = response.data.decode()
+        return result
 
 
 @dataclass
@@ -268,27 +270,3 @@ class NasaAPIBase():
     
     def session(self):
         return NasaSessionAPI(self.auth)
-
-"""
-time1 = time.perf_counter()
-# NICE WORKING BROOOOO!!!!
-if __name__ == '__main__':
-    config = NasaAPIConfig('', '')
-    base = NasaAPIBase(config=config)
-    session = base.session()
-    request = base.request()
-
-    print(request.get_user_id())
-    #session.create_session()
-    #print(session.get_session().cookies)
-    time2 = time.perf_counter()
-    print(f'{time2 - time1:0.4f}')
-    # на 300 мс больше чем просто писать без классов
-    # ну это во многом связанно с тем, что пайтон долго инициализирует переменные
-    # еще он страдает такой темой, что почти все типы данных это абстракции для более низкого уровня
-    # из-за этого увеличивается потребление памяти и еще могут оставаться хвосты
-    # уменьшается из-за этого эффективность, но повышается управляемость...
-    # так как это планируется использовать в проде, нужно научить классы оптимизировать себя
-    # либо делать это вручную, например чистить или удалять классы, которые уже не будут использоваться
-    # или используются один раз, можно и кэшировать.
-"""
