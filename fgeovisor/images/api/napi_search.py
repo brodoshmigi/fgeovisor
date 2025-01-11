@@ -1,15 +1,6 @@
 from django.contrib.gis.gdal.raster.source import GDALRaster
-from gdal_staff import tif_creator
 
-from typing import (
-    Optional, 
-    List, 
-    Set, 
-    Generator, 
-    Tuple, 
-    Dict,
-    Any
-    )
+from typing import (Optional, List, Set, Generator, Tuple, Dict, Any)
 import time
 import uuid
 import datetime
@@ -27,6 +18,53 @@ import napi
 
 time1 = time.perf_counter()
 
+
+def tif_creator(*args: str, image_name: str) -> GDALRaster:
+    """
+    Создает .tif файл из виртуальных .tif файлов
+
+    Или может создать один .tif с несколькими каналами из нескольких .tif с одним каналом
+
+    Args:
+        *args (str):
+            Принмает в себя ссылки на .tif файл.
+        image_name (str):
+            Задает имя снимку исходя из даты его создания
+    Returns:
+        Image (byte or .tif):
+            Возвращает созданный/объединенный .tif новым файлов
+            и в течении сессии сохраняется в оперативной памяти.
+    """
+    if not args:
+        raise ValueError('At least one .tif file is required.')
+    
+
+    img_list_handler = [GDALRaster(value) for value in args]
+
+    source = img_list_handler[0]
+    source_driver = source.driver
+
+    # Issue - в архивах могут быть снимки без ха-ха srid...
+    if not source.srid:
+        raise ValueError('Snimok xuini, url ne to')
+
+    # в name указывается имя директории, в которую сохранится файл
+    raster_create = GDALRaster({
+        'srid': source.srid,
+        'width': source.width,
+        'height': source.height,
+        'driver': str(source_driver),
+        'name': f'{str(image_name)}.tif',
+        'datatype': source.bands[0].datatype(),
+        'nr_of_bands': len(img_list_handler)
+    })
+
+    for y in range(len(img_list_handler)):
+        raster_create.bands[y].data(img_list_handler[y].bands[0].data())
+
+    #return raster_create
+
+
 class SearchCatalog():
 
     def __init__(self, href: str = 'https://cmr.earthdata.nasa.gov/stac'):
@@ -41,11 +79,11 @@ class SearchCatalog():
 
     def get_catalog(self) -> stac.Catalog:
         return self.root_catalog
-    
+
     def get_search_links(self) -> Set[stac.Link]:
         return set(self.root_catalog.get_child_links())
-    
-    def get_links_titles(self) -> Generator[str, str, str]:         
+
+    def get_links_titles(self) -> Generator[str, str, str]:
         for link in self.get_search_links():
             yield link.title
 
@@ -57,48 +95,55 @@ class SearchCatalog():
             return self.satelite_names
 
     def get_sort_childs(self, orderby: List[str]):
-       return {link.get_href() for link in self.get_search_links() if link.title in orderby}
+        return {
+            link.get_href()
+            for link in self.get_search_links() if link.title in orderby
+        }
+
 
 class ClientPool():
 
     def __init__(self):
         self.clients = {}
-    
+
     @lru_cache(maxsize=32)
     def get_client(self, link: str) -> Client:
         if link not in self.clients:
             self.clients[link] = Client.open(link)
         return self.clients[link]
 
+
 class Download(ABC):
-    
+
     @abstractmethod
     def download(self):
         pass
 
+
 class SyncDownload(Download):
-    
+
     def download(self, **kwargs):
 
         http: requests.Session = kwargs['session']
-                
-        response = http.request(
-            "GET", 
-            url=kwargs['url'], 
-            stream=True, 
-            allow_redirects=True,
-            timeout=30)
-        
+
+        response = http.request("GET",
+                                url=kwargs['url'],
+                                stream=True,
+                                allow_redirects=True,
+                                timeout=30)
+
         if response.status_code == 200:
             tif_creator(response.raw.data, image_name=kwargs['name'])
             return 'Complete'
-        else: 
+        else:
             return response.status_code
 
+
 class AsyncDownload(Download):
-    
+
     def download(self, **kwargs):
         pass
+
 
 class IDownload():
 
@@ -108,44 +153,28 @@ class IDownload():
         self.base.create_session()
         self.session = self.base.get_session()
 
-    def download(
-            self,
-            url: str, 
-            name: str = None
-            ):
-        return SyncDownload().download(
-            session=self.session,
-            url=url,
-            name=name
-        )
-    
-    def adownload(
-            self, 
-            item_href: str, 
-            name: str = None
-            ):
-        return AsyncDownload().download(
-            item_href=item_href,
-            name=name
-        )
+    def download(self, url: str, name: str):
+        return SyncDownload().download(session=self.session,
+                                       url=url,
+                                       name=name)
+
+    def adownload(self, item_href: str, name: str = None):
+        return AsyncDownload().download(item_href=item_href, name=name)
+
 
 class SearchCollections():
-    
-    def __init__(
-            self, 
-            satelite_names: List[str] = ['landsat'],
-            catalog_list: List[str] = None,
-            clients_pool = None
-            ):
+
+    def __init__(self,
+                 satelite_names: List[str] = ['landsat'],
+                 catalog_list: List[str] = None,
+                 clients_pool=None):
         self.satelite_names = set(satelite_names)
-        self.catalog = SearchCatalog().get_sort_childs(orderby = catalog_list)
+        self.catalog = SearchCatalog().get_sort_childs(orderby=catalog_list)
         self.clients_pool = clients_pool
 
-    def get_org_catalogs(
-            self, 
-            area: Tuple | List = None, 
-            date: str = None
-            ) -> pd.DataFrame:
+    def get_org_catalogs(self,
+                         area: Tuple | List = None,
+                         date: str = None) -> pd.DataFrame:
         """
         **Ищет каталоги, которые соответствуют нашему запросу.**
         
@@ -160,22 +189,19 @@ class SearchCollections():
         true_collections = pd.DataFrame()
         #collections_list = []
         for link in self.catalog:
-            client = self.clients_pool.get_client(link)
-            collections = client.collection_search(
-                q='landsat',
-                bbox=area,
-                datetime=date
-                )
-            data = pd.DataFrame([
-                {
-                    'id': c['id'],
-                    'href': link
-                } for c in collections.collections_as_dicts()
-            ])
+            client: Client = self.clients_pool.get_client(link)
+            collections = client.collection_search(q='landsat',
+                                                   bbox=area,
+                                                   datetime=date)
+            data = pd.DataFrame([{
+                'id': c['id'],
+                'href': link
+            } for c in collections.collections_as_dicts()])
             filtered = data[data['id'].str.lower().apply(
-                        lambda x: any(search in x for search in self.satelite_names))]
+                lambda x: any(search in x for search in self.satelite_names))]
             true_collections = pd.concat([true_collections, filtered])
         return true_collections
+
 
 class Assets(ABC):
 
@@ -204,8 +230,9 @@ class Assets(ABC):
         """
         pass
 
+
 class SyncSearchAssets(Assets):
-        
+
     def __init__(self, clients_pool):
         self.clients_pool = clients_pool
 
@@ -220,71 +247,69 @@ class SyncSearchAssets(Assets):
         ids = true_collections['id'].tolist()
         for link in links:
             items = self.clients_pool.get_client(link)
-            item_search = items.search(
-                collections=ids,
-                limit=50,
-                query={"eo:cloud_cover": {"lt": 10}},
-                **kwargs
-                )
-            data = np.array([item['assets']['B04']['href']
-                                for item in item_search.items_as_dicts()])
+            item_search = items.search(collections=ids,
+                                       limit=50,
+                                       query={"eo:cloud_cover": {
+                                           "lt": 10
+                                       }},
+                                       **kwargs)
+            data = np.array([
+                item['assets']['B04']['href']
+                for item in item_search.items_as_dicts()
+            ])
             yield data
 
+
 class AsyncSearchAssets(Assets):
-    
+
     def __init__(self, clients_pool):
         self.clients_pool = clients_pool
 
     def get(self, **kwargs) -> Generator[Any, Any, Any]:
         pass
 
+
 class SearchEngine():
 
     def __init__(self, clients_pool):
         self.assets = SyncSearchAssets(clients_pool=clients_pool)
         self.aassets = AsyncSearchAssets(clients_pool=clients_pool)
-    
+
     #SyncSearchAssets
-    def get_assets(
-            self,
-            collection: Optional[pd.DataFrame] = None,
-            date: str = None,
-            area: Tuple | List = None,
-            orderby: Dict = None,
-            max_items: int = None
-            ):
-        return self.assets.get(
-            collections=collection,
-            datetime=date,
-            bbox=area,  
-            max_items=max_items
-            )
+    def get_assets(self,
+                   collection: Optional[pd.DataFrame] = None,
+                   date: str = None,
+                   area: Tuple | List = None,
+                   orderby: Dict = None,
+                   max_items: int = None):
+        return self.assets.get(collections=collection,
+                               datetime=date,
+                               bbox=area,
+                               max_items=max_items)
 
     #AsyncSearchAssets
     def aget_assets(self):
         return self.aassets.get()
 
+
 class ISearch():
 
     def __init__(self):
         self.clients_pool = ClientPool()
-    
+
     # Нужно более глубоко здесь проработать логику стратегии
     # Чтобы просто тыкнул и все заработало
     def search_collections(
             self,
             sat_names: List[str] = None,
-            catalog_filter: List[str] = None
-            ) -> SearchCollections:
-        
-        return SearchCollections(
-            satelite_names=sat_names,
-            catalog_list=catalog_filter,
-            clients_pool=self.clients_pool
-        )
-    
+            catalog_filter: List[str] = None) -> SearchCollections:
+
+        return SearchCollections(satelite_names=sat_names,
+                                 catalog_list=catalog_filter,
+                                 clients_pool=self.clients_pool)
+
     def search_items(self) -> SearchEngine:
         return SearchEngine(clients_pool=self.clients_pool)
-    
+
     def loader(self, base) -> IDownload:
         return IDownload(base)

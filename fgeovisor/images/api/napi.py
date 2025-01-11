@@ -28,23 +28,26 @@ class formater(object):
     """
     Декоратор для форматирования ответа
     """
+
     def __init__(self, use: bool = True):
         self.use = use
 
     def __call__(self, func):
         if self.use:
+
             def inner(*args):
                 # urllib3 or requests returns dif data
                 # and response may not convert to json
-                returned_response = func(*args)
+                returned_response: urllib3.BaseHTTPResponse = func(*args)
 
                 if returned_response.status != 200:
                     return f'status {returned_response.status}, url={returned_response.url}'
-                
+
                 return self.content_check(returned_response)
+
             return inner
         return func
-    
+
     def content_check(self, response):
         try:
             result = response.json()
@@ -60,6 +63,7 @@ class NasaAPIConfig():
     password: str
 
     # Чат гпт сказал, что это хардкорщина, типо миядзаки-like?
+
 
 class NasaAuthBase(ABC):
     """
@@ -79,25 +83,28 @@ class NasaAuthBase(ABC):
     def reset_token(self) -> Dict[_N, _N]:
         return {}
 
+
 class BasicAuth(NasaAuthBase):
-    
+
     def __init__(self, username: str, password: str):
         self.username = username
         self.password = password
 
     def get_token(self) -> Dict[str, str]:
-        b64_creds = b64encode(f'{self.username}:{self.password}'.encode('utf-8'))
+        b64_creds = b64encode(
+            f'{self.username}:{self.password}'.encode('utf-8'))
         return {'Authorization': f'Basic {b64_creds.decode()}'}
-    
+
     def reset_token(self) -> Dict[_N, _N]:
         return super().reset_token()
+
 
 class BearerAuth(NasaAuthBase):
     # TODO Фактически этому классу не хватает обращения еще на 3 URL
     # Так как токен можно получить по разному, и также его можно и удалить
     # Мы говорим сейчас не только о том, что находится в нашем классе
     # Токен находится в БД у НАСА
-    
+
     def __init__(self, token: Dict[str, str]):
         self.token = token
         # Это просто рофлз, bearer токен получить можно только через обращение к api
@@ -108,12 +115,12 @@ class BearerAuth(NasaAuthBase):
         # But /api/ has 2 URLs that could give a bearer token.
         # bedabeda = {'Authorization': f'Basic {self.token}'}
         self.token = self.http.make_request(
-            'GET', '/api/users/tokens', self.token
-        ).json()[0]['access_token']
+            'GET', '/api/users/tokens', self.token).json()[0]['access_token']
         return {'Authorization': f'Bearer {self.token}'}
-    
+
     def reset_token(self) -> Dict[_N, _N]:
         return super().reset_token()
+
 
 class AuthManager():
     """
@@ -121,6 +128,7 @@ class AuthManager():
     Это интерфейс, ну или он хотя бы старается делать вид, что он интерфейс.
     Можно сделать ему наследование от NasaAuthBasе, есть ли в этом смысл?
     """
+
     # TODO есть стратка регать класс только с кфг
     # Суть в том, что мы можем переинициализировать класс внутри себя
     # И делать мы можем это, так как basic появлятся сразу
@@ -130,25 +138,27 @@ class AuthManager():
     # А не пользователь.
     # Класc станет более абстрактным.
     # И поломать в нем что-то будет сложнее.
-    
+
     def __init__(self, config: NasaAPIConfig):
         # Это не Strategy pattern, почти он.
-        self.basic_token = BasicAuth(config.username, config.password).get_token()
+        self.basic_token = BasicAuth(config.username,
+                                     config.password).get_token()
         self.bearer_token = BearerAuth(self.basic_token).get_token()
-    
+
     # Эти функции можно использовать если переопределить логику с переменной auth_strategy
     def get_basic_token(self) -> Optional[Dict[str, str]]:
         return self.basic_token
 
     def get_bearer_token(self) -> Optional[Dict[str, str]]:
         return self.bearer_token
-    
+
     def reset_token(self) -> Optional[Dict[str, str]]:
         self.basic_token = {}
         self.bearer_token = {}
 
+
 class NasaRequestAPI():
-    
+
     def __init__(self):
         self.http = urllib3.PoolManager()
         self.headers: Dict[str, str] = {}
@@ -158,11 +168,10 @@ class NasaRequestAPI():
         if endpoint.startswith('http'):
             return endpoint
         return urljoin(base_url, f'{endpoint}')
-    
-    def prepare_headers(
-            self,
-            token: Optional[Dict[str, str]] = None
-        ) -> Dict[str, str]:
+
+    def prepare_headers(self,
+                        token: Optional[Dict[str,
+                                             str]] = None) -> Dict[str, str]:
         #
         # Тут спорный момент, .copy и инициализация пустого словаря имеет разницу 40 мс.
         headers: Dict[str, str] = {}
@@ -170,24 +179,22 @@ class NasaRequestAPI():
         if token:
             headers.update(token)
         return headers
-    
-    def make_request(
-            self,
-            method: str,
-            endpoint: str,
-            token: Optional[Dict[str, str]] = None,
-            fields: Optional[Dict[str, str]] = None,
-            utype: str = 'PROD'
-        ) -> urllib3.BaseHTTPResponse:
+
+    def make_request(self,
+                     method: str,
+                     endpoint: str,
+                     token: Optional[Dict[str, str]] = None,
+                     fields: Optional[Dict[str, str]] = None,
+                     utype: str = 'PROD') -> urllib3.BaseHTTPResponse:
         #
         url = self.build_url(endpoint, utype=utype)
         headers = self.prepare_headers(token=token)
-        response = self.http.request(
-            method,
-            url,
-            headers=headers,
-            fields=fields)
+        response = self.http.request(method,
+                                     url,
+                                     headers=headers,
+                                     fields=fields)
         return response
+
 
 class NasaAPICall():
 
@@ -195,37 +202,33 @@ class NasaAPICall():
         # Вместо прямого наследования просто добавляем методы в класс
         self.auth = auth
         self.api = NasaRequestAPI()
-        
+
     @formater(True)
     def get_oauth_profile(self, utype: str = 'PROD'):
         return self.api.make_request('GET',
-                                '/oauth/userInfo',
-                                token=self.auth.get_bearer_token(),
-                                utype=utype)
-    
+                                     '/oauth/userInfo',
+                                     token=self.auth.get_bearer_token(),
+                                     utype=utype)
+
     @formater(True)
     def get_oauth_token(self):
-        fields = {
-            'grant_type': 'client_credentials'
-        }
+        fields = {'grant_type': 'client_credentials'}
         return self.api.make_request('POST',
-                                '/oauth/token',
-                                token=self.auth.get_bearer_token(),
-                                fields=fields,
-                                utype='DEV')
-    
+                                     '/oauth/token',
+                                     token=self.auth.get_bearer_token(),
+                                     fields=fields,
+                                     utype='DEV')
+
     @formater(True)
     def get_user_id(self):
-        fields = {
-            'client_id': CLIENT_ID,
-            'grant_type': 'client_credentials'
-        }
+        fields = {'client_id': CLIENT_ID, 'grant_type': 'client_credentials'}
         # DI нужно будет сделать, а то беда беда
-        return self.api.make_request('GET', 
-                                 f'/api/users/shii', 
-                                 token=self.auth.get_bearer_token(), 
-                                 fields=fields)
-    
+        return self.api.make_request('GET',
+                                     f'/api/users/shii',
+                                     token=self.auth.get_bearer_token(),
+                                     fields=fields)
+
+
 class NasaSessionAPI():
 
     def __init__(self, auth: AuthManager):
@@ -243,11 +246,8 @@ class NasaSessionAPI():
         url = self.api.build_url('/oauth/authorize')
         headers = self.api.prepare_headers(self.auth.get_basic_token())
         self.session.headers.update(headers)
-        self.session.get(
-            url=url,
-            params=fields
-        )
-    
+        self.session.post(url=url, params=fields)
+
     def get_session(self):
         return self.session
 
@@ -258,6 +258,7 @@ class NasaSessionAPI():
     def update_cookie(self):
         pass
 
+
 class NasaAPIBase():
 
     def __init__(self, config):
@@ -267,6 +268,11 @@ class NasaAPIBase():
 
     def request(self):
         return NasaAPICall(self.auth)
+
+    def session(self):
+        return NasaSessionAPI(self.auth)
+
+
     
     def session(self):
         return NasaSessionAPI(self.auth)
