@@ -271,8 +271,3 @@ class NasaAPIBase():
 
     def session(self):
         return NasaSessionAPI(self.auth)
-
-
-    
-    def session(self):
-        return NasaSessionAPI(self.auth)
