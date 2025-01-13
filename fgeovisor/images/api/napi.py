@@ -6,7 +6,7 @@ from typing import TypeVar, Dict, Optional, Set
 
 import urllib3
 from urllib.parse import urljoin
-import requests
+from requests import Session
 
 
 """
@@ -233,7 +233,7 @@ class NasaSessionAPI():
 
     def __init__(self, auth: AuthManager):
         self.auth = auth
-        self.session = requests.Session()
+        self.session = Session()
         self.api = NasaRequestAPI()
         self.redirect_uri = 'https://data.lpdaac.earthdatacloud.nasa.gov/login'
 
@@ -243,10 +243,14 @@ class NasaSessionAPI():
             'response_type': 'code',
             'redirect_uri': self.redirect_uri
         }
-        url = self.api.build_url('/oauth/authorize')
+        url = [
+            self.api.build_url('/oauth/authorize'),
+            self.api.build_url('/profile'),
+            self.api.build_url('https://data.lpdaac.earthdatacloud.nasa.gov/s3credentials')
+        ]
         headers = self.api.prepare_headers(self.auth.get_basic_token())
         self.session.headers.update(headers)
-        self.session.post(url=url, params=fields)
+        self.session.get(url=url[0], params=fields)
 
     def get_session(self):
         return self.session
