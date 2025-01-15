@@ -1,59 +1,16 @@
-import time
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from base64 import b64encode
-from typing import TypeVar, Dict, Optional, Set
+from typing import TypeVar, Dict, Optional
 
-import urllib3
-from urllib.parse import urljoin
 from requests import Session
 
-
-"""
-    Реализует основную функциональность по отношению к api Nasa.
-"""
-
+from reqapi import NasaRequestAPI
+from decorators import formater
 
 _N = TypeVar('_N')
 
-DEFAULT_HEADERS: Dict[str, str] = {'user-agent': 'python-urllib3/0.6'}
-
-CLIENT_URL: str = 'https://urs.earthdata.nasa.gov'
-DEV_URL: str = 'https://uat.urs.earthdata.nasa.gov'
-
 CLIENT_ID: str = 'FtSFfbOeuxDcdf4px-elGw'
-
-
-class formater(object):
-    """
-    Декоратор для форматирования ответа
-    """
-
-    def __init__(self, use: bool = True):
-        self.use = use
-
-    def __call__(self, func):
-        if self.use:
-
-            def inner(*args):
-                # urllib3 or requests returns dif data
-                # and response may not convert to json
-                returned_response: urllib3.BaseHTTPResponse = func(*args)
-
-                if returned_response.status != 200:
-                    return f'status {returned_response.status}, url={returned_response.url}'
-
-                return self.content_check(returned_response)
-
-            return inner
-        return func
-
-    def content_check(self, response):
-        try:
-            result = response.json()
-        except Exception:
-            result = response.data.decode()
-        return result
 
 
 @dataclass
@@ -63,6 +20,7 @@ class NasaAPIConfig():
     password: str
 
     # Чат гпт сказал, что это хардкорщина, типо миядзаки-like?
+    # TODO add webbrowser get creds
 
 
 class NasaAuthBase(ABC):
@@ -157,45 +115,6 @@ class AuthManager():
         self.bearer_token = {}
 
 
-class NasaRequestAPI():
-
-    def __init__(self):
-        self.http = urllib3.PoolManager()
-        self.headers: Dict[str, str] = {}
-
-    def build_url(self, endpoint: str, utype: str = 'PROD') -> str:
-        base_url = CLIENT_URL if utype == 'PROD' else DEV_URL
-        if endpoint.startswith('http'):
-            return endpoint
-        return urljoin(base_url, f'{endpoint}')
-
-    def prepare_headers(self,
-                        token: Optional[Dict[str,
-                                             str]] = None) -> Dict[str, str]:
-        #
-        # Тут спорный момент, .copy и инициализация пустого словаря имеет разницу 40 мс.
-        headers: Dict[str, str] = {}
-        headers.update(DEFAULT_HEADERS)
-        if token:
-            headers.update(token)
-        return headers
-
-    def make_request(self,
-                     method: str,
-                     endpoint: str,
-                     token: Optional[Dict[str, str]] = None,
-                     fields: Optional[Dict[str, str]] = None,
-                     utype: str = 'PROD') -> urllib3.BaseHTTPResponse:
-        #
-        url = self.build_url(endpoint, utype=utype)
-        headers = self.prepare_headers(token=token)
-        response = self.http.request(method,
-                                     url,
-                                     headers=headers,
-                                     fields=fields)
-        return response
-
-
 class NasaAPICall():
 
     def __init__(self, auth: AuthManager):
@@ -246,7 +165,8 @@ class NasaSessionAPI():
         url = [
             self.api.build_url('/oauth/authorize'),
             self.api.build_url('/profile'),
-            self.api.build_url('https://data.lpdaac.earthdatacloud.nasa.gov/s3credentials')
+            self.api.build_url(
+                'https://data.lpdaac.earthdatacloud.nasa.gov/s3credentials')
         ]
         headers = self.api.prepare_headers(self.auth.get_basic_token())
         self.session.headers.update(headers)

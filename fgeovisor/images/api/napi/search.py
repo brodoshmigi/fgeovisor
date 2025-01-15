@@ -1,5 +1,3 @@
-from django.contrib.gis.gdal.raster.source import GDALRaster
-
 from typing import (Optional, List, Set, Generator, Tuple, Dict, Any)
 import time
 import uuid
@@ -14,55 +12,8 @@ import pandas as pd
 import pystac as stac
 from pystac_client.client import Client
 
-import napi
-
-time1 = time.perf_counter()
-
-
-def tif_creator(*args: str, image_name: str) -> GDALRaster:
-    """
-    Создает .tif файл из виртуальных .tif файлов
-
-    Или может создать один .tif с несколькими каналами из нескольких .tif с одним каналом
-
-    Args:
-        *args (str):
-            Принмает в себя ссылки на .tif файл.
-        image_name (str):
-            Задает имя снимку исходя из даты его создания
-    Returns:
-        Image (byte or .tif):
-            Возвращает созданный/объединенный .tif новым файлов
-            и в течении сессии сохраняется в оперативной памяти.
-    """
-    if not args:
-        raise ValueError('At least one .tif file is required.')
-    
-
-    img_list_handler = [GDALRaster(value) for value in args]
-
-    source = img_list_handler[0]
-    source_driver = source.driver
-
-    # Issue - в архивах могут быть снимки без ха-ха srid...
-    if not source.srid:
-        raise ValueError('Snimok xuini, url ne to')
-
-    # в name указывается имя директории, в которую сохранится файл
-    raster_create = GDALRaster({
-        'srid': source.srid,
-        'width': source.width,
-        'height': source.height,
-        'driver': str(source_driver),
-        'name': f'{str(image_name)}.tif',
-        'datatype': source.bands[0].datatype(),
-        'nr_of_bands': len(img_list_handler)
-    })
-
-    for y in range(len(img_list_handler)):
-        raster_create.bands[y].data(img_list_handler[y].bands[0].data())
-
-    #return raster_create
+import auth
+from gdal_staff import tif_creator
 
 
 class SearchCatalog():
@@ -126,11 +77,10 @@ class SyncDownload(Download):
 
         http: requests.Session = kwargs['session']
 
-        response = http.request("GET",
-                                url=kwargs['url'],
-                                stream=True,
-                                allow_redirects=True,
-                                timeout=30)
+        response = http.get(url=kwargs['url'],
+                            stream=True,
+                            allow_redirects=True,
+                            timeout=30)
 
         if response.status_code == 200:
             tif_creator(response.raw.data, image_name=kwargs['name'])
@@ -147,7 +97,7 @@ class AsyncDownload(Download):
 
 class IDownload():
 
-    def __init__(self, session: napi.NasaAPIBase):
+    def __init__(self, session: auth.NasaAPIBase):
         self.base = session.session()
 
         self.base.create_session()
@@ -187,7 +137,6 @@ class SearchCollections():
                 DataFrame с отсортированными коллекциями
         """
         true_collections = pd.DataFrame()
-        #collections_list = []
         for link in self.catalog:
             client: Client = self.clients_pool.get_client(link)
             collections = client.collection_search(q='landsat',
