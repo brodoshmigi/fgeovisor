@@ -98,6 +98,7 @@ class AsyncDownload(Download):
 class IDownload():
 
     def __init__(self, session: auth.NasaAPIBase):
+        # TODO поумнее нужно сделать
         self.base = session.session()
 
         self.base.create_session()
@@ -113,6 +114,43 @@ class IDownload():
 
 
 class SearchCollections():
+    """
+    Есть одна вещая проблема.
+
+    Client возвращает результат и мы уже определились, что для ассетов и коллекций,
+    как минимум, у наса, должны быть разные link. Но, в чем же все таки проблема?
+    
+    Когда эта библиотека возвращает результат - он представляется ввиде объекта,
+    т.к. содержит в себе кучу разных страниц с результатами, да, именно страниц.
+
+    Это еще ничего, однако, получение таким образом результата превращается в
+    <class ...>, что нас не интересует, так как нам из всех этих резульатов нужен,
+    конечно, если нужен, тот, который подойдет под наши запросы. Объясняю почему:
+
+    Если наша Q в поиске(кто не знаком с большой Q, просто знайте, это свободный параметр)
+    будет равна landsat он выдаст абсолютно все коллекции, где хоть раз упоминалось это слово
+    кто наблюдательный должен уже понять, что там содержится не только landsat,
+    а, например, его смежные миссии, которые, соответственно, нам уже не подходят.
+
+    Почему же не подходят? Мы ищем только те, которые содержат в себе каналы с 1 по 9.
+    Но и не только это, еще, конечно, хотелось бы получать более точные результаты,
+    а не все, что есть... Тем более там могут быть коллекции, которые уже морально устарели.
+    Чисто логически, мы могли бы и не сортировать вообще ничего, получив коллекции, просто,
+    скажем так, искать вхождения, да - это проблему бы решило, но мы, таким образом,
+    можем и не попасть в то, что нам нужно.
+
+    Ввиду чего возникает необходимость сортировки этих объектов по id, а это
+    можно сделать только если использовать collections_as_... и все бы ничего,
+    но авторы библиотеки реализовали эту функции как генератор, из-за чего,
+    чтобы получить результат, нужно использовать очень большое количество циклов,
+    что увеличивает время на совершение запроса.
+
+    Да, может многопоточка это фиксит, но синхронная версия будет медленной ввиду этого.
+
+    И эту проблему нужно решить, либо расширением существующего класса нашего,
+    либо другими фокусами, конечно, можно ничего и не менять. Разница 1-3 сек.
+    Ну либо можно получать равки и отправлять в другой класс, который уже будет фильтровать.
+    """
 
     def __init__(self,
                  satelite_names: List[str] = ['landsat'],
@@ -138,18 +176,20 @@ class SearchCollections():
         """
         true_collections = pd.DataFrame()
         for link in self.catalog:
-            client: Client = self.clients_pool.get_client(link)
-            collections = client.collection_search(q='landsat',
-                                                   bbox=area,
-                                                   datetime=date)
             data = pd.DataFrame([{
                 'id': c['id'],
                 'href': link
-            } for c in collections.collections_as_dicts()])
+            } for c in self._get_collection(
+                link=link, bbox=area, datetime=date)])
             filtered = data[data['id'].str.lower().apply(
                 lambda x: any(search in x for search in self.satelite_names))]
             true_collections = pd.concat([true_collections, filtered])
         return true_collections
+
+    def _get_collection(self, link: str, **kwargs):
+        client: Client = self.clients_pool.get_client(link=link)
+        collections = client.collection_search(q='landsat', **kwargs)
+        return collections.collections_as_dicts()
 
 
 class Assets(ABC):
@@ -186,27 +226,30 @@ class SyncSearchAssets(Assets):
         self.clients_pool = clients_pool
 
     # Параметры можно заменить на словарь
-    def get(self, **kwargs) -> Generator[Any, Any, Any]:
+    def get(self, collections, **kwargs) -> Generator[Any, Any, Any]:
         # -> pd.Dataframe() желательно
         # т.к. возвращать хочется больше инфы, чем просто ссылки
         # Но у нас тут еще и yield)
-        true_collections = kwargs['collections']
-        kwargs.pop('collections')
+        true_collections = collections
         links = true_collections['href'].drop_duplicates().tolist()
         ids = true_collections['id'].tolist()
         for link in links:
-            items = self.clients_pool.get_client(link)
-            item_search = items.search(collections=ids,
-                                       limit=50,
-                                       query={"eo:cloud_cover": {
-                                           "lt": 10
-                                       }},
-                                       **kwargs)
+            items = self._get_assets(link=link, ids=ids, **kwargs)
             data = np.array([
                 item['assets']['B04']['href']
-                for item in item_search.items_as_dicts()
+                for item in items.items_as_dicts()
             ])
             yield data
+
+    def _get_assets(self, link: str, ids, **kwargs):
+        items: Client = self.clients_pool.get_client(link=link)
+        item_search = items.search(collections=ids,
+                                   limit=50,
+                                   query={"eo:cloud_cover": {
+                                       "lt": 10
+                                   }},
+                                   **kwargs)
+        return item_search
 
 
 class AsyncSearchAssets(Assets):
@@ -260,5 +303,5 @@ class ISearch():
     def search_items(self) -> SearchEngine:
         return SearchEngine(clients_pool=self.clients_pool)
 
-    def loader(self, base) -> IDownload:
-        return IDownload(base)
+    def loader(self, sauth) -> IDownload:
+        return IDownload(sauth)
