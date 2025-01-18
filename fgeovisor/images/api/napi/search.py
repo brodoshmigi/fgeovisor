@@ -2,6 +2,7 @@ from typing import (Optional, List, Set, Generator, Tuple, Dict, Any)
 import time
 import uuid
 import datetime
+import asyncio
 from functools import lru_cache
 from abc import ABC, abstractmethod
 
@@ -119,7 +120,7 @@ class IDownload():
         return AsyncDownload().download(item_href=item_href, name=name)
 
 
-class SearchCollections():
+class Collections(ABC):
     """
     Есть одна вещая проблема.
 
@@ -158,17 +159,8 @@ class SearchCollections():
     Ну либо можно получать равки и отправлять в другой класс, который уже будет фильтровать.
     """
 
-    def __init__(self,
-                 satelite_names: List[str] = ['landsat'],
-                 catalog_list: List[str] = None,
-                 clients_pool=None):
-        self.satelite_names = set(satelite_names)
-        self.catalog = SearchCatalog().get_sort_childs(orderby=catalog_list)
-        self.clients_pool = clients_pool
-
-    def get_by_orgs(self,
-                    area: Tuple | List = None,
-                    date: str = None) -> pd.DataFrame:
+    @abstractmethod
+    def get_by_orgs(self) -> pd.DataFrame:
         """
         **Ищет каталоги, которые соответствуют нашему запросу.**
         
@@ -180,6 +172,22 @@ class SearchCollections():
             Dataframe ('id' | 'href'):
                 DataFrame с отсортированными коллекциями
         """
+        pass
+
+
+class SearchCollections():
+
+    def __init__(self,
+                 satelite_names: List[str] = ['landsat'],
+                 catalog_list: List[str] = None,
+                 clients_pool=None):
+        self.satelite_names = set(satelite_names)
+        self.catalog = SearchCatalog().get_sort_childs(orderby=catalog_list)
+        self.clients_pool = clients_pool
+
+    def get_by_orgs(self,
+                    area: Tuple | List = None,
+                    date: str = None) -> pd.DataFrame:
         true_collections = pd.DataFrame()
         for link in self.catalog:
             data = pd.DataFrame([{
@@ -191,8 +199,48 @@ class SearchCollections():
                 lambda x: any(search in x for search in self.satelite_names))]
             true_collections = pd.concat([true_collections, filtered])
         return true_collections
-    
-    def get_by_link(self):
+
+    async def aget_by_orgs(self,
+                           area: Tuple | List = None,
+                           date: str = None) -> pd.DataFrame:
+        queue = asyncio.Queue()
+        _lock = asyncio.Lock()
+        sem = asyncio.Semaphore(10)
+        true_collections = []
+
+        for link in self.catalog:
+            await queue.put(link)
+
+        async def worker():
+            while True:
+                link = await queue.get()
+                async with sem:
+                    collections = await self._asearch_collection(link=link,
+                                                                 bbox=area,
+                                                                 datetime=date)
+                    filtered_collections = [
+                        {'id': c['id'], 'href': link}
+                        for c in collections.collections_as_dicts()
+                        if any(search in c['id'].lower() 
+                             for search in self.satelite_names)
+                    ]
+                    async with _lock:
+                        true_collections.extend(filtered_collections)
+                queue.task_done()
+
+        workers = [
+            asyncio.create_task(worker())
+            for _ in range(min(32, len(self.catalog)))
+        ]
+        await queue.join()
+
+        for w in workers:
+            w.cancel()
+        await asyncio.gather(*workers, return_exceptions=True)
+
+        return pd.DataFrame(true_collections)
+
+    def get_by_links(self):
         for link in self.catalog:
             return self._get_collections(link=link)
 
@@ -200,6 +248,11 @@ class SearchCollections():
         client: Client = self.clients_pool.get_client(link=link)
         collections = client.collection_search(q='landsat', **kwargs)
         return collections.collections_as_dicts()
+
+    async def _asearch_collection(self, link: str, **kwargs):
+        client: Client = self.clients_pool.get_client(link=link)
+        collections = client.collection_search(q='landsat', **kwargs)
+        return collections
 
     def _get_collections(self, link: str):
         # Маленький шаг для человека, но огромный для меня
@@ -210,7 +263,7 @@ class SearchCollections():
             'link': link,
         } for c in client.get_collections()])
         return result.drop_duplicates()
-    
+
     def _get_collection(self, link: str, id: str):
         client: Client = self.clients_pool.get_client(link=link)
         result = pd.DataFrame([{
@@ -218,6 +271,7 @@ class SearchCollections():
             'link': link,
         } for c in client.get_collection(id)])
         return result
+
 
 class Assets(ABC):
 
@@ -247,13 +301,14 @@ class Assets(ABC):
         pass
 
 
-class SyncSearchAssets(Assets):
+class SearchAssets(Assets):
 
     def __init__(self, clients_pool):
         self.clients_pool = clients_pool
 
     # Параметры можно заменить на словарь
-    def get(self, collections, **kwargs) -> Generator[Any, Any, Any]:
+    def get(self, collections: pd.DataFrame,
+            **kwargs) -> Generator[Any, Any, Any]:
         # -> pd.Dataframe() желательно
         # т.к. возвращать хочется больше инфы, чем просто ссылки
         # Но у нас тут еще и yield)
@@ -261,14 +316,14 @@ class SyncSearchAssets(Assets):
         links = true_collections['href'].drop_duplicates().tolist()
         ids = true_collections['id'].tolist()
         for link in links:
-            items = self._get_assets(link=link, ids=ids, **kwargs)
+            items = self._search_assets(link=link, ids=ids, **kwargs)
             data = np.array([
                 item['assets']['B04']['href']
                 for item in items.items_as_dicts()
             ])
             yield data
 
-    def _get_assets(self, link: str, ids, **kwargs):
+    def _search_assets(self, link: str, ids, **kwargs):
         items: Client = self.clients_pool.get_client(link=link)
         item_search = items.search(collections=ids,
                                    limit=50,
@@ -279,20 +334,61 @@ class SyncSearchAssets(Assets):
         return item_search
 
 
-class AsyncSearchAssets(Assets):
+class ASearchAssets(Assets):
+    """
+    TODO
+    import twisted
+    """
 
     def __init__(self, clients_pool):
         self.clients_pool = clients_pool
 
-    def get(self, **kwargs) -> Generator[Any, Any, Any]:
-        pass
+    async def get(self, collections: pd.DataFrame, **kwargs):
+        # -> pd.Dataframe() желательно
+        # т.к. возвращать хочется больше инфы, чем просто ссылки
+        # Но у нас тут еще и yield)
+        true_collections = collections
+        links = true_collections['href'].drop_duplicates().tolist()
+        ids = true_collections['id'].tolist()
+
+        sem = asyncio.Semaphore(10)
+        all_assets = []
+
+        async def bounded_search(link):
+            async with sem:
+                result = await self._search_assets(link=link,
+                                                   ids=ids,
+                                                   **kwargs)
+                if result:
+                    assets = [
+                        item['assets']['B04']['href']
+                        for item in result.items_as_dicts()
+                    ]
+                    all_assets.extend(assets)
+                return result
+
+        async with asyncio.TaskGroup() as tg:
+            tasks = [
+                tg.create_task(bounded_search(link=link)) for link in links
+            ]
+        return pd.DataFrame({'href': all_assets})
+
+    async def _search_assets(self, link: str, ids, **kwargs):
+        items: Client = self.clients_pool.get_client(link=link)
+        item_search = items.search(collections=ids,
+                                   limit=50,
+                                   query={"eo:cloud_cover": {
+                                       "lt": 10
+                                   }},
+                                   **kwargs)
+        return item_search
 
 
 class SearchEngine():
 
     def __init__(self, clients_pool):
-        self.assets = SyncSearchAssets(clients_pool=clients_pool)
-        self.aassets = AsyncSearchAssets(clients_pool=clients_pool)
+        self.assets = SearchAssets(clients_pool=clients_pool)
+        self.aassets = ASearchAssets(clients_pool=clients_pool)
 
     #SyncSearchAssets
     def get_assets(self,
@@ -307,8 +403,16 @@ class SearchEngine():
                                max_items=max_items)
 
     #AsyncSearchAssets
-    def aget_assets(self):
-        return self.aassets.get()
+    def aget_assets(self,
+                    collection: Optional[pd.DataFrame] = None,
+                    date: str = None,
+                    area: Tuple | List = None,
+                    orderby: Dict = None,
+                    max_items: int = None):
+        return self.aassets.get(collections=collection,
+                                datetime=date,
+                                bbox=area,
+                                max_items=max_items)
 
 
 class ISearch():
