@@ -1,6 +1,6 @@
 from typing import Dict, Optional
 
-import urllib3
+from urllib3 import PoolManager, BaseHTTPResponse
 from urllib.parse import urljoin
 
 CLIENT_URL: str = 'https://urs.earthdata.nasa.gov'
@@ -12,7 +12,7 @@ DEFAULT_HEADERS: Dict[str, str] = {'user-agent': 'python-urllib3/0.6'}
 class NasaRequestAPI():
 
     def __init__(self):
-        self.http = urllib3.PoolManager()
+        self.http = PoolManager()
         self.headers: Dict[str, str] = {}
 
     def build_url(self, endpoint: str, utype: str = 'PROD') -> str:
@@ -37,7 +37,7 @@ class NasaRequestAPI():
                      endpoint: str,
                      token: Optional[Dict[str, str]] = None,
                      fields: Optional[Dict[str, str]] = None,
-                     utype: str = 'PROD') -> urllib3.BaseHTTPResponse:
+                     utype: str = 'PROD') -> BaseHTTPResponse:
         #
         url = self.build_url(endpoint, utype=utype)
         headers = self.prepare_headers(token=token)
