@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Generator, Any
+from typing import Generator, Any, Dict, TypeVar
 
 import pandas as pd
 
+_N = TypeVar('_N')
 
 class Download(ABC):
 
@@ -92,3 +93,21 @@ class Assets(ABC):
                 Возвращает iterator с numpy массивом из объектов
         """
         pass
+
+class NasaAuthBase(ABC):
+    """
+    Абстракция класса для классов аутентификации: Basic и Bearer.
+    Грубо говоря, мы можем пойти в лес с топором, ножом или калашом.
+    Что выберешь?
+
+    Достаточно избыточно, но позволяет без лишних действий использовать
+    Любой класс аутентификации. Плюсом можно добавить новых.
+    """
+
+    @abstractmethod
+    def get_token(self) -> Dict[str, str]:
+        pass
+
+    @abstractmethod
+    def reset_token(self) -> Dict[_N, _N]:
+        return {}
