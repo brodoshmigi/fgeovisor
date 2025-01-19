@@ -1,5 +1,13 @@
-from django.contrib.gis.gdal.raster.source import GDALRaster
+"""
+You should use interface if you want to interact with this api.
+
+This module is designed to create a high-level interface for interacting 
+with low-level classes. While you can use it directly, we recommend using 
+it through the interface for better organization and maintainability.
+
 # Important: If GDALRaster is not imported in the main file, an exception will be thrown and the program will close.
+"""
+from django.contrib.gis.gdal.raster.source import GDALRaster
 
 from typing import Optional, List, Tuple, Dict
 import time
