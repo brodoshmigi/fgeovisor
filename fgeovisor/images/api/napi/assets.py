@@ -2,7 +2,7 @@ from typing import Generator, Any
 import asyncio
 
 import numpy as np
-import pandas as pd
+from pandas import DataFrame
 from pystac_client.client import Client
 
 from abstract import Assets
@@ -13,7 +13,7 @@ class SearchAssets(Assets):
         self.clients_pool = clients_pool
 
     # Параметры можно заменить на словарь
-    def get(self, collections: pd.DataFrame,
+    def get(self, collections: DataFrame,
             **kwargs) -> Generator[Any, Any, Any]:
         # -> pd.Dataframe() желательно
         # т.к. возвращать хочется больше инфы, чем просто ссылки
@@ -49,7 +49,7 @@ class ASearchAssets(Assets):
     def __init__(self, clients_pool):
         self.clients_pool = clients_pool
 
-    async def get(self, collections: pd.DataFrame, **kwargs):
+    async def get(self, collections: DataFrame, **kwargs):
         # -> pd.Dataframe() желательно
         # т.к. возвращать хочется больше инфы, чем просто ссылки
         # Но у нас тут еще и yield)
@@ -77,7 +77,7 @@ class ASearchAssets(Assets):
             tasks = [
                 tg.create_task(bounded_search(link=link)) for link in links
             ]
-        return pd.DataFrame({'href': all_assets})
+        return DataFrame({'href': all_assets})
 
     async def _search_assets(self, link: str, ids, **kwargs):
         items: Client = self.clients_pool.get_client(link=link)

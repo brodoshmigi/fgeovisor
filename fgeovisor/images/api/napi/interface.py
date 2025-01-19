@@ -18,8 +18,9 @@ import pandas as pd
 import auth
 from utils import ClientPool
 from loader import Download, ADownload
-from collection import SearchCollections
+from collection import SearchCollections, ASearchCollections
 from assets import SearchAssets, ASearchAssets
+
 
 class IDownload():
 
@@ -31,12 +32,29 @@ class IDownload():
         self.session = self.base.get_session()
 
     def download(self, url: str, name: str):
-        return Download().download(session=self.session,
-                                       url=url,
-                                       name=name)
+        return Download().download(session=self.session, url=url, name=name)
 
     def adownload(self, item_href: str, name: str = None):
         return ADownload().download(item_href=item_href, name=name)
+
+
+class ICollection():
+
+    def __init__(self,
+                 satelite_names: List[str] = None,
+                 catalog_list: List[str] = None,
+                 clients_pool=None):
+        self.args = {
+            'satelite_names': satelite_names,
+            'catalog_list': catalog_list,
+            'clients_pool': clients_pool
+        }
+
+    def get(self, area: Tuple | List = None, date: str = None):
+        return SearchCollections(**self.args).get_by_orgs(area=area, date=date)
+
+    def aget(self, area: Tuple | List = None, date: str = None):
+        return ASearchCollections(**self.args).get_by_orgs(area=area, date=date)
 
 
 class SearchEngine():
@@ -80,11 +98,11 @@ class ISearch():
     def search_collections(
             self,
             sat_names: List[str] = None,
-            catalog_filter: List[str] = None) -> SearchCollections:
+            catalog_filter: List[str] = None) -> ICollection:
 
-        return SearchCollections(satelite_names=sat_names,
-                                 catalog_list=catalog_filter,
-                                 clients_pool=self.clients_pool)
+        return ICollection(satelite_names=sat_names,
+                           catalog_list=catalog_filter,
+                           clients_pool=self.clients_pool)
 
     def search_items(self) -> SearchEngine:
         return SearchEngine(clients_pool=self.clients_pool)
@@ -106,7 +124,7 @@ def main():
         sat_names=['landsat', 'hlsl', 'sentinel', 'hlss'],
         catalog_filter=['USGS_LTA', 'LPDAAC_ECS', 'LPCLOUD', 'ESA'])
 
-    dt = api.get_by_orgs(**kw)
+    dt = api.get(**kw)
 
     time2 = time.perf_counter()
     print(f'{dt}\n{time2-time1:0.4f}')
@@ -141,7 +159,7 @@ async def amain():
         sat_names=['landsat', 'hlsl', 'sentinel', 'hlss'],
         catalog_filter=['USGS_LTA', 'LPDAAC_ECS', 'LPCLOUD', 'ESA'])
 
-    dt = await api.aget_by_orgs(**kw)
+    dt = await api.aget(**kw)
 
     time2 = time.perf_counter()
     print(f'{dt}\n{time2-time1:0.4f}')
