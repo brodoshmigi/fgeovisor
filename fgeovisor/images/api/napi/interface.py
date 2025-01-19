@@ -1,4 +1,5 @@
 from django.contrib.gis.gdal.raster.source import GDALRaster
+# Important: If GDALRaster is not imported in the main file, an exception will be thrown and the program will close.
 
 from typing import Optional, List, Tuple, Dict
 import time
