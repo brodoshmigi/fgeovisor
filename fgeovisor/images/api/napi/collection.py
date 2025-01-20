@@ -87,8 +87,8 @@ class ASearchCollections(Collections):
                 link = await queue.get()
                 async with sem:
                     collections = await self._search_collection(link=link,
-                                                                 bbox=area,
-                                                                 datetime=date)
+                                                                bbox=area,
+                                                                datetime=date)
                     filtered_collections = [{
                         'id': c['id'],
                         'href': link
@@ -112,6 +112,6 @@ class ASearchCollections(Collections):
         return DataFrame(true_collections)
 
     async def _search_collection(self, link: str, **kwargs):
-        client: Client = self.clients_pool.get_client(link=link)
+        client: Client = await self.clients_pool.aget_client(link=link)
         collections = client.collection_search(q='landsat', **kwargs)
         return collections

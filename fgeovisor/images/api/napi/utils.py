@@ -1,5 +1,6 @@
 from typing import List, Set, Generator
 from functools import lru_cache
+import asyncio
 
 import pystac as stac
 from pystac_client.client import Client
@@ -51,9 +52,25 @@ class ClientPool():
 
     def __init__(self):
         self.clients = {}
+        self._lock = asyncio.Lock()
 
     @lru_cache(maxsize=32)
     def get_client(self, link: str) -> Client:
         if link not in self.clients:
             self.clients[link] = Client.open(link)
         return self.clients[link]
+
+    async def aget_client(self, link: str) -> Client:
+        async with self._lock:
+            if link not in self.clients:
+                self.clients[link] = await asyncio.to_thread(Client.open, link)
+            return self.clients[link]
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        for client in self.clients.values():
+            if hasattr(client, 'close'):
+                await asyncio.to_thread(client.close)
+        self.clients.clear()

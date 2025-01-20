@@ -7,6 +7,7 @@ from pystac_client.client import Client
 
 from abstract import Assets
 
+
 class SearchAssets(Assets):
 
     def __init__(self, clients_pool):
@@ -50,18 +51,19 @@ class ASearchAssets(Assets):
         self.clients_pool = clients_pool
 
     async def get(self, collections: DataFrame, **kwargs):
-        # -> pd.Dataframe() желательно
-        # т.к. возвращать хочется больше инфы, чем просто ссылки
-        # Но у нас тут еще и yield)
         true_collections = collections
         links = true_collections['href'].drop_duplicates().tolist()
         ids = true_collections['id'].tolist()
 
-        sem = asyncio.Semaphore(10)
+        queue = asyncio.Queue()
         all_assets = []
 
-        async def bounded_search(link):
-            async with sem:
+        for link in links:
+            await queue.put(link)
+
+        async def worker():
+            while True:
+                link = await queue.get()
                 result = await self._search_assets(link=link,
                                                    ids=ids,
                                                    **kwargs)
@@ -71,16 +73,20 @@ class ASearchAssets(Assets):
                         for item in result.items_as_dicts()
                     ]
                     all_assets.extend(assets)
+                queue.task_done()
                 return result
 
-        async with asyncio.TaskGroup() as tg:
-            tasks = [
-                tg.create_task(bounded_search(link=link)) for link in links
-            ]
+        workers = [asyncio.create_task(worker()) for _ in range(10)]
+        await queue.join()
+
+        for w in workers:
+            w.cancel()
+        await asyncio.gather(*workers, return_exceptions=True)
+
         return DataFrame({'href': all_assets})
 
     async def _search_assets(self, link: str, ids, **kwargs):
-        items: Client = self.clients_pool.get_client(link=link)
+        items: Client = await self.clients_pool.aget_client(link=link)
         item_search = items.search(collections=ids,
                                    limit=50,
                                    query={"eo:cloud_cover": {
