@@ -7,6 +7,7 @@ from requests import Session
 
 from reqapi import NasaRequestAPI
 from decorators import formater
+from abstract import NasaAuthBase
 
 _N = TypeVar('_N')
 
@@ -21,25 +22,6 @@ class NasaAPIConfig():
 
     # Чат гпт сказал, что это хардкорщина, типо миядзаки-like?
     # TODO add webbrowser get creds
-
-
-class NasaAuthBase(ABC):
-    """
-    Абстракция класса для классов аутентификации: Basic и Bearer.
-    Грубо говоря, мы можем пойти в лес с топором, ножом или калашом.
-    Что выберешь?
-
-    Достаточно избыточно, но позволяет без лишних действий использовать
-    Любой класс аутентификации. Плюсом можно добавить новых.
-    """
-
-    @abstractmethod
-    def get_token(self) -> Dict[str, str]:
-        pass
-
-    @abstractmethod
-    def reset_token(self) -> Dict[_N, _N]:
-        return {}
 
 
 class BasicAuth(NasaAuthBase):
