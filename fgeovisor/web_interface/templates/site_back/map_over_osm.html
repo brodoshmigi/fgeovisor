@@ -61,7 +61,7 @@
         <button id="cancelButton" style="display: none;">Отменить</button>
     </div>
     <!-- Карта -->
-    <div id="map" onmousedown="document.getElementById('sidebar').style.width='0px'" ontouchstart ="document.getElementById('sidebar').style.width='0px'"></div>
+    <div id="map" onmousedown="document.getElementById('sidebar').style.width='0px'"></div>
 
     <!-- Кнопка открытия меню -->
     <button id="menuButton" class="menu-button" onmousedown="toggleSidebar()">☰</button>
@@ -86,8 +86,8 @@
             <h2>Вход</h2>
             <form method="post" action="{% url 'log-in' %}">
                 {% csrf_token %}
-                <input placeholder="Введите login" type="text" id="username" name="username" required>
-                <input placeholder="Введите пароль" type="password" id="password" name="password" required>
+                <input placeholder="Введите login" type="text" id="username" name="username" autocomplete="username" required>
+                <input placeholder="Введите пароль" type="password" id="password" name="password" autocomplete="current-password" required>
                 <button type="submit">Войти</button>
                 <div class="login-help">
                     <a href ='#' onclick="showRegistrationForm()">Нет аккаунта</a>
@@ -101,10 +101,10 @@
             <h2>Регистрация</h2>
             <form method="post" action="{% url 'sign-in' %}">
                 {% csrf_token %}
-                <input placeholder="Введите имя пользователя" type="text" id = "UserName" onsubmit="return validatePasswords()" name = "username" required>
-                <input placeholder="Введите email" type="text" id="regEmail" name="email" required>
-                <input placeholder="Введите пароль" type="password" id="regPassword" name="password" required>
-                <input placeholder="Повторите пароль" type="password" id="passwordConfirmation" name="passwordConfirmation" required>
+                <input placeholder="Введите имя пользователя" type="text" id = "UserName" onsubmit="return validatePasswords()" name = "username" autocomplete="username" required>
+                <input placeholder="Введите email" type="text" id="regEmail" name="email" required autocomplete="email">
+                <input placeholder="Введите пароль" type="password" id="regPassword" name="password" autocomplete="new-password" required>
+                <input placeholder="Повторите пароль" type="password" id="passwordConfirmation" name="passwordConfirmation" autocomplete="new-password" required>
                 <button type="submit">Зарегистрироваться</button>
             </form>
         </div>
