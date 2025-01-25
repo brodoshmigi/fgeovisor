@@ -203,3 +203,47 @@ export function showThemeSettings(){
 }
 
 window.showThemeSettings = showThemeSettings;
+
+
+
+export function handleCalendarClick() {
+    document.getElementById('calendarWrapper').style.display = 'block';
+    if (!document.getElementById('calendar-content').innerHTML) {
+        displayCalendar();
+    }
+}
+
+function displayCalendar() {
+    const container = document.getElementById('calendar-content');
+    container.innerHTML = `
+        <iframe src="https://calendar.google.com/calendar/embed?src=2502e8d9ee01e88e530b8c2a650e5b429f1e2c702cfb0f209cb1dcda5c33395e%40group.calendar.google.com&ctz=Europe%2FMoscow" 
+                style="border: 0" 
+                width="100%" 
+                height="600" 
+                frameborder="0" 
+                scrolling="no">
+        </iframe>
+    `;
+}
+
+window.handleCalendarClick = handleCalendarClick;
+
+
+export function initGoogleAPI() {
+    // Инициализация базовой функциональности календаря
+    console.log('Инициализация календаря');
+    // При инициализации проверяем и создаем необходимые элементы
+    if (!document.getElementById('calendarWrapper')) {
+        console.error('Элемент календаря не найден');
+        return;
+    }
+    // Вешаем обработчик на кнопку календаря
+    const calendarButton = document.getElementById('calendarButton');
+    if (calendarButton) {
+        calendarButton.onclick = handleCalendarClick;
+    }
+}
+
+window.initGoogleAPI = initGoogleAPI;
+
+window.handleCalendarClick = handleCalendarClick;

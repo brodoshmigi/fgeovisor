@@ -99,3 +99,12 @@ a:visited{
 	background: #38393c;
 	color: #ffffff
 	}
+
+#calendarWrapper {
+    background-color: #38393c;
+    color: white;
+}
+
+.calendar-day {
+    background-color: #434853;
+}

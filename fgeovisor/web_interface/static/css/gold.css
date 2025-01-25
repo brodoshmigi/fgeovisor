@@ -31,3 +31,8 @@ button{
 button:hover{
     background-color: gold;
 }
+
+.calendar-day:hover {
+    background-color: gold;
+    color: black;
+}
