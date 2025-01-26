@@ -28,3 +28,4 @@ ssl/
 ssl
 start_nginx.bat
 stop_nginx.bat
+api.js

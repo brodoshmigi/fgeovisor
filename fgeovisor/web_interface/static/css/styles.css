@@ -302,7 +302,10 @@ a:hover{
 
 .calendar-container {
     position: relative;
-    max-width: 300px;
+    width: 450px;
+    border-radius: 10px;
+    border-width: 10px;
+    border-color: white;
 }
 
 .calendar-header {
@@ -340,12 +343,19 @@ a:hover{
 }
 
 .calendar-header h3 {
-    margin: 0;
+    margin: 5px;
 }
 
 .close-calendar {
     cursor: pointer;
     font-size: 24px;
+    margin: 5px;
+}
+.close-calendar:hover,
+.close-calendar:focus {
+    color: crimson; /* Цвет текста при наведении */
+    text-decoration: none; /* Убираем подчеркивание */
+    cursor: pointer; /* Курсор в виде указателя */
 }
 
 #calendar-content ul {
@@ -361,4 +371,10 @@ a:hover{
 
 #calendar-content li:last-child {
     border-bottom: none;
+}
+
+.event-button {
+    margin-bottom: 10px;
+    margin-left: 10px;
+    width: 100px;
 }

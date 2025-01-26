@@ -1,25 +1,31 @@
 var savedTheme = localStorage.getItem('theme');
 
 export function toggleButtonDisplay(createVisible, finishVisible, cancelVisible) {
-    document.getElementById("createButton").style.display = createVisible ? "block" : "none";
-    document.getElementById("finishButton").style.display = finishVisible ? "block" : "none";
-    document.getElementById("cancelButton").style.display = cancelVisible ? "block" : "none";
+    const createButton = document.getElementById("createButton");
+    const finishButton = document.getElementById("finishButton");
+    const cancelButton = document.getElementById("cancelButton");
+
+    if (createButton) createButton.style.display = createVisible ? "block" : "none";
+    if (finishButton) finishButton.style.display = finishVisible ? "block" : "none";
+    if (cancelButton) cancelButton.style.display = cancelVisible ? "block" : "none";
 }
 
 window.toggleButtonDisplay = toggleButtonDisplay;
 
 // Функция для переключения бокового меню
-
 export function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
     const menuButton = document.getElementById("menuButton");
-    sidebar.style.width = sidebar.style.width === "250px" ? "0" : "250px";
-    if (savedTheme){
-        if (savedTheme === "light"){
-            menuButton.style.border = sidebar.style.width === "250px" ? "0px solid #20bab0" : "1px solid #20bab0";
-        }else{
-            menuButton.style.border = "0px solid #20bab0";
-            menuButton.style.boxShadow = sidebar.style.width === "250px" ? "none" : "0 2px 5px rgba(0, 0, 0, 0.3)"
+
+    if (sidebar && menuButton) {
+        sidebar.style.width = sidebar.style.width === "250px" ? "0" : "250px";
+        if (savedTheme) {
+            if (savedTheme === "light") {
+                menuButton.style.border = sidebar.style.width === "250px" ? "0px solid #20bab0" : "1px solid #20bab0";
+            } else {
+                menuButton.style.border = "0px solid #20bab0";
+                menuButton.style.boxShadow = sidebar.style.width === "250px" ? "none" : "0 2px 5px rgba(0, 0, 0, 0.3)";
+            }
         }
     }
 }
@@ -27,114 +33,137 @@ export function toggleSidebar() {
 window.toggleSidebar = toggleSidebar;
 
 // Функция для открытия модального окна
-
 function openModal() {
     const modal = document.getElementById("modal");
-    modal.style.display = "block"; // Показываем модальное окно
-    modal.addEventListener("click", handleOutsideClick);
+    if (modal) {
+        modal.style.display = "block";
+        modal.addEventListener("click", handleOutsideClick);
+    }
 }
 
 // Функция для закрытия модального окна
-
 export function closeModal() {
     const modal = document.getElementById("modal");
-    modal.style.display = "none"; // Скрываем модальное окно
-    document.getElementById("modalBody").innerHTML = ""; // Очищаем содержимое модального окна
-    loginerror = "False"
-    regerror = "False"
-    modal.removeEventListener("click", handleOutsideClick);
+    if (modal) {
+        modal.style.display = "none";
+        const modalBody = document.getElementById("modalBody");
+        if (modalBody) modalBody.innerHTML = "";
+        loginerror = "False";
+        regerror = "False";
+        modal.removeEventListener("click", handleOutsideClick);
+    }
 }
 
 window.closeModal = closeModal;
 
-function handleOutsideClick(event){
+function handleOutsideClick(event) {
     const modalContent = document.getElementById("modal-content");
-    if (!modalContent.contains(event.target)){
+    if (modalContent && !modalContent.contains(event.target)) {
         closeModal();
     }
 }
 
 // Функция для отображения формы входа
-
 export function showLoginForm() {
-    document.getElementById("modalBody").innerHTML = document.getElementById("loginForm").innerHTML; // Загружаем содержимое формы входа
+    const modalBody = document.getElementById("modalBody");
     const modal = document.getElementById("modal-content");
-    modal.style.width = "35%%";
-    modal.style.height = "350px%";
-    if (loginerror == "True"){
-        document.getElementById("errormsg").style.display = "block";
+
+    if (modalBody && modal) {
+        modalBody.innerHTML = document.getElementById("loginForm").innerHTML;
+        modal.style.width = "35%";
+        modal.style.height = "350px";
+        if (loginerror === "True") {
+            const errorMsg = document.getElementById("errormsg");
+            if (errorMsg) errorMsg.style.display = "block";
+        }
+        openModal();
+
+        const passwordFields = document.querySelectorAll("#modalBody input[type='password']");
+        passwordFields.forEach(function(field) {
+            field.style.width = "100%";
+        });
     }
-    openModal(); // Открываем модальное окно
-    var passwordField = document.querySelectorAll("#modalBody input[type='password']");
-    passwordField.forEach(function(field){
-        field.style.width = "100%"; // Изменяем ширину поля ввода пароля
-    });
 }
 
 window.showLoginForm = showLoginForm;
 
 // Функция для отображения формы регистрации
-
 export function showRegistrationForm() {
-    document.getElementById("modalBody").innerHTML = document.getElementById("registrationForm").innerHTML; // Загружаем содержимое формы регистрации
-    if (regerror == "True"){
-        document.getElementById("errorrg").style.display = "block";
-    }
+    const modalBody = document.getElementById("modalBody");
     const modal = document.getElementById("modal-content");
-    modal.style.width = "36%";
-    modal.style.height = "350px";
-    openModal(); // Открываем модальное окно
-    var form = document.querySelector("form[action]");
-    form.addEventListener("submit", function(event) {
-        var password = document.getElementById("regPassword").value;
-        var confirmPassword = document.getElementById("passwordConfirmation").value;
-        if (password !== confirmPassword) {
-            alert("Пароли не совпадают!");
-            // Предотвращаем отправку формы
-            event.preventDefault();
+
+    if (modalBody && modal) {
+        modalBody.innerHTML = document.getElementById("registrationForm").innerHTML;
+        modal.style.width = "36%";
+        modal.style.height = "350px";
+        if (regerror === "True") {
+            const errorRg = document.getElementById("errorrg");
+            if (errorRg) errorRg.style.display = "block";
         }
-    });
+        openModal();
+
+        const form = document.querySelector("form[action]");
+        if (form) {
+            form.addEventListener("submit", function(event) {
+                const password = document.getElementById("regPassword").value;
+                const confirmPassword = document.getElementById("passwordConfirmation").value;
+                if (password !== confirmPassword) {
+                    alert("Пароли не совпадают!");
+                    event.preventDefault();
+                }
+            });
+        }
+    }
 }
 
 window.showRegistrationForm = showRegistrationForm;
 
-//Смена бокового меню для пользователя
+// Смена бокового меню для пользователя
+export function switchsidebarcontent() {
+    const createButton = document.getElementById("createButton");
+    const loggedInButtons = document.getElementById("loggedinbuttons");
+    const defoltView = document.getElementById("defoltview");
+    const superuser = document.getElementById("superuser");
+    const uiButton = document.getElementById("ui-button");
 
-export function switchsidebarcontent(){
-    if (authcheck == "False"){
-        document.getElementById("createButton").style.display = "none";
-        document.getElementById("loggedinbuttons").style.display = "none";
-        document.getElementById("defoltview").style.display = "block";
-    }else{
-        document.getElementById("loggedinbuttons").style.display = "block";
-        document.getElementById("defoltview").style.display = "none";
-        if (isadmin == "False"){
-            document.getElementById("superuser").style.display = "none";
-        }else{
-            document.getElementById("superuser").style.display = "block";
+    if (authcheck === "False") {
+        if (createButton) createButton.style.display = "none";
+        if (loggedInButtons) loggedInButtons.style.display = "none";
+        if (defoltView) defoltView.style.display = "block";
+    } else {
+        if (loggedInButtons) loggedInButtons.style.display = "block";
+        if (defoltView) defoltView.style.display = "none";
+        if (isadmin === "False") {
+            if (superuser) superuser.style.display = "none";
+        } else {
+            if (superuser) superuser.style.display = "block";
         }
-        document.getElementById('ui-button').style.display = "block";
+        if (uiButton) uiButton.style.display = "block";
     }
-    if (loginerror == "True"){
+
+    if (loginerror === "True") {
         showLoginForm();
     }
-    if (regerror == "True"){
+    if (regerror === "True") {
         showRegistrationForm();
     }
 }
 
-// темы и всё, что с ними связано
+window.switchsidebarcontent = switchsidebarcontent;
 
+// Функции для работы с темами
 export function switchTheme(themChoose) {
     const themeLink = document.getElementById('theme');
-    if (themChoose === "dark"){
-        themeLink.setAttribute("href",staticUrls.dark);
-        localStorage.setItem('theme','dark');
-        savedTheme = "dark";
-    }else{
-        themeLink.setAttribute("href",staticUrls.light);
-        localStorage.setItem('theme','light');
-        savedTheme = "light";
+    if (themeLink) {
+        if (themChoose === "dark") {
+            themeLink.setAttribute("href", staticUrls.dark);
+            localStorage.setItem('theme', 'dark');
+            savedTheme = "dark";
+        } else {
+            themeLink.setAttribute("href", staticUrls.light);
+            localStorage.setItem('theme', 'light');
+            savedTheme = "light";
+        }
     }
 }
 
@@ -144,99 +173,137 @@ export function autoSwitchTheme() {
     const themeLink = document.getElementById('theme');
     const savedTheme = localStorage.getItem('theme');
     const savedColor = localStorage.getItem('selectedColor');
-    if (savedTheme) {
-        if (savedTheme === 'dark') {
-            themeLink.setAttribute('href', staticUrls.dark);
+
+    if (themeLink) {
+        if (savedTheme) {
+            if (savedTheme === 'dark') {
+                themeLink.setAttribute('href', staticUrls.dark);
+            } else {
+                themeLink.setAttribute('href', staticUrls.light);
+            }
         } else {
-            themeLink.setAttribute('href', staticUrls.light);
-        }
-    } else {
-        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            themeLink.setAttribute('href', staticUrls.dark);
-        } else {
-            themeLink.setAttribute('href', staticUrls.light);
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                themeLink.setAttribute('href', staticUrls.dark);
+            } else {
+                themeLink.setAttribute('href', staticUrls.light);
+            }
         }
     }
+
     if (savedColor) {
         polygonLayerGroup.eachLayer(function(layer) {
             layer.setStyle({ color: savedColor });
         });
 
         const colorLink = document.getElementById('colors');
-        colorLink.setAttribute('href', staticUrls[savedColor]);
+        if (colorLink) {
+            colorLink.setAttribute('href', staticUrls[savedColor]);
+        }
     }
 }
-
 
 window.autoSwitchTheme = autoSwitchTheme;
 
 export function switchColor(color) {
     const colorLink = document.getElementById('colors');
     let selectedColor;
+
     if (color === "blue") {
-        colorLink.setAttribute("href", staticUrls.deepskyblue);
         selectedColor = "deepskyblue";
     } else if (color === "red") {
-        colorLink.setAttribute("href", staticUrls.crimson);
         selectedColor = "crimson";
     } else if (color === "gold") {
-        colorLink.setAttribute("href", staticUrls.gold);
         selectedColor = "gold";
     } else if (color === "purple") {
-        colorLink.setAttribute("href", staticUrls.blueviolet);
         selectedColor = "blueviolet";
     }
+
+    if (colorLink) {
+        colorLink.setAttribute("href", staticUrls[selectedColor]);
+    }
+
     polygonLayerGroup.eachLayer(function(layer) {
         layer.setStyle({ color: selectedColor });
     });
+
     localStorage.setItem('selectedColor', selectedColor);
 }
 
 window.switchColor = switchColor;
 
-export function showThemeSettings(){
-    document.getElementById("modalBody").innerHTML = document.getElementById("themeSettings").innerHTML;
+export function showThemeSettings() {
+    const modalBody = document.getElementById("modalBody");
     const modal = document.getElementById("modal-content");
-    modal.style.width = "350px";
-    modal.style.height = "auto";
-    openModal();
+
+    if (modalBody && modal) {
+        modalBody.innerHTML = document.getElementById("themeSettings").innerHTML;
+        modal.style.width = "350px";
+        modal.style.height = "auto";
+        openModal();
+    }
 }
 
 window.showThemeSettings = showThemeSettings;
 
+// Функция для получения событий из календаря
+async function fetchPublicCalendarEvents() {
+    const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events?key=${apiKey}`;
 
-
-export function handleCalendarClick() {
-    document.getElementById('calendarWrapper').style.display = 'block';
-    if (!document.getElementById('calendar-content').innerHTML) {
-        displayCalendar();
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log('События календаря:', data.items);
+        return data.items;
+    } catch (error) {
+        console.error('Ошибка при получении событий:', error);
+        return [];
     }
 }
 
-function displayCalendar() {
-    const container = document.getElementById('calendar-content');
-    container.innerHTML = `
-        <iframe src="https://calendar.google.com/calendar/embed?src=2502e8d9ee01e88e530b8c2a650e5b429f1e2c702cfb0f209cb1dcda5c33395e%40group.calendar.google.com&ctz=Europe%2FMoscow" 
-                style="border: 0" 
-                width="100%" 
-                height="600" 
-                frameborder="0" 
-                scrolling="no">
-        </iframe>
-    `;
-}
-
-window.handleCalendarClick = handleCalendarClick;
-
-
-export function initGoogleAPI() {
-    // Инициализация базовой функциональности календаря
-    console.log('Инициализация календаря');
-    // При инициализации проверяем и создаем необходимые элементы
-    if (!document.getElementById('calendarWrapper')) {
-        console.error('Элемент календаря не найден');
+// Функция для отображения событий на странице
+function displayEvents(events) {
+    const eventsContainer = document.getElementById('events-container');
+    if (!eventsContainer) {
+        console.error('Контейнер для событий не найден!');
         return;
     }
+
+    // Очищаем контейнер перед добавлением новых событий
+    eventsContainer.innerHTML = '';
+
+    if (events.length === 0) {
+        eventsContainer.innerHTML = '<p>Событий нет.</p>';
+        return;
+    }
+
+    // Создаем HTML для каждого события
+    events.forEach(event => {
+        const eventElement = document.createElement('button');
+        eventElement.className = 'event-button';
+        eventElement.innerHTML = `
+            <p>${new Date(event.start.date).toLocaleDateString()}</p>
+        `;
+        eventElement.addEventListener('click', function() {
+            //вставить return
+            alert(event.start.date)
+        })
+        eventsContainer.appendChild(eventElement);
+    });
+}
+
+// Функция для отображения календаря
+function handleCalendarClick() {
+    const calendarWrapper = document.getElementById('calendarWrapper');
+    if (calendarWrapper) {
+        calendarWrapper.style.display = 'block';
+        fetchPublicCalendarEvents().then(events => displayEvents(events));
+    }
+}
+
+// Инициализация календаря
+export async function initGoogleAPI() {
+    console.log('Инициализация календаря');
+
     // Вешаем обработчик на кнопку календаря
     const calendarButton = document.getElementById('calendarButton');
     if (calendarButton) {
@@ -244,6 +311,9 @@ export function initGoogleAPI() {
     }
 }
 
+// Добавляем функции в глобальную область видимости
+window.handleCalendarClick = handleCalendarClick;
 window.initGoogleAPI = initGoogleAPI;
 
-window.handleCalendarClick = handleCalendarClick;
+// Вызов функции после загрузки DOM
+document.addEventListener('DOMContentLoaded', initGoogleAPI);

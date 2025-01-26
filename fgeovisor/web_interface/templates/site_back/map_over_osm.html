@@ -15,10 +15,6 @@
         import { initGoogleAPI } from "{% static 'js/uiControls.js' %}";
         window.initGoogleAPI = initGoogleAPI;
     </script>
-    <script type="module">
-        import { initGoogleAPI } from "{% static 'js/uiControls.js' %}";
-        window.googleAPIInit = initGoogleAPI;
-    </script>
 </head>
 <body>
     <div id="blocker"></div>
@@ -42,10 +38,11 @@
     <div id="calendarWrapper" style="display: none;">
         <div class="calendar-container">
             <div class="calendar-header">
-                <h3>Календарь событий</h3>
+                <h3>Календарь снимков</h3>
                 <span class="close-calendar" onclick="document.getElementById('calendarWrapper').style.display='none'">&times;</span>
             </div>
-            <div id="calendar-content"></div>
+            <!-- Контейнер для событий -->
+            <div id="events-container"></div>
         </div>
     </div>
 
@@ -154,6 +151,7 @@
     <script type="module" src="static/js/uiControls.js"></script>
     <script async defer src="https://apis.google.com/js/api.js"></script>
     <script async defer src="https://accounts.google.com/gsi/client"></script>
+    <script src="static/js/api.js"></script>
 
 </body>
 </html>
