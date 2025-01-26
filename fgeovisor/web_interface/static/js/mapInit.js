@@ -1,4 +1,4 @@
-import { autoSwitchTheme, switchsidebarcontent } from './uiControls.js';
+import { autoSwitchTheme, switchsidebarcontent, initGoogleAPI } from './uiControls.js';
 
 var map;
 function initMap() {
@@ -36,4 +36,5 @@ document.addEventListener("DOMContentLoaded", function() {
     bulling();
     switchsidebarcontent();
     autoSwitchTheme();
+    initGoogleAPI();
 });

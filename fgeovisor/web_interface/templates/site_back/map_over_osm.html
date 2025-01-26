@@ -11,6 +11,10 @@
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/mainColors.css' %}">
     <link rel="stylesheet" id="colors" href="{% static 'css/deepskyblue.css' %}">
+    <script type="module">
+        import { initGoogleAPI } from "{% static 'js/uiControls.js' %}";
+        window.initGoogleAPI = initGoogleAPI;
+    </script>
 </head>
 <body>
     <div id="blocker"></div>
@@ -27,6 +31,19 @@
             <a href="{% url 'log-out' %}">Выйти</a>
         </div>
         <a href="#" id="themeButton" onclick="showThemeSettings()">Внешний вид</a>
+        <!-- Добавляем кнопку календаря -->
+        <a href="#" id="calendarButton" onclick="handleAuthClick()">Календарь</a>
+    </div>
+    <!-- Добавляем контейнер календаря -->
+    <div id="calendarWrapper" style="display: none;">
+        <div class="calendar-container">
+            <div class="calendar-header">
+                <h3>Календарь снимков</h3>
+                <span class="close-calendar" onclick="document.getElementById('calendarWrapper').style.display='none'">&times;</span>
+            </div>
+            <!-- Контейнер для событий -->
+            <div id="events-container"></div>
+        </div>
     </div>
 
     <div id="themeSettings" style="display: none;">
@@ -132,6 +149,9 @@
     <script src="static/js/polygonManager.js"></script>
     <script src="static/js/calculations.js"></script>
     <script type="module" src="static/js/uiControls.js"></script>
+    <script async defer src="https://apis.google.com/js/api.js"></script>
+    <script async defer src="https://accounts.google.com/gsi/client"></script>
+    <script src="static/js/api.js"></script>
 
 </body>
 </html>
