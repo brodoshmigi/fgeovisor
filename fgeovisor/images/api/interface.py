@@ -15,11 +15,11 @@ import asyncio
 
 import pandas as pd
 
-from auth import NasaAPIBase, NasaAPIConfig
-from utils import ClientPool
-from loader import Download, ADownload
-from collection import SearchCollections, ASearchCollections
-from assets import SearchAssets, ASearchAssets
+from napi.auth import NasaAPIBase, NasaAPIConfig
+from napi.utils import ClientPool
+from napi.loader import Download, ADownload
+from napi.collection import SearchCollections, ASearchCollections
+from napi.assets import SearchAssets, ASearchAssets
 
 
 class IDownload():
@@ -136,7 +136,7 @@ def main():
 
     links = api2.get_assets(collection=dt, max_items=20, **kw)
 
-    config = NasaAPIConfig('shii', '6451Yyul1234/')
+    config = NasaAPIConfig('', '')
     lbase = NasaAPIBase(config=config)
 
     api3 = base.loader(sauth=lbase)
@@ -170,7 +170,7 @@ async def amain():
     api2 = base.search_items()
 
     time3 = perf_counter()
-    links = await api2.aget_assets(collection=dt, max_items=20, **kw)
+    links = await api2.aget_assets(collection=dt, max_items=5, **kw)
 
     time4 = perf_counter()
     print(f'{links}\n{time4-time3:0.4f}')

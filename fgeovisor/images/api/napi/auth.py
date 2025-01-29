@@ -1,13 +1,12 @@
 from dataclasses import dataclass
-from abc import ABC, abstractmethod
 from base64 import b64encode
 from typing import TypeVar, Dict, Optional
 
 from requests import Session
 
-from reqapi import NasaRequestAPI
-from decorators import formater
-from abstract import NasaAuthBase
+from core.io_default_api import IODefaultAPI, nasa_hosts
+from .decorators import formater
+from .abstract import NasaAuthBase
 
 _N = TypeVar('_N')
 
@@ -48,7 +47,7 @@ class BearerAuth(NasaAuthBase):
     def __init__(self, token: Dict[str, str]):
         self.token = token
         # Это просто рофлз, bearer токен получить можно только через обращение к api
-        self.http = NasaRequestAPI()
+        self.http = IODefaultAPI(nasa_hosts)
 
     def get_token(self) -> Dict[str, str]:
         # TODO make request to /api/users/tokens
@@ -102,32 +101,32 @@ class NasaAPICall():
     def __init__(self, auth: AuthManager):
         # Вместо прямого наследования просто добавляем методы в класс
         self.auth = auth
-        self.api = NasaRequestAPI()
+        self.api = IODefaultAPI(nasa_hosts)
 
     @formater(True)
-    def get_oauth_profile(self, utype: str = 'PROD'):
+    def get_oauth_profile(self, urltype: str = 'PROD'):
         return self.api.make_request('GET',
                                      '/oauth/userInfo',
                                      token=self.auth.get_bearer_token(),
-                                     utype=utype)
+                                     urltype=urltype)
 
     @formater(True)
-    def get_oauth_token(self):
+    def get_oauth_token(self, urltype: str = 'DEV'):
         fields = {'grant_type': 'client_credentials'}
         return self.api.make_request('POST',
                                      '/oauth/token',
                                      token=self.auth.get_bearer_token(),
                                      fields=fields,
-                                     utype='DEV')
+                                     urltype=urltype)
 
     @formater(True)
-    def get_user_id(self):
+    def get_user_id(self, urltype: str = 'PROD'):
         fields = {'client_id': CLIENT_ID, 'grant_type': 'client_credentials'}
-        # DI нужно будет сделать, а то беда беда
         return self.api.make_request('GET',
                                      f'/api/users/shii',
                                      token=self.auth.get_bearer_token(),
-                                     fields=fields)
+                                     fields=fields,
+                                     urltype=urltype)
 
 
 class NasaSessionAPI():
@@ -135,7 +134,7 @@ class NasaSessionAPI():
     def __init__(self, auth: AuthManager):
         self.auth = auth
         self.session = Session()
-        self.api = NasaRequestAPI()
+        self.api = IODefaultAPI(nasa_hosts)
         self.redirect_uri = 'https://data.lpdaac.earthdatacloud.nasa.gov/login'
 
     def create_session(self):

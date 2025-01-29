@@ -2,14 +2,13 @@ from django.contrib.gis.gdal.raster.source import GDALRaster
 from typing import List
 
 from requests import Session
-
-from requests import Session
 from aiohttp import ClientSession
 from asyncio import gather
 from uuid import uuid4
 
-from abstract import Download
-from gdal_staff import tif_creator
+from .abstract import Download
+from core.gdal_staff import tif_creator
+
 
 class Download(Download):
 

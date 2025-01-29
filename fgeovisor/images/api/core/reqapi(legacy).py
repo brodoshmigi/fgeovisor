@@ -9,7 +9,7 @@ DEV_URL: str = 'https://uat.urs.earthdata.nasa.gov'
 DEFAULT_HEADERS: Dict[str, str] = {'user-agent': 'python-urllib3/0.6'}
 
 
-class NasaRequestAPI():
+class IODefaultAPI():
 
     def __init__(self):
         self.http = PoolManager()
@@ -40,9 +40,9 @@ class NasaRequestAPI():
                      utype: str = 'PROD') -> BaseHTTPResponse:
         #
         url = self.build_url(endpoint, utype=utype)
-        headers = self.prepare_headers(token=token)
-        response = self.http.request(method,
-                                     url,
-                                     headers=headers,
+        prepared_headers = self.prepare_headers(token=token)
+        response = self.http.request(method=method,
+                                     url=url,
+                                     headers=prepared_headers,
                                      fields=fields)
         return response

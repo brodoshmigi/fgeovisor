@@ -4,8 +4,8 @@ import asyncio
 from pandas import DataFrame, concat
 from pystac_client.client import Client
 
-from utils import SearchCatalog
-from abstract import Collections
+from .utils import SearchCatalog
+from .abstract import Collections
 
 
 class SearchCollections(Collections):
