@@ -5,7 +5,7 @@ from typing import TypeVar, Dict, Optional
 
 from requests import Session
 
-from reqapi import NasaRequestAPI
+from io_default_api import IODefaultAPI
 from decorators import formater
 from abstract import NasaAuthBase
 
@@ -48,7 +48,7 @@ class BearerAuth(NasaAuthBase):
     def __init__(self, token: Dict[str, str]):
         self.token = token
         # Это просто рофлз, bearer токен получить можно только через обращение к api
-        self.http = NasaRequestAPI()
+        self.http = IODefaultAPI()
 
     def get_token(self) -> Dict[str, str]:
         # TODO make request to /api/users/tokens
@@ -102,7 +102,7 @@ class NasaAPICall():
     def __init__(self, auth: AuthManager):
         # Вместо прямого наследования просто добавляем методы в класс
         self.auth = auth
-        self.api = NasaRequestAPI()
+        self.api = IODefaultAPI()
 
     @formater(True)
     def get_oauth_profile(self, utype: str = 'PROD'):
@@ -135,7 +135,7 @@ class NasaSessionAPI():
     def __init__(self, auth: AuthManager):
         self.auth = auth
         self.session = Session()
-        self.api = NasaRequestAPI()
+        self.api = IODefaultAPI()
         self.redirect_uri = 'https://data.lpdaac.earthdatacloud.nasa.gov/login'
 
     def create_session(self):
