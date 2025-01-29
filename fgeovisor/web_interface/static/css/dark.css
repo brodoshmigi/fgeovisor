@@ -116,3 +116,8 @@ a:visited{
 iframe {
     filter: invert(1) hue-rotate(180deg); /* Инверсия для темной темы */
 }
+
+.ndvi-value-display {
+    background-color: #38393c;
+    color: white;
+}

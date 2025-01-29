@@ -302,8 +302,6 @@ function handleCalendarClick() {
 
 // Инициализация календаря
 export async function initGoogleAPI() {
-    console.log('Инициализация календаря');
-
     // Вешаем обработчик на кнопку календаря
     const calendarButton = document.getElementById('calendarButton');
     if (calendarButton) {
@@ -314,6 +312,3 @@ export async function initGoogleAPI() {
 // Добавляем функции в глобальную область видимости
 window.handleCalendarClick = handleCalendarClick;
 window.initGoogleAPI = initGoogleAPI;
-
-// Вызов функции после загрузки DOM
-document.addEventListener('DOMContentLoaded', initGoogleAPI);
