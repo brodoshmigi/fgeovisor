@@ -1,7 +1,7 @@
 ---
 name: Question
 about: Describe your question about the code or the project.
-title: "[Question]"
+title: "[Q]:"
 labels: question
 assignees: ''
 

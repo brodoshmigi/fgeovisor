@@ -1,7 +1,7 @@
 ---
 name: BUG
 about: Create a report to help us improve
-title: "[BUG]"
+title: "[B]-LVL(0 - 5):"
 labels: bug
 assignees: ''
 
