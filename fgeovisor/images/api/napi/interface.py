@@ -136,7 +136,7 @@ def main():
 
     links = api2.get_assets(collection=dt, max_items=20, **kw)
 
-    config = NasaAPIConfig('shii', '6451Yyul1234/')
+    config = NasaAPIConfig('', '')
     lbase = NasaAPIBase(config=config)
 
     api3 = base.loader(sauth=lbase)
