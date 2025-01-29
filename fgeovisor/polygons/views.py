@@ -65,9 +65,13 @@ class DeletePolygon(APIView):
         # id должен быть, т.к. js отсылает тупо строчку - это неправильно
         # тесты с этим также не провести, и + в будущем нужно будет токен иметь
         PolygonInstance = Polygons.get(polygon_id=request.data["id"])
-        delete_image(PolygonInstance)
-        PolygonInstance.delete()
-        return Response({"success": 'deleted'})
+        try:
+            delete_image(PolygonInstance)
+        except:
+            pass
+        finally:
+            PolygonInstance.delete()
+            return Response({"success": 'deleted'})
 
 class UpdatePolygon(APIView):
     """

@@ -378,3 +378,11 @@ a:hover{
     margin-left: 10px;
     width: 100px;
 }
+
+.ndvi-value-display {
+    position: absolute;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+    pointer-events: none; /* Чтобы элемент не блокировал другие события */
+}
