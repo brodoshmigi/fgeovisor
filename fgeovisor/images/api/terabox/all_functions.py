@@ -48,6 +48,22 @@ from urllib3 import PoolManager
 # GET https://www.terabox.com/rest/2.0/pcs/file
 # # p|f [method(locateupload)]
 
+# FILE UPLOAD
+# POST https://www.terabox.com/api/precreate?
+# # p|f [app_id, web, channel, clienttype, jsToken, dp-logid]
+# # form data: b|h [path, autoinit, target_path, block_list, size, file_limit_switch_v34, local_mtime]
+#
+# OPTIONS https://c-jp.terabox.com/rest/2.0/pcs/superfile2?
+# # p|f [method(upload), app_id, web, channel, clienttype, logid, path, uploadid, uploadsign, partseq]
+#
+# POST https://c-jp.terabox.com/rest/2.0/pcs/superfile2?
+# # p|f [method(upload), app_id, web, channel, clienttype, logid, path, uploadid, uploadsign, partseq]
+# # b|h [file]
+#
+# POST https://www.terabox.com/api/create?
+# # p|f [isdir(0), rtype(1), bdstoken, app_id, web, channel, clienttype, jsToken, dp-logid]
+# # b|h [path, size, uploadid, target_path, block_list, local_mtime]
+
 '''OPEN-API'''
 
 # https://www.terabox.com/integrations/docs?lang=en
