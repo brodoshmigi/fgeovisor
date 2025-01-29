@@ -136,7 +136,7 @@ def main():
 
     links = api2.get_assets(collection=dt, max_items=20, **kw)
 
-    config = NasaAPIConfig('shii', '6451Yyul1234/')
+    config = NasaAPIConfig('', '')
     lbase = NasaAPIBase(config=config)
 
     api3 = base.loader(sauth=lbase)
@@ -175,7 +175,7 @@ async def amain():
     time4 = perf_counter()
     print(f'{links}\n{time4-time3:0.4f}')
 
-    user = NasaAPIConfig('shii', '6451Yyul1234/')
+    user = NasaAPIConfig('', '')
     creds = NasaAPIBase(config=user)
 
     lof_links = links['href'].to_list()
