@@ -208,14 +208,14 @@ export function switchColor(color) {
     const colorLink = document.getElementById('colors');
     let selectedColor;
 
-    if (color === "blue") {
-        selectedColor = "deepskyblue";
-    } else if (color === "red") {
-        selectedColor = "crimson";
-    } else if (color === "gold") {
-        selectedColor = "gold";
-    } else if (color === "purple") {
-        selectedColor = "blueviolet";
+    if (color === "blue_crayola") {
+        selectedColor = "blue_crayola";
+    } else if (color === "dark_cyan") {
+        selectedColor = "dark_cyan";
+    } else if (color === "green_crayola") {
+        selectedColor = "green_crayola";
+    } else if (color === "orange_crayola") {
+        selectedColor = "orange_crayola";
     }
 
     if (colorLink) {

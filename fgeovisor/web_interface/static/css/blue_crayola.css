@@ -1,38 +1,38 @@
-/* Акцентные цвета: DeepSkyBlue */
+/* Акцентные цвета: #1A4F63 */
 
 /* Прогресс-бар */
 .progress-bar {
-    background-color: deepskyblue;
+    background-color: #1A4F63;
 }
 
 #progressBar {
-    background: deepskyblue;
+    background: #1A4F63;
 }
 
 /* Кнопка открытия меню при наведении */
 .menu-button:hover {
-    background-color: deepskyblue;
+    background-color: #1A4F63;
 }
 
 a:hover {
-    color: deepskyblue;
+    color: #1A4F63;
 }
 
 /* Кнопка внутри всплывающего окна */
 .leaflet-popup-content-wrapper button {
-    background-color: deepskyblue;
+    background-color: #1A4F63;
     color: white;
 }
 
 button{
-    background-color: rgb(29, 165, 211);
+    background-color: #1A4876;
 }
 
 button:hover{
-    background-color: deepskyblue;
+    background-color: #1A4F63;
 }
 
 .calendar-day:hover {
-    background-color: deepskyblue;
+    background-color: #1A4F63;
     color: white;
 }

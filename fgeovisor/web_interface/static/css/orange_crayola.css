@@ -1,38 +1,38 @@
-/* Акцентные цвета: blueviolet */
+/* Акцентные цвета: #FCB03C */
 
 /* Прогресс-бар */
 .progress-bar {
-    background-color: blueviolet;
+    background-color: #FCB03C;
 }
 
 #progressBar {
-    background: blueviolet;
+    background: #FCB03C;
 }
 
 /* Кнопка открытия меню при наведении */
 .menu-button:hover {
-    background-color: blueviolet;
+    background-color: #FCB03C;
 }
 
 a:hover {
-    color: blueviolet;
+    color: #FCB03C;
 }
 
 /* Кнопка внутри всплывающего окна */
 .leaflet-popup-content-wrapper button {
-    background-color: blueviolet;
+    background-color: #FCB03C;
     color: white;
 }
 
 button{
-    background-color: rgb(141, 71, 206);
+    background-color: #FFAE42;
 }
 
 button:hover{
-    background-color: blueviolet;
+    background-color: #FCB03C;
 }
 
 .calendar-day:hover {
-    background-color: blueviolet;
+    background-color: #FCB03C;
     color: white;
 }

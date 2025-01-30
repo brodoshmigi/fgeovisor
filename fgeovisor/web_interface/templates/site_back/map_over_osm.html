@@ -10,7 +10,7 @@
     <link id="theme" rel="stylesheet" href="{% static 'css/light.css' %}">
     <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
     <link rel="stylesheet" href="{% static 'css/mainColors.css' %}">
-    <link rel="stylesheet" id="colors" href="{% static 'css/deepskyblue.css' %}">
+    <link rel="stylesheet" id="colors" href="{% static 'css/blue_crayola.css' %}">
     <script type="module">
         import { initGoogleAPI } from "{% static 'js/uiControls.js' %}";
         window.initGoogleAPI = initGoogleAPI;
@@ -58,10 +58,10 @@
             <div class="section">
                 <div class="section-title">Цвет акцента</div>
                 <div class="accent-colors">
-                    <button style="background-color: deepskyblue;" onclick="switchColor('blue')"></button>
-                    <button style="background-color: crimson;" onclick="switchColor('red')"></button>
-                    <button style="background-color: blueviolet;"onclick="switchColor('purple')"></button>
-                    <button style="background-color: gold;" onclick="switchColor('gold')"></button>
+                    <button style="background-color: #1A4F63;" onclick="switchColor('blue_crayola')"></button>
+                    <button style="background-color: #068587;" onclick="switchColor('dark_cyan')"></button>
+                    <button style="background-color: #FCB03C;"onclick="switchColor('orange_crayola')"></button>
+                    <button style="background-color: #6FB07F;" onclick="switchColor('green_crayola')"></button>
                 </div>
             </div>
         </div>
@@ -136,10 +136,10 @@
         const staticUrls = {
             light: "{% static 'css/light.css' %}",
             dark: "{% static 'css/dark.css' %}",
-            deepskyblue: "{% static 'css/deepskyblue.css' %}",
-            crimson: "{% static 'css/crimson.css' %}",
-            gold: "{% static 'css/gold.css' %}",
-            blueviolet: "{% static 'css/blueviolet.css' %}"
+            blue_crayola: "{% static 'css/blue_crayola.css' %}",
+            dark_cyan: "{% static 'css/dark_cyan.css' %}",
+            green_crayola: "{% static 'css/green_crayola.css' %}",
+            orange_crayola: "{% static 'css/orange_crayola.css' %}"
         };
     </script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
