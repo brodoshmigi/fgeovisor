@@ -28,7 +28,7 @@
             <div id="superuser">
                 <a href="{% url 'admin:index' %}">Панель админа</a>
             </div>
-            <a href="{% url 'log-out' %}">Выйти</a>
+            <a href="#" onclick="logout()">Выйти</a>
         </div>
         <a href="#" id="themeButton" onclick="showThemeSettings()">Внешний вид</a>
         <!-- Добавляем кнопку календаря -->
@@ -101,11 +101,11 @@
             <!-- Содержимое файла login.html -->
             <div class="errormsg" id="errormsg"><p>Неправильное имя пользователя или пароль</p></div>
             <h2>Вход</h2>
-            <form method="post" action="{% url 'log-in' %}">
+            <form onsubmit="auth(event)">
                 {% csrf_token %}
                 <input placeholder="Введите login" type="text" id="username" name="username" autocomplete="username" required>
                 <input placeholder="Введите пароль" type="password" id="password" name="password" autocomplete="current-password" required>
-                <button type="submit">Войти</button>
+                <button>Войти</button>
                 <div class="login-help">
                     <a href ='#' onclick="showRegistrationForm()">Нет аккаунта</a>
                 </div>
@@ -116,9 +116,9 @@
             <!-- Содержимое файла registration.html -->
             <div class="errormsg" id="errorrg"><p>Неверные данные или пользователь уже существует</p></div>
             <h2>Регистрация</h2>
-            <form method="post" action="{% url 'sign-in' %}">
+            <form onsubmit="register(event)">
                 {% csrf_token %}
-                <input placeholder="Введите имя пользователя" type="text" id = "UserName" onsubmit="return validatePasswords()" name = "username" autocomplete="username" required>
+                <input placeholder = "Введите имя пользователя" type="text" id = "UserName" onsubmit="return validatePasswords()" name = "username" autocomplete="username" required>
                 <input placeholder="Введите email" type="text" id="regEmail" name="email" required autocomplete="email">
                 <input placeholder="Введите пароль" type="password" id="regPassword" name="password" autocomplete="new-password" required>
                 <input placeholder="Повторите пароль" type="password" id="passwordConfirmation" name="passwordConfirmation" autocomplete="new-password" required>
@@ -127,7 +127,7 @@
         </div>
     </div>
     <script>
-        const csrfToken = document.querySelector('[name = csrfmiddlewaretoken]').value;
+        var csrfToken = document.querySelector('[name = csrfmiddlewaretoken]').value;
         var authcheck = "{{auth_check | safe}}";
         var isadmin = "{{is_staff | safe}}";
         var loginerror = "{{login_error | safe}}"
@@ -136,10 +136,10 @@
         const staticUrls = {
             light: "{% static 'css/light.css' %}",
             dark: "{% static 'css/dark.css' %}",
-            blue_crayola: "{% static 'css/blue_crayola.css' %}",
-            dark_cyan: "{% static 'css/dark_cyan.css' %}",
-            green_crayola: "{% static 'css/green_crayola.css' %}",
-            orange_crayola: "{% static 'css/orange_crayola.css' %}"
+            "#1A4F63": "{% static 'css/blue_crayola.css' %}",
+            "#068587": "{% static 'css/dark_cyan.css' %}",
+            "#6FB07F": "{% static 'css/green_crayola.css' %}",
+            "#FCB03C": "{% static 'css/orange_crayola.css' %}"
         };
     </script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -150,6 +150,6 @@
     <script src="static/js/calculations.js"></script>
     <script type="module" src="static/js/uiControls.js"></script>
     <script src="static/js/api.js"></script>
-
+    <script src="static/js/userstate.js"></script>
 </body>
 </html>

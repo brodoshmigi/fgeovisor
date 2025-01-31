@@ -16,7 +16,7 @@ function displayPolygons(geojsonData){
     // очищаем слой полигонов во избежание фатомных элементов
     polygonLayerGroup.clearLayers();
     // создаём полигон по заданным в файле параметрам
-    const savedColor = localStorage.getItem('selectedColor') || 'deepskyblue';
+    const savedColor = localStorage.getItem('selectedColor') || 'blue_crayola';
 
     // Создаем полигон с заданным цветом
     L.geoJSON(geojsonData, {
@@ -102,7 +102,7 @@ async function deletePolygon(layer) {
 function createPolygon(){
     //манипуляции с кнопками в правой части экрана
     toggleButtonDisplay(false, true, true);
-    const savedColor = localStorage.getItem('selectedColor') || 'deepskyblue';
+    const savedColor = localStorage.getItem('selectedColor') || 'blue_crayola';
 
     //создание пустого полигона и линий предпросмотра
     let latLng = [];
