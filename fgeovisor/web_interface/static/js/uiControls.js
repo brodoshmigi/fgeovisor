@@ -72,10 +72,6 @@ export function showLoginForm() {
         modalBody.innerHTML = document.getElementById("loginForm").innerHTML;
         modal.style.width = "35%";
         modal.style.height = "350px";
-        if (loginerror === "True") {
-            const errorMsg = document.getElementById("errormsg");
-            if (errorMsg) errorMsg.style.display = "block";
-        }
         openModal();
 
         const passwordFields = document.querySelectorAll("#modalBody input[type='password']");
@@ -208,14 +204,14 @@ export function switchColor(color) {
     const colorLink = document.getElementById('colors');
     let selectedColor;
 
-    if (color === "blue") {
-        selectedColor = "deepskyblue";
-    } else if (color === "red") {
-        selectedColor = "crimson";
-    } else if (color === "gold") {
-        selectedColor = "gold";
-    } else if (color === "purple") {
-        selectedColor = "blueviolet";
+    if (color === "blue_crayola") {
+        selectedColor = "#1A4F63";
+    } else if (color === "dark_cyan") {
+        selectedColor = "#068587";
+    } else if (color === "green_crayola") {
+        selectedColor = "#6FB07F";
+    } else if (color === "orange_crayola") {
+        selectedColor = "#FCB03C";
     }
 
     if (colorLink) {

@@ -102,6 +102,9 @@ function calculateNDVI(r, g, b) {
     var nir = r;
     var red = b;
     var ndvi = (nir - red) / (nir + red);
+    if (ndvi < 0){
+        ndvi = 0;
+    }
     return ndvi;
 }
 

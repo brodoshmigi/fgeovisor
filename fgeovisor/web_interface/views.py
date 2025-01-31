@@ -52,13 +52,14 @@ class RegistrationView(APIView):
         else: 
             # отрисовка карты, отправка ошибки на фронт
             My_errors.tmp_context['is_vallid_error'] = True
-            return redirect(reverse('map'))
+            return Response(My_errors.error_send())
             #return Response(My_errors.error_send())
-        username = request.POST['username']
-        password = request.POST['password']
+        username = registrationData.data.get('username')
+        password = request.data['password']
         user = authenticate(request, username=username, password=password)
-        login(request, user)   
-        return redirect(reverse('map'))
+        login(request, user)
+        My_errors.tmp_context['auth_check'] = True   
+        return Response(My_errors.error_send())
 
 class LoginView(APIView):
     """
@@ -76,15 +77,18 @@ class LoginView(APIView):
         user = authenticate(username=username, password=password)
         try: 
             login(request, user)
-            return redirect(reverse('map'))
+            My_errors.tmp_context['auth_check'] = True
+            My_errors.tmp_context['is_staff'] = self.request.user.is_staff
+            return Response(My_errors.error_send())
         except AttributeError:
             # отрисовка карты, отправка ошибки на фронт
             My_errors.tmp_context['login_error'] = True
-            return redirect(reverse('map'))
+            return Response(My_errors.error_send())
 
-def logoutView(request):
+class LogoutView(APIView):
     """
     Функции Копатыча | выход из аккаунта
     """
-    logout(request)
-    return redirect(reverse('map'))
+    def post(self, request):
+        logout(request)
+        return Response("")
