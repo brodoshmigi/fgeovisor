@@ -3,11 +3,15 @@
  function calcNdvi(layer, del) {
     var layerID = 'ndviLayer_' + layer.id;
     var isPhotoRendered = map._layers[layerID];
-    var ndviValueDisplay; // Объявляем переменную на уровне функции
+    var ndviValueDisplay = null; // Инициализируем переменную как null
 
     if (del === true) {
         return new Promise((resolve) => {
             if (isPhotoRendered) {
+                isPhotoRendered.setStyle({
+                    fillOpacity: 0.5 // Полупрозрачный полигон
+                });
+                delete map._layers[layerID];
                 map.removeLayer(isPhotoRendered);
             }
             resolve();
@@ -19,6 +23,8 @@
                 fillOpacity: 0.5 // Полупрозрачный полигон
             });
             delete map._layers[layerID];
+            layer.off("mousemove");
+            layer.off("mouseout");
         } else {
             latlngBounds = layer.getLatLngs();
             const requestURL = '/get-img/' + layer.id;
@@ -40,16 +46,13 @@
                 ndviLayer.addTo(map);
                 map._layers[layerID] = ndviLayer;
 
-                // Создаем элемент для отображения значения NDVI
-                ndviValueDisplay = L.DomUtil.create('div', 'ndvi-value-display');
-                document.body.appendChild(ndviValueDisplay);
-
                 // Обработчик события mousemove на полигоне
                 layer.on('mousemove', function (e) {
-                    if (!ndviValueDisplay) {
-                        console.error("ndviValueDisplay не определен");
-                        return;
-                    }
+                    if (!ndviValueDisplay){
+                        ndviValueDisplay = L.DomUtil.create('div', 'ndvi-value-display');
+                        document.body.appendChild(ndviValueDisplay);
+                        console.log("ndvi включен, отоюражение включено")
+                    };
 
                     var canvas = document.createElement('canvas');
                     var ctx = canvas.getContext('2d');
@@ -88,6 +91,8 @@
                 layer.on('mouseout', function () {
                     if (ndviValueDisplay) {
                         ndviValueDisplay.textContent = '';
+                        L.DomUtil.remove(ndviValueDisplay);
+                        ndviValueDisplay = null; // Сбрасываем переменную
                     }
                 });
             });
