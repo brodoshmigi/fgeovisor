@@ -7,7 +7,7 @@
 
 1. [Start](#for-start-project)
 2. [Important aspects](#important-aspects)
-3. [Test's](#test-cases)
+3. [Test's](#test)
 
 ### For start project
 
@@ -38,7 +38,7 @@ PostGIS устанавливается для win через appbuilder, кот�
 
 [Top](#project-info)
 
-### Test сases
+### Test
 
 > [!TIP]
 > Для тестов создан специальный .bat файл, который запускает общие тесты по всему проекту
