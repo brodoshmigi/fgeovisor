@@ -25,7 +25,6 @@ async function auth(event) {
             closeModal();
             toggleButtonDisplay(true, false, false);
             getCookie('csrftoken');
-            
             if (window.map) {
                 await getPolygons();
             }
@@ -98,8 +97,12 @@ async function logout() {
             initGoogleAPI();
             toggleButtonDisplay(false, false, false);
             getCookie('csrftoken');
+            polygonLayerGroup.eachLayer((layer) => {
+                Object.values(layer._layers).forEach((subLayer) => {
+                    calcNdvi(subLayer.feature,true);
+                });
+            });
             displayPolygons();
-
         }
     } catch (error) {
         console.log("Куда собрался? Я с тобой ещё не закончил.")

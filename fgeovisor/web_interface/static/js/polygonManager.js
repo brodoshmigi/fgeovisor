@@ -1,13 +1,18 @@
 //Достаём полигоны из БД
 let polygonLayerGroup;
 function getPolygons(){
-    fetch("get-polygons/")
+    polygonLayerGroup.eachLayer(function(layer) {
+        calcNdvi(layer, true);
+    });
+    if (window.authcheck === "True"){
+        fetch("get-polygons/")
         .then(function(response){
-        return response.json();
-        })
-        .then(function(data){
-            displayPolygons(data);
-        })
+            return response.json();
+            })
+            .then(function(data){
+                displayPolygons(data);
+            })
+    }
 }
 
 // функция отображения политгонов из БД
