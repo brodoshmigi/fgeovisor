@@ -1,23 +1,20 @@
-import rest_framework.permissions as rp
-from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.shortcuts import render
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth.models import AnonymousUser
+
+import rest_framework.permissions as rp
 from rest_framework.views import APIView
-from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
-from .serializators import (UserRegistrationSerializator, UserLoginSerializator)
+
+from .serializators import (UserRegistrationSerializator,
+                            UserLoginSerializator)
 from .staff import My_errors
+""" Классы представлений, которые отрабатывают обращения клиента """
 
-
-"""
-Классы представлений, которые отрабатывают обращения клиента
-"""
 
 class MapView(APIView):
-    """
-    Рендерит карту по запросу и проверяет авторизован пользователь или нет
-    """
+    """ Рендерит карту по запросу и проверяет авторизован пользователь или нет """
+
     permission_classes = [rp.IsAuthenticatedOrReadOnly]
 
     # ТУТА ПРОВЕРКА ГУТ ГУТ
@@ -27,55 +24,57 @@ class MapView(APIView):
         if user.username == AnonymousUser.username:
             # описание состояния пользователя дл js
             context['auth_check'] = False
-            return render(request, 'site_back/map_over_osm.html', 
+            return render(request,
+                          'site_back/map_over_osm.html',
                           context=My_errors.error_send())
             #return Response(My_errors.error_send())
         else:
             # описание состояния пользователя дл js
             context['auth_check'] = True
             context['is_staff'] = user.is_staff
-            return render(request, 'site_back/map_over_osm.html', 
+            return render(request,
+                          'site_back/map_over_osm.html',
                           context=My_errors.error_send())
 
+
 class RegistrationView(APIView):
-    """
-    Класс регистрации аккаунта с простейшей валидацией на стороне сервера
-    """
+    """ Класс регистрации аккаунта с простейшей валидацией на стороне сервера """
+
     permission_classes = [rp.AllowAny]
 
     def post(self, request):
         # Распакоука данных из сериализатора POST сессии
-        registrationData = UserRegistrationSerializator(data=request.data)
-        if registrationData.is_valid():
+        data_serialized = UserRegistrationSerializator(data=request.data)
+        if data_serialized.is_valid():
             # Сохранение в БД
-            registrationData.save()
-        else: 
+            data_serialized.save()
+        else:
             # отрисовка карты, отправка ошибки на фронт
             My_errors.tmp_context['is_vallid_error'] = True
             return Response(My_errors.error_send())
             #return Response(My_errors.error_send())
-        username = registrationData.data.get('username')
+        username = data_serialized.data.get('username')
         password = request.data['password']
         user = authenticate(request, username=username, password=password)
         login(request, user)
-        My_errors.tmp_context['auth_check'] = True   
+        My_errors.tmp_context['auth_check'] = True
         return Response(My_errors.error_send())
 
+
 class LoginView(APIView):
-    """
-    Класс логина в аккаунт
-    """ 
+    """ Класс логина в аккаунт """
+
     permission_classes = [rp.AllowAny]
 
     def post(self, request):
         # Распакоука данных из сериализатора POST сессии
-        loginData = UserLoginSerializator(data=request.data)
-        loginData.is_valid()
-        #автовход после регистрации
-        username = loginData.data.get('username')
-        password = loginData.data.get('password')
+        data_serialized = UserLoginSerializator(data=request.data)
+        data_serialized.is_valid()
+        # автовход после регистрации
+        username = data_serialized.data.get('username')
+        password = data_serialized.data.get('password')
         user = authenticate(username=username, password=password)
-        try: 
+        try:
             login(request, user)
             My_errors.tmp_context['auth_check'] = True
             My_errors.tmp_context['is_staff'] = self.request.user.is_staff
@@ -85,10 +84,10 @@ class LoginView(APIView):
             My_errors.tmp_context['login_error'] = True
             return Response(My_errors.error_send())
 
+
 class LogoutView(APIView):
-    """
-    Функции Копатыча | выход из аккаунта
-    """
+    """ Функции Копатыча | выход из аккаунта """
+
     def post(self, request):
         logout(request)
         return Response("")
