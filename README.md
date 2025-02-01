@@ -3,6 +3,13 @@
 > [!TIP]
 > Для удобства навигации по **README** используйте раздел **Structure**
 
+Tools used: 
+1. [Django/Geodjango](https://github.com/django/django)
+2. [Pystac/Pystac_client](https://github.com/stac-utils/pystac-client)
+3. Google Earth Engine | Python lib
+4. Nasa cloud storage
+5. Terabox cloud storage
+
 ## Structure
 
 1. [Start](#for-start-project)
