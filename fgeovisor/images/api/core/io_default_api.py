@@ -97,7 +97,7 @@ class IODefaultAPI():
         else:
             prepared_headers = {}
 
-        if fields and add_in == 'q' or fields == {} and add_in == 'h':
+        if fields and add_in == 'q' or fields == {} and add_in == 'q':
             prepared_fields = self.prepare_params(token=token, fields=fields)
         else:
             prepared_fields = {}
