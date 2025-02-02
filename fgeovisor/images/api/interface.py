@@ -186,6 +186,13 @@ async def amain():
     time6 = perf_counter()
     print(f'{time6-time5:0.4f}')
 
+def auth_test():
+    user = NasaAPIConfig('', '')
+    creds = NasaAPIBase(config=user)
+
+    session = creds.session().create_session()
+
 if __name__ == '__main__':
     #main()
-    asyncio.run(amain())
+    #asyncio.run(amain())
+    auth_test()

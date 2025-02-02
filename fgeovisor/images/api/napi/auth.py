@@ -54,7 +54,7 @@ class BearerAuth(NasaAuthBase):
         # But /api/ has 2 URLs that could give a bearer token.
         # bedabeda = {'Authorization': f'Basic {self.token}'}
         self.token = self.http.make_request(
-            'GET', '/api/users/tokens', self.token).json()[0]['access_token']
+            'GET', '/api/users/tokens', token=self.token, headers={}).json()[0]['access_token']
         return {'Authorization': f'Bearer {self.token}'}
 
     def reset_token(self) -> Dict[_N, _N]:
