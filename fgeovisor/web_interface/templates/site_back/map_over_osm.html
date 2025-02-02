@@ -1,148 +1,230 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      href="{% static 'img/favicon.ico' %}"
+      type="image/x-icon"
+    />
     <title>fgeovisor</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <link id="theme" rel="stylesheet" href="{% static 'css/light.css' %}">
-    <link rel="stylesheet" href="{% static 'css/leaflet.css' %}">
-    <link rel="stylesheet" href="{% static 'css/mainColors.css' %}">
-    <link rel="stylesheet" id="colors" href="{% static 'css/blue_crayola.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <link id="theme" rel="stylesheet" href="{% static 'css/light.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/leaflet.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/mainColors.css' %}" />
+    <link
+      rel="stylesheet"
+      id="colors"
+      href="{% static 'css/blue_crayola.css' %}"
+    />
     <script type="module">
-        import { initGoogleAPI } from "{% static 'js/uiControls.js' %}";
-        window.initGoogleAPI = initGoogleAPI;
+      import { initGoogleAPI } from "{% static 'js/uiControls.js' %}";
+      window.initGoogleAPI = initGoogleAPI;
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <div id="blocker"></div>
     <!-- Боковое меню -->
-    <div id="sidebar" class="sidebar" style="width: 0;">
-        <div id="defoltview">
-            <a href="#" onclick="showLoginForm()">Войти</a>
-            <a href="#" onclick="showRegistrationForm()">Зарегистрироваться</a>
+    <div id="sidebar" class="sidebar" style="width: 0">
+      <div id="defoltview">
+        <a href="#" onclick="showLoginForm()">Войти</a>
+        <a href="#" onclick="showRegistrationForm()">Зарегистрироваться</a>
+      </div>
+      <div id="loggedinbuttons">
+        <div id="superuser">
+          <a href="{% url 'admin:index' %}">Панель админа</a>
         </div>
-        <div id="loggedinbuttons">
-            <div id="superuser">
-                <a href="{% url 'admin:index' %}">Панель админа</a>
-            </div>
-            <a href="#" onclick="logout()">Выйти</a>
-        </div>
-        <a href="#" id="themeButton" onclick="showThemeSettings()">Внешний вид</a>
-        <!-- Добавляем кнопку календаря -->
-        <a href="#" id="calendarButton" onclick="handleAuthClick()">Календарь</a>
+        <a href="#" onclick="logout()">Выйти</a>
+      </div>
+      <a href="#" id="themeButton" onclick="showThemeSettings()">Внешний вид</a>
+      <!-- Добавляем кнопку календаря -->
+      <a href="#" id="calendarButton" onclick="handleAuthClick()">Календарь</a>
     </div>
     <!-- Добавляем контейнер календаря -->
-    <div id="calendarWrapper" style="display: none;">
-        <div class="calendar-container">
-            <div class="calendar-header">
-                <h3>Календарь снимков</h3>
-                <span class="close-calendar" onclick="document.getElementById('calendarWrapper').style.display='none'">&times;</span>
-            </div>
-            <!-- Контейнер для событий -->
-            <div id="events-container"></div>
+    <div id="calendarWrapper" style="display: none">
+      <div class="calendar-container">
+        <div class="calendar-header">
+          <h3>Календарь снимков</h3>
+          <span
+            class="close-calendar"
+            onclick="document.getElementById('calendarWrapper').style.display='none'"
+            >&times;</span
+          >
         </div>
+        <!-- Контейнер для событий -->
+        <div id="events-container"></div>
+      </div>
     </div>
 
-    <div id="themeSettings" style="display: none;">
-        <div class="settings-panel">
-            <div class="section">
-                <div class="section-title">Тема</div>
-                <div class="theme-toggle">
-                    <button class="button" onclick="switchTheme('dark')">Тёмная</button>
-                    <button class="button" onclick="switchTheme('light')">Светлая</button>
-                </div>
-            </div>
-            <div class="section">
-                <div class="section-title">Цвет акцента</div>
-                <div class="accent-colors">
-                    <button style="background-color: #1A4F63;" onclick="switchColor('blue_crayola')"></button>
-                    <button style="background-color: #068587;" onclick="switchColor('dark_cyan')"></button>
-                    <button style="background-color: #FCB03C;"onclick="switchColor('orange_crayola')"></button>
-                    <button style="background-color: #6FB07F;" onclick="switchColor('green_crayola')"></button>
-                </div>
-            </div>
+    <div id="themeSettings" style="display: none">
+      <div class="settings-panel">
+        <div class="section">
+          <div class="section-title">Тема</div>
+          <div class="theme-toggle">
+            <button class="button" onclick="switchTheme('dark')">Тёмная</button>
+            <button class="button" onclick="switchTheme('light')">
+              Светлая
+            </button>
+          </div>
         </div>
+        <div class="section">
+          <div class="section-title">Цвет акцента</div>
+          <div class="accent-colors">
+            <button
+              style="background-color: #1a4f63"
+              onclick="switchColor('blue_crayola')"
+            ></button>
+            <button
+              style="background-color: #068587"
+              onclick="switchColor('dark_cyan')"
+            ></button>
+            <button
+              style="background-color: #fcb03c"
+              onclick="switchColor('orange_crayola')"
+            ></button>
+            <button
+              style="background-color: #6fb07f"
+              onclick="switchColor('green_crayola')"
+            ></button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="popup-button">
-        <button id="calcNDVI">NDVI</button>
-        <button id="deleteButton">Удалить</button>
-        <button id="editButton">Изменить</button>
+      <button id="calcNDVI">NDVI</button>
+      <button id="deleteButton">Удалить</button>
+      <button id="editButton">Изменить</button>
     </div>
     <div class="ui-button" id="ui-button">
-        <button id="createButton">Добавить поле</button>
-        <button id="finishButton" style="display: none;">Применить</button>
-        <button id="cancelButton" style="display: none;">Отменить</button>
+      <button id="createButton">Добавить поле</button>
+      <button id="finishButton" style="display: none">Применить</button>
+      <button id="cancelButton" style="display: none">Отменить</button>
     </div>
     <!-- Карта -->
-    <div id="map" onmousedown="document.getElementById('sidebar').style.width='0px'"></div>
+    <div
+      id="map"
+      onmousedown="document.getElementById('sidebar').style.width='0px'"
+    ></div>
 
     <!-- Кнопка открытия меню -->
-    <button id="menuButton" class="menu-button" onmousedown="toggleSidebar()">☰</button>
-    
+    <button id="menuButton" class="menu-button" onmousedown="toggleSidebar()">
+      ☰
+    </button>
+
     <!-- Модальное окно для форм -->
     <div id="modal" class="modal">
-        <div class="modal-content" id="modal-content" onclick="event.stopPropagation();">
-            <span id="span" class="close" onclick="closeModal()">&times;</span>
-            <div class="modalBody" id="modalBody"></div>
-        </div>
+      <div
+        class="modal-content"
+        id="modal-content"
+        onclick="event.stopPropagation();"
+      >
+        <span id="span" class="close" onclick="closeModal()">&times;</span>
+        <div class="modalBody" id="modalBody"></div>
+      </div>
     </div>
 
-    <div id="progressContainer" style="display: none;">
-        <div id="progressBar"></div>
+    <div id="progressContainer" style="display: none">
+      <div id="progressBar"></div>
     </div>
-
-    <div id='ndvi-value-display' class="ndvi-value-display"></div>
 
     <!-- Встраиваем формы в скрытые элементы -->
-    <div style="display: none;">
-        <div id="loginForm">
-            <!-- Содержимое файла login.html -->
-            <div class="errormsg" id="errormsg"><p>Неправильное имя пользователя или пароль</p></div>
-            <h2>Вход</h2>
-            <form onsubmit="auth(event)">
-                {% csrf_token %}
-                <input placeholder="Введите login" type="text" id="username" name="username" autocomplete="username" required>
-                <input placeholder="Введите пароль" type="password" id="password" name="password" autocomplete="current-password" required>
-                <button>Войти</button>
-                <div class="login-help">
-                    <a href ='#' onclick="showRegistrationForm()">Нет аккаунта</a>
-                </div>
-            </form>
+    <div style="display: none">
+      <div id="loginForm">
+        <!-- Содержимое файла login.html -->
+        <div class="errormsg" id="errormsg">
+          <p>Неправильное имя пользователя или пароль</p>
         </div>
+        <h2>Вход</h2>
+        <form onsubmit="auth(event)">
+          {% csrf_token %}
+          <input
+            placeholder="Введите login"
+            type="text"
+            id="username"
+            name="username"
+            autocomplete="username"
+            required
+          />
+          <input
+            placeholder="Введите пароль"
+            type="password"
+            id="password"
+            name="password"
+            autocomplete="current-password"
+            required
+          />
+          <button>Войти</button>
+          <div class="login-help">
+            <a href="#" onclick="showRegistrationForm()">Нет аккаунта</a>
+          </div>
+        </form>
+      </div>
 
-        <div id="registrationForm">
-            <!-- Содержимое файла registration.html -->
-            <div class="errormsg" id="errorrg"><p>Неверные данные или пользователь уже существует</p></div>
-            <h2>Регистрация</h2>
-            <form onsubmit="register(event)">
-                {% csrf_token %}
-                <input placeholder = "Введите имя пользователя" type="text" id = "UserName" onsubmit="return validatePasswords()" name = "username" autocomplete="username" required>
-                <input placeholder="Введите email" type="text" id="regEmail" name="email" required autocomplete="email">
-                <input placeholder="Введите пароль" type="password" id="regPassword" name="password" autocomplete="new-password" required>
-                <input placeholder="Повторите пароль" type="password" id="passwordConfirmation" name="passwordConfirmation" autocomplete="new-password" required>
-                <button type="submit">Зарегистрироваться</button>
-            </form>
+      <div id="registrationForm">
+        <!-- Содержимое файла registration.html -->
+        <div class="errormsg" id="errorrg">
+          <p>Неверные данные или пользователь уже существует</p>
         </div>
+        <h2>Регистрация</h2>
+        <form onsubmit="register(event)">
+          {% csrf_token %}
+          <input
+            placeholder="Введите имя пользователя"
+            type="text"
+            id="UserName"
+            onsubmit="return validatePasswords()"
+            name="username"
+            autocomplete="username"
+            required
+          />
+          <input
+            placeholder="Введите email"
+            type="text"
+            id="regEmail"
+            name="email"
+            required
+            autocomplete="email"
+          />
+          <input
+            placeholder="Введите пароль"
+            type="password"
+            id="regPassword"
+            name="password"
+            autocomplete="new-password"
+            required
+          />
+          <input
+            placeholder="Повторите пароль"
+            type="password"
+            id="passwordConfirmation"
+            name="passwordConfirmation"
+            autocomplete="new-password"
+            required
+          />
+          <button type="submit">Зарегистрироваться</button>
+        </form>
+      </div>
     </div>
     <script>
-        var csrfToken = document.querySelector('[name = csrfmiddlewaretoken]').value;
-        var authcheck = "{{auth_check | safe}}";
-        var isadmin = "{{is_staff | safe}}";
-        var loginerror = "{{login_error | safe}}"
-        var regerror = "{{is_vallid_error | safe}}"
-        var permition_access = "{{create_error | safe}}"
-        const staticUrls = {
-            light: "{% static 'css/light.css' %}",
-            dark: "{% static 'css/dark.css' %}",
-            "#1A4F63": "{% static 'css/blue_crayola.css' %}",
-            "#068587": "{% static 'css/dark_cyan.css' %}",
-            "#6FB07F": "{% static 'css/green_crayola.css' %}",
-            "#FCB03C": "{% static 'css/orange_crayola.css' %}"
-        };
+      var csrfToken = document.querySelector(
+        "[name = csrfmiddlewaretoken]"
+      ).value;
+      var authcheck = "{{auth_check | safe}}";
+      var isadmin = "{{is_staff | safe}}";
+      var loginerror = "{{login_error | safe}}";
+      var regerror = "{{is_vallid_error | safe}}";
+      var permition_access = "{{create_error | safe}}";
+      const staticUrls = {
+        light: "{% static 'css/light.css' %}",
+        dark: "{% static 'css/dark.css' %}",
+        "#1A4F63": "{% static 'css/blue_crayola.css' %}",
+        "#068587": "{% static 'css/dark_cyan.css' %}",
+        "#6FB07F": "{% static 'css/green_crayola.css' %}",
+        "#FCB03C": "{% static 'css/orange_crayola.css' %}",
+      };
     </script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/leaflet-editable@1.2.0/src/Leaflet.Editable.js"></script>
@@ -153,5 +235,5 @@
     <script type="module" src="static/js/uiControls.js"></script>
     <script src="static/js/api.js"></script>
     <script src="static/js/userstate.js"></script>
-</body>
+  </body>
 </html>
