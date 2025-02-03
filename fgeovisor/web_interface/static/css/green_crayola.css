@@ -2,37 +2,37 @@
 
 /* Прогресс-бар */
 .progress-bar {
-    background-color: #6FB07F;
+    background-color: #6fb07f;
 }
 
 #progressBar {
-    background: #6FB07F;
+    background: #6fb07f;
 }
 
 /* Кнопка открытия меню при наведении */
 .menu-button:hover {
-    background-color: #6FB07F;
+    background-color: #6fb07f;
 }
 
 a:hover {
-    color: #6FB07F;
+    color: #6fb07f;
 }
 
 /* Кнопка внутри всплывающего окна */
 .leaflet-popup-content-wrapper button {
-    background-color: #6FB07F;
+    background-color: #6fb07f;
     color: black;
 }
 
-button{
-    background-color: #6DAE81;
+button {
+    background-color: #6dae81;
 }
 
-button:hover{
-    background-color: #6FB07F;
+button:hover {
+    background-color: #6fb07f;
 }
 
 .calendar-day:hover {
-    background-color: #6FB07F;
+    background-color: #6fb07f;
     color: black;
 }

@@ -3,16 +3,16 @@ body {
     background-color: #282c34; /* Цвет фона */
 }
 
-.leaflet-layer{
+.leaflet-layer {
     filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
 }
 
-.progress-container{
+.progress-container {
     background-color: #38303c;
     border: 1px solid #ccc;
 }
 
-.progress-bar{
+.progress-bar {
     border-radius: 10px;
     color: #ccc;
 }
@@ -57,11 +57,12 @@ body {
 
 /* Заголовок модального окна */
 .modal-content h2 {
-    color: #ffffff; /* Цвет заголовка */    left: 0%;
+    color: #ffffff; /* Цвет заголовка */
+    left: 0%;
 }
 
 /* Поля ввода */
-input{
+input {
     border: 1px solid #ccc; /* Цвет границы */
 }
 
@@ -70,11 +71,11 @@ input{
     color: white; /* Цвет текста кнопки закрытия */
 }
 
-.a:link{
+.a:link {
     color: white;
 }
 
-a:visited{
+a:visited {
     color: white;
 }
 
@@ -96,9 +97,9 @@ a:visited{
 
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-	background: #38393c;
-	color: #ffffff
-	}
+    background: #38393c;
+    color: #ffffff;
+}
 
 #calendarWrapper {
     background-color: #38393c;

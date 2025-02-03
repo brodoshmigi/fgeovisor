@@ -5,7 +5,7 @@ body {
     font-family: Arial, sans-serif;
 }
 
-#blocker{
+#blocker {
     position: fixed;
     top: 0;
     left: 0;
@@ -26,7 +26,7 @@ body {
     z-index: 0;
 }
 
-.progress-container{
+.progress-container {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -37,7 +37,7 @@ body {
     margin: 20px 10px;
 }
 
-.progress-bar{
+.progress-bar {
     overflow: auto;
     display: none;
     margin: 20px 10px;
@@ -86,7 +86,7 @@ body {
     transition: width 0.4s ease-in-out;
 }
 
-.errormsg{
+.errormsg {
     text-align: center;
     color: red;
     display: none;
@@ -150,7 +150,7 @@ body {
     transform: translateY(-50%); /* Сдвигаем вверх на 50% высоты окна */
 }
 
-.modalBody{
+.modalBody {
     margin: auto;
     width: 90%;
     height: 100%;
@@ -162,7 +162,7 @@ body {
     font-size: 28px; /* Увеличенный размер шрифта */
 }
 
-input{
+input {
     margin-bottom: 20px;
     height: 40px; /* Высота полей ввода */
     border-radius: 5px; /* Закругленные углы */
@@ -170,7 +170,7 @@ input{
     transition: border 0.3s, box-shadow 0.3s; /* Плавный переход при фокусировке */
 }
 
-input[type="text"]{
+input[type="text"] {
     width: 99%;
 }
 
@@ -181,7 +181,7 @@ input[type="password"] {
     box-sizing: border-box;
 }
 
-input[type="password"]:last-of-type{
+input[type="password"]:last-of-type {
     margin-right: 0;
 }
 
@@ -227,11 +227,11 @@ button:hover {
     cursor: pointer; /* Курсор в виде указателя */
 }
 
-a:hover{
-    color:deepskyblue;
+a:hover {
+    color: deepskyblue;
 }
 
-.login-help{
+.login-help {
     margin-top: 30px;
     text-align: end;
     font-size: 18px;
@@ -248,10 +248,9 @@ a:hover{
     transition: background-color 0.3s;
 }
 
-.themeSettings{
+.themeSettings {
     text-align: center;
 }
-
 
 /* настройка тем */
 
@@ -295,7 +294,7 @@ a:hover{
     transform: translate(-50%, -50%);
     z-index: 1000;
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     width: auto;
     height: auto;
 }
