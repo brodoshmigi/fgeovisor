@@ -1,30 +1,30 @@
-async function auth(event) { 
+async function auth(event) {
     event.preventDefault();
-    const username = document.getElementById('username').value;
-    const password = document.getElementById('password').value;
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
 
-    const data = {'username': username, 'password': password};
+    const data = { username: username, password: password };
     try {
-        const response = await fetch('log-in/', {
-            method: 'POST',
+        const response = await fetch("log-in/", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
         });
         const result = await response.json();
 
         window.authcheck = result.auth_check ? "True" : "False";
         window.isadmin = result.is_staff ? "True" : "False";
-        
+
         if (result.auth_check) {
             switchsidebarcontent();
             autoSwitchTheme();
             initGoogleAPI();
             closeModal();
             toggleButtonDisplay(true, false, false);
-            getCookie('csrftoken');
+            getCookie("csrftoken");
             if (window.map) {
                 await getPolygons();
             }
@@ -32,16 +32,18 @@ async function auth(event) {
             document.getElementById("errormsg").style.display = "block";
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
     }
 }
 
-async function register(event) { 
+async function register(event) {
     event.preventDefault();
-    const username = document.getElementById('UserName').value;
-    const email = document.getElementById('regEmail').value;
-    const password = document.getElementById('regPassword').value;
-    const passwordConfirmation = document.getElementById('passwordConfirmation').value;
+    const username = document.getElementById("UserName").value;
+    const email = document.getElementById("regEmail").value;
+    const password = document.getElementById("regPassword").value;
+    const passwordConfirmation = document.getElementById(
+        "passwordConfirmation"
+    ).value;
 
     if (password !== passwordConfirmation) {
         document.getElementById("errorrg").innerHTML = "Пароли не совпадают";
@@ -50,44 +52,44 @@ async function register(event) {
         return;
     }
 
-    const data = {'username': username, 'email': email, 'password': password};
+    const data = { username: username, email: email, password: password };
     try {
-        const response = await fetch('sign-in/', {
-            method: 'POST',
+        const response = await fetch("sign-in/", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
         });
         const result = await response.json();
         window.authcheck = result.auth_check ? "True" : "False";
         window.isadmin = result.is_staff ? "True" : "False";
-        
+
         if (result.auth_check) {
             switchsidebarcontent();
             autoSwitchTheme();
             initGoogleAPI();
             closeModal();
             toggleButtonDisplay(true, false, false);
-            getCookie('csrftoken');
-            
+            getCookie("csrftoken");
         } else {
-            document.getElementById("errorrg").innerHTML = "Неверные данные или пользователь уже существует";
+            document.getElementById("errorrg").innerHTML =
+                "Неверные данные или пользователь уже существует";
             document.getElementById("errorrg").style.display = "block";
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error("Error:", error);
     }
 }
 
 async function logout() {
     try {
-        const response = await fetch('log-out/', {
-            method: 'POST',
+        const response = await fetch("log-out/", {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrfToken
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken,
             },
         });
         if (response.ok) {
@@ -96,27 +98,29 @@ async function logout() {
             switchsidebarcontent();
             initGoogleAPI();
             toggleButtonDisplay(false, false, false);
-            getCookie('csrftoken');
+            getCookie("csrftoken");
             polygonLayerGroup.eachLayer((layer) => {
                 Object.values(layer._layers).forEach((subLayer) => {
-                    calcNdvi(subLayer.feature,true);
+                    calcNdvi(subLayer.feature, true);
                 });
             });
             displayPolygons();
         }
     } catch (error) {
-        console.log("Куда собрался? Я с тобой ещё не закончил.")
+        console.log("Куда собрался? Я с тобой ещё не закончил.");
     }
 }
 
 function getCookie(name) {
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
+    if (document.cookie && document.cookie !== "") {
+        const cookies = document.cookie.split(";");
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
             // Does this cookie string begin with the name we want?
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                window.csrfToken = decodeURIComponent(cookie.substring(name.length + 1));
+            if (cookie.substring(0, name.length + 1) === name + "=") {
+                window.csrfToken = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
                 break;
             }
         }
