@@ -98,7 +98,7 @@ async function deletePolygon(layer) {
             body: JSON.stringify(data),
         });
         const result = await response.json();
-        console.log("Success:", result);
+        console.log("Success:");
         await calcNdvi(layer, true);
         layer.remove();
     } catch (error) {
@@ -222,16 +222,14 @@ async function updatePolygon(geojson) {
             return response.json();
         })
         .then(function (data) {
-            console.log("Success:", data);
+            console.log("Success:");
         });
     await showProgressBar();
-    console.log("обновляем полигоны");
     getPolygons();
 }
 
 //Функция сохранения полигона
 async function savePolygon(geojson) {
-    console.log(geojson);
     fetch("create-polygon/", {
         method: "POST",
         headers: {
@@ -245,13 +243,12 @@ async function savePolygon(geojson) {
             return response.json();
         })
         .then(function (data) {
-            console.log("Success:", data);
+            console.log("Success:");
         })
         .catch(function (error) {
             console.error("Error:", error);
         });
     await showProgressBar();
-    console.log("обновляем полигоны");
     getPolygons();
 }
 
@@ -278,7 +275,6 @@ function enableEdit(layer) {
         //выключаем редактирование
         layer.disableEdit();
         //фиксируем изменения как новый полигон и удаляем старый
-        console.log(layer.id);
         geojson = layer.toGeoJSON();
         updatePolygon(geojson);
         toggleButtonDisplay(true, false, false);

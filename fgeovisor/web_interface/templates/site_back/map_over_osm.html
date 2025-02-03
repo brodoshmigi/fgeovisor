@@ -19,10 +19,6 @@
             id="colors"
             href="{% static 'css/blue_crayola.css' %}"
         />
-        <script type="module">
-            import { initGoogleAPI } from "{% static 'js/uiControls.js' %}";
-            window.initGoogleAPI = initGoogleAPI;
-        </script>
     </head>
     <body>
         <div id="blocker"></div>
@@ -249,7 +245,6 @@
         <script src="static/js/polygonManager.js"></script>
         <script src="static/js/calculations.js"></script>
         <script type="module" src="static/js/uiControls.js"></script>
-        <script src="static/js/api.js"></script>
         <script src="static/js/userstate.js"></script>
     </body>
 </html>

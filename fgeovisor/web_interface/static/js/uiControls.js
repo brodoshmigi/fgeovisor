@@ -262,14 +262,11 @@ window.showThemeSettings = showThemeSettings;
 
 // Функция для получения событий из календаря
 async function fetchPublicCalendarEvents() {
-    const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(
-        calendarId
-    )}/events?key=${apiKey}`;
+    const url = '/get-events/'
 
     try {
         const response = await fetch(url);
         const data = await response.json();
-        console.log("События календаря:", data.items);
         return data.items;
     } catch (error) {
         console.error("Ошибка при получении событий:", error);
@@ -278,7 +275,7 @@ async function fetchPublicCalendarEvents() {
 }
 
 // Функция для отображения событий на странице
-function displayEvents(events) {
+export function displayEvents(events) {
     const eventsContainer = document.getElementById("events-container");
     if (!eventsContainer) {
         console.error("Контейнер для событий не найден!");
@@ -293,39 +290,31 @@ function displayEvents(events) {
         return;
     }
 
-    // Создаем HTML для каждого события
-    events.forEach((event) => {
-        const eventElement = document.createElement("button");
-        eventElement.className = "event-button";
-        eventElement.innerHTML = `
+    return new Promise((resolve) => {
+        events.forEach((event) => {
+            const eventElement = document.createElement("button");
+            eventElement.className = "event-button";
+            eventElement.innerHTML = `
             <p>${new Date(event.start.date).toLocaleDateString()}</p>
-        `;
-        eventElement.addEventListener("click", function () {
-            //вставить return
-            alert(event.start.date);
+            `;
+            eventElement.addEventListener("click", function () {
+                calendarWrapper.style.display = "none";
+                resolve(event.start.date);
+            });
+            eventsContainer.appendChild(eventElement);
         });
-        eventsContainer.appendChild(eventElement);
     });
 }
 
 // Функция для отображения календаря
-function handleCalendarClick() {
+export async function handleCalendarClick() {
     const calendarWrapper = document.getElementById("calendarWrapper");
     if (calendarWrapper) {
         calendarWrapper.style.display = "block";
-        fetchPublicCalendarEvents().then((events) => displayEvents(events));
+        const events = await fetchPublicCalendarEvents();
+        const selectedDate = await displayEvents(events);
+        return selectedDate;
     }
 }
 
-// Инициализация календаря
-export async function initGoogleAPI() {
-    // Вешаем обработчик на кнопку календаря
-    const calendarButton = document.getElementById("calendarButton");
-    if (calendarButton) {
-        calendarButton.onclick = handleCalendarClick;
-    }
-}
-
-// Добавляем функции в глобальную область видимости
 window.handleCalendarClick = handleCalendarClick;
-window.initGoogleAPI = initGoogleAPI;
