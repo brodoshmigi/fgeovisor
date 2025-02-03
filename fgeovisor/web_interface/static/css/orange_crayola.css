@@ -2,37 +2,37 @@
 
 /* Прогресс-бар */
 .progress-bar {
-    background-color: #FCB03C;
+    background-color: #fcb03c;
 }
 
 #progressBar {
-    background: #FCB03C;
+    background: #fcb03c;
 }
 
 /* Кнопка открытия меню при наведении */
 .menu-button:hover {
-    background-color: #FCB03C;
+    background-color: #fcb03c;
 }
 
 a:hover {
-    color: #FCB03C;
+    color: #fcb03c;
 }
 
 /* Кнопка внутри всплывающего окна */
 .leaflet-popup-content-wrapper button {
-    background-color: #FCB03C;
+    background-color: #fcb03c;
     color: white;
 }
 
-button{
-    background-color: #FFAE42;
+button {
+    background-color: #ffae42;
 }
 
-button:hover{
-    background-color: #FCB03C;
+button:hover {
+    background-color: #fcb03c;
 }
 
 .calendar-day:hover {
-    background-color: #FCB03C;
+    background-color: #fcb03c;
     color: white;
 }
