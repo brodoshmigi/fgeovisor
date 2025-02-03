@@ -1,9 +1,17 @@
 //Функция рассчёта NDVI
-
-function calcNdvi(layer, del) {
+async function calcNdvi(layer, del) {
     var layerID = "ndviLayer_" + layer.id;
     var isPhotoRendered = map._layers[layerID];
     var ndviValueDisplay = null; // Инициализируем переменную как null
+    var popup = document.getElementsByClassName(
+        "leaflet-popup  leaflet-zoom-animated"
+    );
+    Array.from(popup).forEach((popup) => {
+        const closeButton = popup.querySelector(
+            ".leaflet-popup-close-button"
+        );
+        closeButton.click();
+    });
 
     if (del === true) {
         return new Promise((resolve) => {
@@ -28,10 +36,12 @@ function calcNdvi(layer, del) {
         } else {
             latlngBounds = layer.getLatLngs();
             const requestURL = "/get-img/" + layer.id;
+            let pic_date = await window.handleCalendarClick();
             fetch(requestURL, {
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRFToken": csrfToken, // Добавляем CSRF-токен
+                    Date: pic_date,
                 },
             })
                 .then((response) => response.json())
@@ -54,7 +64,6 @@ function calcNdvi(layer, del) {
                                 "ndvi-value-display"
                             );
                             document.body.appendChild(ndviValueDisplay);
-                            console.log("ndvi включен, отоюражение включено");
                         }
 
                         var canvas = document.createElement("canvas");
