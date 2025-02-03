@@ -1,8 +1,8 @@
-import rest_framework.permissions as rp
+from urllib3 import PoolManager
+
 from django.shortcuts import render
 from django.conf import settings
 from django.http import JsonResponse
-from django.shortcuts import render
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import AnonymousUser
 
@@ -13,10 +13,7 @@ from rest_framework.response import Response
 from .serializators import (UserRegistrationSerializator,
                             UserLoginSerializator)
 from .staff import My_errors
-import requests
 
-GOOGLE_API_KEY = settings.GOOGLE_CALENDAR_API_KEY  # Храним API-ключ в настройках
-CALENDAR_ID = settings.GOOGLE_CALENDAR_ID  # ID календаря
 """ Классы представлений, которые отрабатывают обращения клиента """
 
 
@@ -101,15 +98,17 @@ class LogoutView(APIView):
         return Response("")
 
 def get_calendar_events(request):
-    """Функция Карыча | Google Calendar"""
-    url = (f'https://www.googleapis.com/calendar/v3/calendars/;'
-          f'{CALENDAR_ID}/events?key={GOOGLE_API_KEY}')
+    """ Функция Карыча | Google Calendar """
+    GOOGLE_API_KEY = settings.GOOGLE_CALENDAR_API_KEY
+    CALENDAR_ID = settings.GOOGLE_CALENDAR_ID
+    url = (f'https://www.googleapis.com/calendar/v3/calendars/{CALENDAR_ID}/events?key={GOOGLE_API_KEY}')
+    http = PoolManager()
 
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
+    response = http.request('GET', url=url)
+    
+    if response.status == 200:
         data = response.json()
         return JsonResponse(data)
     
-    except requests.exceptions.RequestException as e:
-        return JsonResponse({"error": "Ошибка при запросе к Google API", "details": str(e)}, status=500)
+    print(response.status)
+    return JsonResponse({'api error': response.status})
