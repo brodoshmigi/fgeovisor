@@ -94,18 +94,14 @@ class IODefaultAPI():
         if headers and add_in == 'h' or headers == {} and add_in == 'h':
             prepared_headers = self.prepare_headers(token=token,
                                                     headers=headers)
-        elif headers is not None:
-            prepared_headers = headers
         else: 
-            prepared_headers = {}
+            prepared_headers = {} if headers is None else headers
 
         if fields and add_in == 'q' or fields == {} and add_in == 'q':
             prepared_fields = self.prepare_params(token=token, fields=fields)
-        elif fields is not None:
-            prepared_fields = fields
         else: 
-            prepared_headers = {}
-            
+            prepared_fields = {} if fields is None else fields
+
         return prepared_headers, prepared_fields
 
     def make_request(self,
