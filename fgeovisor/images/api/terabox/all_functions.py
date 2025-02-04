@@ -66,7 +66,7 @@ h = {
     #"Accept-Encoding": "gzip, deflate, br, zstd",
     #"X-Requested-With": "XMLHttpRequest",
     #"Cookie": "",
-    "Cookie": "ndus=YqVQEixteHuiplpSWJT9c__Cr4ZcyBRBewHKj-jp"
+    "Cookie": ""
     #"Sec-Fetch-Dest": "empty",
     #"Sec-Fetch-Mode": "no-cors",
     #"Sec-Fetch-Site": "same-origin",

@@ -39,7 +39,7 @@ class Files():
 
 class CloudFileManager():
 
-    NDUS_EXAMPLE = {'Cookie': 'ndus=YqVQEixteHuiplpSWJT9c__Cr4ZcyBRBewHKj-jp'}
+    NDUS_EXAMPLE = {'Cookie': 'ndus='}
 
     def __init__(self):
         self.__http = IODefaultAPI(host=terabox_hosts)
@@ -60,6 +60,7 @@ class CloudFileManager():
         response = self.__http.make_request('GET',
                                             '/api/list',
                                             token=ndus,
+                                            headers={},
                                             fields=fields)
         serialized_resp = response.json()
         self._check_ndus_valid(serialized_resp)
