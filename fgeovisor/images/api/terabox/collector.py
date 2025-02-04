@@ -45,15 +45,26 @@ class CloudFileManager():
         self.__http = IODefaultAPI(host=terabox_hosts)
         self.container = Files()
 
-    def file_list_from_cloude(self, ndus: Dict[str, str] = NDUS_EXAMPLE):
+    def file_list_from_cloud(self, ndus: Dict[str, str] = NDUS_EXAMPLE):
+        """ Default web-request to file list in terabox | Not openapi """
+        # Keep in mind, what developers may change they api's
+        fields: Dict[str, str] = {
+            'order': 'time',
+            'desc': 1,
+            'dir': '/',
+            'num': 100,
+            'page': 1,
+            'showempty': 0,
+        }
+        fields.update(DEFAULT_PARAMS)
         response = self.__http.make_request('GET',
                                             '/api/list',
                                             token=ndus,
-                                            fields=DEFAULT_PARAMS)
+                                            fields=fields)
         serialized_resp = response.json()
         self._check_ndus_valid(serialized_resp)
         return serialized_resp
-        
+
     def _check_ndus_valid(self, serialized_response) -> None:
         if serialized_response['errno'] != 0:
             raise ValueError('ndus is not valid')
