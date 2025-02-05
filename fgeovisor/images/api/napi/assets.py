@@ -24,10 +24,7 @@ class SearchAssets(Assets):
         ids = true_collections['id'].tolist()
         for link in links:
             items = self._search_assets(link=link, ids=ids, **kwargs)
-            data = np.array([
-                item['assets']['B04']['href']
-                for item in items.items_as_dicts()
-            ])
+            data = np.array([item for item in items.items_as_dicts()])
             yield data
 
     def _search_assets(self, link: str, ids, **kwargs):
@@ -68,10 +65,7 @@ class ASearchAssets(Assets):
                                                    ids=ids,
                                                    **kwargs)
                 if result:
-                    assets = [
-                        item['assets']['B04']['href']
-                        for item in result.items_as_dicts()
-                    ]
+                    assets = [item for item in result.items_as_dicts()]
                     all_assets.extend(assets)
                 queue.task_done()
                 return result
@@ -83,7 +77,7 @@ class ASearchAssets(Assets):
             w.cancel()
         await asyncio.gather(*workers, return_exceptions=True)
 
-        return DataFrame({'href': all_assets})
+        return DataFrame({'item': all_assets})
 
     async def _search_assets(self, link: str, ids, **kwargs):
         items: Client = await self.clients_pool.aget_client(link=link)

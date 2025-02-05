@@ -5,12 +5,13 @@
 # import pycurl? = threading 100%, async(concurrent|corutine) - hz
 
 from urllib3 import PoolManager
+from requests import Session
 
 '''USER-API, REQUIRE CSRF'''
 # p|f - params(requests)|fields(urllib3) and ? для очевидности
 # b|h - body or headers
 
-# 
+#
 # POST https://www.terabox.com/rest/1.0/operation/tcc/query?
 # # p|f [app_id(250528), web(1), channel(dubox), clienttype(0), jsToken(after login), dp-logid, devuid]
 
@@ -39,6 +40,45 @@ from urllib3 import PoolManager
 # USER FILES LIST INFO
 # GET https://www.terabox.com/api/list?
 # # p|f [app_id, web, channel, clienttype, jsToken, dp-logid, order, desc(1), dir(/), num(100), page(1), showempty(0)]
+
+f = {
+    'app_id': 250528,
+    'web': 1, # Без него нельзя, но при 0 он дайет только ссылки
+    'channel': 'dubox',
+    'clienttype': 0,
+    'jsToken': '',
+    'dp-logid': '',
+    'order': 'time',
+    'desc': 1,
+    'dir': '/',
+    'num': 100,
+    'page': 1,
+    'showempty': 0,
+}
+
+h = {
+    #'Accept': 'application/json, text/plain, */*',
+    #'Content-Type': 'application/x-www-form-urlencoded',
+    #'Host': 'www.terabox.com',
+    #'Referer': 'https://www.terabox.com/main?category=all',
+    #'User-Agent': '',
+    #'Cache-Control': 'no-cache',
+    #"Accept-Encoding": "gzip, deflate, br, zstd",
+    #"X-Requested-With": "XMLHttpRequest",
+    #"Cookie": "",
+    "Cookie": ""
+    #"Sec-Fetch-Dest": "empty",
+    #"Sec-Fetch-Mode": "no-cors",
+    #"Sec-Fetch-Site": "same-origin",
+    #"Priority": "u=4",
+    #"Pragma": "no-cache",
+}
+#s = Session()
+#test = PoolManager()
+#response = test.request('GET', 'https://www.terabox.com/api/list', fields=f, headers=h)
+#resp = s.get('https://www.terabox.com/')
+#resp1 = s.get('https://www.terabox.com/api/list', params=f, headers=h)
+#print(response.json())
 
 # USER INFO
 # GET https://www.terabox.com/passport/get_info?

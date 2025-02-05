@@ -9,7 +9,7 @@ it through the interface for better organization and maintainability.
 """
 from django.contrib.gis.gdal.raster.source import GDALRaster
 
-from typing import Optional, List, Tuple, Dict
+from typing import Optional, List, Tuple, Dict, Callable
 from time import perf_counter
 import asyncio
 
@@ -20,6 +20,7 @@ from napi.utils import ClientPool
 from napi.loader import Download, ADownload
 from napi.collection import SearchCollections, ASearchCollections
 from napi.assets import SearchAssets, ASearchAssets
+from core.gdal_staff import tif_creator, jpeg_creator
 
 
 class IDownload():
@@ -37,8 +38,7 @@ class IDownload():
         return Download().download(session=self.session, url=url, name=name)
 
     def adownload(self, url_list: str):
-        return ADownload().download(url_list=url_list,
-                                    token=self.token)
+        return ADownload().download(url_list=url_list, token=self.token)
 
 
 class ICollection():
@@ -151,9 +151,11 @@ def main():
 
 async def amain():
 
+    #'area': (43.241685, 44.369128, 43.278764, 44.339915),
+    #'area': (42.171192, 45.04739, 42.18441, 45.053151),
     kw = {
         'area': (42.171192, 45.04739, 42.18441, 45.053151),
-        'date': '2024-09/2024-11'
+        'date': '2024-08/2024-12'
     }
     time1 = perf_counter()
     base = ISearch()
@@ -170,7 +172,7 @@ async def amain():
     api2 = base.search_items()
 
     time3 = perf_counter()
-    links = await api2.aget_assets(collection=dt, max_items=5, **kw)
+    links = await api2.aget_assets(collection=dt, max_items=10, **kw)
 
     time4 = perf_counter()
     print(f'{links}\n{time4-time3:0.4f}')
@@ -178,13 +180,23 @@ async def amain():
     user = NasaAPIConfig('', '')
     creds = NasaAPIBase(config=user)
 
-    lof_links = links['href'].to_list()
+    lof_links = links['item'].to_list()
+    bands = []
+    # need in class
+    for item in lof_links:
+        if 'L30' in item['id']:
+            b4, b58 = item['assets']['B04']['href'], item['assets']['B05']['href']
+        else:
+            b4, b58 = item['assets']['B04']['href'], item['assets']['B08']['href']
+        bands.extend([b4, b58])
+        
     api3 = base.loader(sauth=creds)
 
     time5 = perf_counter()
-    await api3.adownload(lof_links)
+    await api3.adownload(bands)
     time6 = perf_counter()
     print(f'{time6-time5:0.4f}')
+
 
 def auth_test():
     user = NasaAPIConfig('', '')
@@ -192,7 +204,8 @@ def auth_test():
 
     session = creds.session().create_session()
 
+
 if __name__ == '__main__':
     #main()
-    #asyncio.run(amain())
-    auth_test()
+    asyncio.run(amain())
+    #auth_test()
