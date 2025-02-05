@@ -25,8 +25,8 @@
         <!-- Боковое меню -->
         <div id="sidebar" class="sidebar" style="width: 0">
             <div id="defoltview">
-                <a href="#" onclick="showLoginForm()">Войти</a>
-                <a href="#" onclick="showRegistrationForm()"
+                <a href="javascript:void(0)" onclick="showLoginForm()">Войти</a>
+                <a href="javascript:void(0)" onclick="showRegistrationForm()"
                     >Зарегистрироваться</a
                 >
             </div>
@@ -34,9 +34,9 @@
                 <div id="superuser">
                     <a href="{% url 'admin:index' %}">Панель админа</a>
                 </div>
-                <a href="#" onclick="logout()">Выйти</a>
+                <a href="javascript:void(0)" onclick="logout()">Выйти</a>
             </div>
-            <a href="#" id="themeButton" onclick="showThemeSettings()"
+            <a href="javascript:void(0)" id="themeButton" onclick="showThemeSettings()"
                 >Внешний вид</a
             >
             <!-- Добавляем кнопку календаря -->
@@ -165,7 +165,7 @@
                     />
                     <button>Войти</button>
                     <div class="login-help">
-                        <a href="#" onclick="showRegistrationForm()"
+                        <a href="javascript:void(0)" onclick="showRegistrationForm()"
                             >Нет аккаунта</a
                         >
                     </div>
