@@ -30,14 +30,13 @@ class Download(Download):
 
 class ADownload(Download):
 
-    async def download(self,
-                       url_list: List,
-                       token=None,
-                       cookie=None):
+    async def download(self, url_list: List, token=None, cookie=None):
         async with ClientSession(headers=token, cookies=cookie) as session:
             tasks = [
-                self.get_site_content(url=url, name=uuid4(), session=session)
-                for url in url_list
+                self.get_site_content(
+                    url=url,
+                    name=f'{str(uuid4())[0:10]}-{url[-35:-4]}',
+                    session=session) for url in url_list
             ]
             await gather(*tasks, return_exceptions=True)
 
