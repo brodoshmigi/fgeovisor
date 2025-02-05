@@ -21,7 +21,6 @@ async function auth(event) {
         if (result.auth_check) {
             switchsidebarcontent();
             autoSwitchTheme();
-            initGoogleAPI();
             closeModal();
             toggleButtonDisplay(true, false, false);
             getCookie("csrftoken");
@@ -69,7 +68,6 @@ async function register(event) {
         if (result.auth_check) {
             switchsidebarcontent();
             autoSwitchTheme();
-            initGoogleAPI();
             closeModal();
             toggleButtonDisplay(true, false, false);
             getCookie("csrftoken");
@@ -96,7 +94,6 @@ async function logout() {
             window.authcheck = "False";
             window.isadmin = "False";
             switchsidebarcontent();
-            initGoogleAPI();
             toggleButtonDisplay(false, false, false);
             getCookie("csrftoken");
             polygonLayerGroup.eachLayer((layer) => {
