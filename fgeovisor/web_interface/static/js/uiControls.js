@@ -262,7 +262,7 @@ window.showThemeSettings = showThemeSettings;
 
 // Функция для получения событий из календаря
 async function fetchPublicCalendarEvents() {
-    const url = '/get-events/'
+    const url = "/get-events/";
 
     try {
         const response = await fetch(url);
@@ -289,7 +289,6 @@ export function displayEvents(events) {
         eventsContainer.innerHTML = "<p>Событий нет.</p>";
         return;
     }
-
     return new Promise((resolve) => {
         events.forEach((event) => {
             const eventElement = document.createElement("button");
@@ -308,11 +307,16 @@ export function displayEvents(events) {
 
 // Функция для отображения календаря
 export async function handleCalendarClick() {
+    toggleButtonDisplay(false, false, false);
+    document.querySelector(".close-calendar").addEventListener("click", () => {
+        toggleButtonDisplay(true, false, false);
+    });
     const calendarWrapper = document.getElementById("calendarWrapper");
     if (calendarWrapper) {
         calendarWrapper.style.display = "block";
         const events = await fetchPublicCalendarEvents();
         const selectedDate = await displayEvents(events);
+        toggleButtonDisplay(true, false, false);
         return selectedDate;
     }
 }

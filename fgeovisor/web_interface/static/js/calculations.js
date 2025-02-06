@@ -1,25 +1,25 @@
 //Функция рассчёта NDVI
+var ndviValueDisplay = null; // Инициализируем переменную как null
 async function calcNdvi(layer, del) {
     var layerID = "ndviLayer_" + layer.id;
     var isPhotoRendered = map._layers[layerID];
-    var ndviValueDisplay = null; // Инициализируем переменную как null
     var popup = document.getElementsByClassName(
         "leaflet-popup  leaflet-zoom-animated"
     );
     Array.from(popup).forEach((popup) => {
-        const closeButton = popup.querySelector(
-            ".leaflet-popup-close-button"
-        );
+        const closeButton = popup.querySelector(".leaflet-popup-close-button");
         closeButton.click();
     });
 
     if (del === true) {
         return new Promise((resolve) => {
             if (isPhotoRendered) {
-                isPhotoRendered.setStyle({
+                layer.setStyle({
                     fillOpacity: 0.5, // Полупрозрачный полигон
                 });
                 delete map._layers[layerID];
+                layer.off("mousemove");
+                layer.off("mouseout");
                 map.removeLayer(isPhotoRendered);
             }
             resolve();
