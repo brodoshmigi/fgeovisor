@@ -78,7 +78,7 @@ PostGIS устанавливается для win через appbuilder, кот�
 
 #### GDAL_ERROR 1
 > ``` python
-> GDAL_ERROR 1: b'PROJ: proj_create_from_database: C:\\Program Files\\PostgreSQL\\16\\share\\contrib\\postgis-3.5\\proj\\proj.db
+> GDAL_ERROR 1: b'PROJ: proj_create_from_database: .\PostgreSQL\16\share\contrib\postgis-3.5\proj\proj.db
 > contains DATABASE.LAYOUT.VERSION.MINOR = 2 whereas a number >= 3 is expected. It comes from another PROJ installation.'
 > ```
 > Возможные способы исправления этой ошибки:
@@ -126,11 +126,11 @@ PostGIS устанавливается для win через appbuilder, кот�
 #### WinError 127
 
 > ``` python
-> File "E:\GEO_DJAMBO\geodjangorainmarker\venv\Lib\site-packages\django\contrib\gis\gdal\libgdal.py", line 72, in <module>
+> File ".\venv\Lib\site-packages\django\contrib\gis\gdal\libgdal.py", line 72, in <module>
 >
 >    lgdal = CDLL(lib_path)
 >            ^^^^^^^^^^^^^^
->  File "E:\programms\Python312\Lib\ctypes\__init__.py", line 379, in __init__
+>  File ".\Python312\Lib\ctypes\__init__.py", line 379, in __init__
 >  
 >    self._handle = _dlopen(self._name, mode)
 >                   ^^^^^^^^^^^^^^^^^^^^^^^^^
