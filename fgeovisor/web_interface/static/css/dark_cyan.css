@@ -1,0 +1,38 @@
+/* Акцентные цвета: #068587 */
+
+/* Прогресс-бар */
+.progress-bar {
+    background-color: #068587;
+}
+
+#progressBar {
+    background: #068587;
+}
+
+/* Кнопка открытия меню при наведении */
+.menu-button:hover {
+    background-color: #068587;
+}
+
+a:hover {
+    color: #068587;
+}
+
+/* Кнопка внутри всплывающего окна */
+.leaflet-popup-content-wrapper button {
+    background-color: #068587;
+    color: white;
+}
+
+button {
+    background-color: #008b8b;
+}
+
+button:hover {
+    background-color: #068587;
+}
+
+.calendar-day:hover {
+    background-color: #068587;
+    color: white;
+}

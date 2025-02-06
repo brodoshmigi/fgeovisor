@@ -1,0 +1,124 @@
+/* Общие стили для body */
+body {
+    background-color: #282c34; /* Цвет фона */
+}
+
+.leaflet-layer {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+.progress-container {
+    background-color: #38303c;
+    border: 1px solid #ccc;
+}
+
+.progress-bar {
+    border-radius: 10px;
+    color: #ccc;
+}
+
+/* Боковое меню */
+.sidebar {
+    background-color: #38393c;
+}
+
+.sidebar a {
+    color: white;
+}
+
+.sidebar a:hover {
+    background-color: #434853;
+}
+
+#progressContainer {
+    background: #38393c;
+}
+
+/* Кнопка открытия меню */
+.menu-button {
+    background-color: #38393c;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.ui-button {
+    background-color: #38393c00;
+    color: white;
+}
+
+.ui-button button {
+    background-color: #38393c;
+}
+
+/* Контент модального окна */
+.modal-content {
+    background-color: #38393c; /* Цвет фона формы */
+}
+
+/* Заголовок модального окна */
+.modal-content h2 {
+    color: #ffffff; /* Цвет заголовка */
+    left: 0%;
+}
+
+/* Поля ввода */
+input {
+    border: 1px solid #ccc; /* Цвет границы */
+}
+
+/* Стили для кнопки закрытия модального окна */
+.close {
+    color: white; /* Цвет текста кнопки закрытия */
+}
+
+.a:link {
+    color: white;
+}
+
+a:visited {
+    color: white;
+}
+
+#themeButton {
+    background-color: #38393c;
+}
+
+#themeButton:hover {
+    background-color: #434853; /* Цвет при наведении */
+}
+
+#themeSettings {
+    color: white;
+}
+
+.section-title {
+    color: white;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+    background: #38393c;
+    color: #ffffff;
+}
+
+#calendarWrapper {
+    background-color: #38393c;
+    color: white;
+}
+
+.calendar-day {
+    background-color: #434853;
+}
+
+.calendar-container {
+    background-color: #38393c; /* Темный фон */
+}
+
+iframe {
+    filter: invert(1) hue-rotate(180deg); /* Инверсия для темной темы */
+}
+
+.ndvi-value-display {
+    background-color: #38393c;
+    color: white;
+}

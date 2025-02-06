@@ -3,10 +3,20 @@ body {
     overflow-x: hidden;
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #282c34; /* Цвет фона */
 }
 
-/* Стили для карты */
+#blocker {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    z-index: 9999999;
+    display: none;
+    cursor: not-allowed;
+}
+
 #map {
     height: 100vh;
     width: 100vw;
@@ -16,39 +26,33 @@ body {
     z-index: 0;
 }
 
-.progress-container{
+.progress-container {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     overflow: auto;
     width: 700px;
-    background-color: #38303c;
-    border: 1px solid #ccc;
     border-radius: 10px;
     margin: 20px 10px;
 }
 
-.progress-bar{
+.progress-bar {
     overflow: auto;
     display: none;
     margin: 20px 10px;
     width: 0%;
     height: 20px;
     background-color: crimson;
-    color: #ccc;
     line-height: 20px;
-    border-radius: 10px;
 }
 
-/* Боковое меню */
 .sidebar {
     height: 100%;
     width: 0;
     position: fixed;
     top: 0;
     left: 0;
-    background-color: #38393c;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 85px;
@@ -60,13 +64,8 @@ body {
     padding: 10px 25px;
     text-decoration: none;
     font-size: 20px;
-    color: white;
     display: block;
     transition: 0.3s;
-}
-
-.sidebar a:hover {
-    background-color: #434853;
 }
 
 #progressContainer {
@@ -76,7 +75,6 @@ body {
     transform: translate(-50%, -50%);
     width: 300px;
     height: 20px;
-    background: #38393c;
     border-radius: 10px;
     overflow: hidden;
     z-index: 1000;
@@ -85,21 +83,17 @@ body {
 #progressBar {
     height: 100%;
     width: 0%;
-    background: deepskyblue;
     transition: width 0.4s ease-in-out;
 }
 
-.errormsg{
+.errormsg {
     text-align: center;
     color: red;
     display: none;
 }
 
-/* Кнопка открытия меню */
 .menu-button {
     font-size: 20px;
-    background-color: #38393c;
-    color: white;
     border: none;
     padding: 5px 10px;
     cursor: pointer;
@@ -108,19 +102,12 @@ body {
     left: 20px;
     z-index: 2;
     border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     width: auto;
     min-width: 50px;
     transition: background-color 0.3s;
 }
 
-.menu-button:hover {
-    background-color: deepskyblue;
-}
-
 .ui-button {
-    background-color: #38393c00;
-    color: white;
     margin-top: 10px;
     cursor: pointer;
     position: fixed;
@@ -136,11 +123,9 @@ body {
 .ui-button button {
     border-radius: 10px;
     margin-top: 10px;
-    background-color: #38393c;
     font-family: Arial, sans-serif;
 }
 
-/* Модальное окно */
 .modal {
     display: none; /* Скрыто по умолчанию */
     position: fixed;
@@ -153,12 +138,11 @@ body {
     background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
 }
 
-/* Контент модального окна */
 .modal-content {
-    background-color: #38393c; /* Цвет фона формы */
+    min-width: 350px;
     margin: auto; /* Центрируем по горизонтали */
-    width: 700px; /* Максимальная ширина 700 пикселей */
-    height: 400px; /* Высота модального окна */
+    width: 35%; /* Максимальная ширина 700 пикселей */
+    height: 350px; /* Высота модального окна */
     border: 1px solid #888;
     border-radius: 10px; /* Закругленные углы */
     position: relative; /* Устанавливаем позицию относительно окна */
@@ -166,30 +150,27 @@ body {
     transform: translateY(-50%); /* Сдвигаем вверх на 50% высоты окна */
 }
 
-.modalBody{
+.modalBody {
     margin: auto;
     width: 90%;
     height: 100%;
 }
-/* Заголовок модального окна */
+
 .modal-content h2 {
     margin-top: 30px;
     text-align: center; /* Центрируем заголовок */
-    color: #ffffff; /* Цвет заголовка */    left: 0%;
     font-size: 28px; /* Увеличенный размер шрифта */
 }
 
-/* Поля ввода */
-input{
+input {
     margin-bottom: 20px;
     height: 40px; /* Высота полей ввода */
-    border: 1px solid #ccc; /* Цвет границы */
     border-radius: 5px; /* Закругленные углы */
     font-size: 16px; /* Размер шрифта */
     transition: border 0.3s, box-shadow 0.3s; /* Плавный переход при фокусировке */
 }
 
-input[type="text"]{
+input[type="text"] {
     width: 99%;
 }
 
@@ -200,7 +181,7 @@ input[type="password"] {
     box-sizing: border-box;
 }
 
-input[type="password"]:last-of-type{
+input[type="password"]:last-of-type {
     margin-right: 0;
 }
 
@@ -216,7 +197,6 @@ input[type="password"]:focus {
 button {
     width: 100%; /* Занимаем 100% ширины контейнера */
     height: 40px; /* Высота кнопки */
-    background-color: #4a90e2; /* Цвет кнопки */
     color: white; /* Цвет текста кнопки */
     border: none; /* Убираем границу */
     border-radius: 5px; /* Закругленные углы */
@@ -228,15 +208,12 @@ button {
 
 /* Эффект наведения на кнопку */
 button:hover {
-    background-color: #357ab8; /* Цвет кнопки при наведении */
     transform: translateY(-2px); /* Легкий эффект поднятия при наведении */
 }
 
-/* Стили для кнопки закрытия модального окна */
 .close {
     margin-right: 10px;
     margin-top: 5px;
-    color: white; /* Цвет текста кнопки закрытия */
     float: right; /* Выравнивание справа */
     font-size: 32px; /* Размер шрифта */
     font-weight: bold; /* Жирный текст */
@@ -245,26 +222,166 @@ button:hover {
 
 .close:hover,
 .close:focus {
-    color: #f1f1f1; /* Цвет текста при наведении */
+    color: crimson; /* Цвет текста при наведении */
     text-decoration: none; /* Убираем подчеркивание */
     cursor: pointer; /* Курсор в виде указателя */
 }
 
-.a:link{
-    color: white;
+a:hover {
+    color: deepskyblue;
 }
 
-
-a:visited{
-    color: white;
-}
-
-a:hover{
-    color:deepskyblue;
-}
-
-.login-help{
+.login-help {
     margin-top: 30px;
     text-align: end;
     font-size: 18px;
+}
+
+#themeButton {
+    position: absolute; /* Фиксирует кнопку относительно экрана */
+    bottom: 95px;
+    width: 100%;
+    text-align: left;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.themeSettings {
+    text-align: center;
+}
+
+/* настройка тем */
+
+#themeSettings {
+    padding: 20px;
+}
+
+.settings-panel {
+    max-width: 300px;
+    margin: 0 auto; /* Центрирование панели */
+}
+
+.section {
+    margin-bottom: 20px;
+}
+
+.section-title {
+    margin-top: 10px; /* Отступ сверху */
+    text-align: center; /* Центрирование текста */
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.theme-toggle {
+    display: flex; /* Горизонтальное выравнивание кнопок */
+    justify-content: center; /* Центрирование кнопок */
+    gap: 10px; /* Расстояние между кнопками */
+}
+
+.accent-colors {
+    display: grid; /* Сетка для кнопок */
+    grid-template-columns: repeat(2, 1fr); /* Две колонки */
+    gap: 10px; /* Расстояние между кнопками */
+    justify-items: center; /* Центрирование кнопок внутри ячеек */
+}
+
+#calendarWrapper {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    width: auto;
+    height: auto;
+}
+
+.calendar-container {
+    position: relative;
+    width: 450px;
+    border-radius: 10px;
+    border-width: 10px;
+    border-color: white;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 25px);
+    gap: 1px;
+}
+
+.weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 25px);
+    text-align: center;
+    font-size: 11px;
+    margin-bottom: 2px;
+}
+
+.calendar-day {
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.calendar-header h3 {
+    margin: 5px;
+}
+
+.close-calendar {
+    cursor: pointer;
+    font-size: 24px;
+    margin: 5px;
+}
+.close-calendar:hover,
+.close-calendar:focus {
+    color: crimson; /* Цвет текста при наведении */
+    text-decoration: none; /* Убираем подчеркивание */
+    cursor: pointer; /* Курсор в виде указателя */
+}
+
+#calendar-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#calendar-content li {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+#calendar-content li:last-child {
+    border-bottom: none;
+}
+
+.event-button {
+    margin-bottom: 10px;
+    margin-left: 10px;
+    width: 100px;
+}
+
+.ndvi-value-display {
+    position: absolute;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+    pointer-events: none; /* Чтобы элемент не блокировал другие события */
 }

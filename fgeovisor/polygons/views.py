@@ -26,10 +26,10 @@ class CreatePolygon(APIView):
         """
         # Обрабатываем GeoJSON здесь
         user = self.request.user
-        polygonInstance = Polygon(owner=user, polygon_data=str(
+        polygon_instance = Polygon(owner=user, polygon_data=str(
                                     request.data['geometry']))
-        polygonInstance.save()
-        polygon_image = Image_From_GEE(polygonInstance)
+        polygon_instance.save()
+        polygon_image = Image_From_GEE(polygon_instance)
         try:
             polygon_image.download_image()
             polygon_image.visualization()
@@ -50,8 +50,8 @@ class GetPolygons(APIView):
 
     def get(self, request):
         polygons_objects = Polygon.objects.filter(owner=self.request.user.id).all()
-        polygons_objects = PolygonFromDbSerializer(polygons_objects, many=True)
-        return Response(polygons_objects.data)
+        polygons_serialized = PolygonFromDbSerializer(polygons_objects, many=True)
+        return Response(polygons_serialized.data)
 
 class DeletePolygon(APIView):
     """
@@ -64,10 +64,14 @@ class DeletePolygon(APIView):
         Polygons = Polygon.objects.filter(owner=self.request.user.id)
         # id должен быть, т.к. js отсылает тупо строчку - это неправильно
         # тесты с этим также не провести, и + в будущем нужно будет токен иметь
-        PolygonInstance = Polygons.get(polygon_id=request.data["id"])
-        delete_image(PolygonInstance)
-        PolygonInstance.delete()
-        return Response({"success": 'deleted'})
+        polygon_instance = Polygons.get(polygon_id=request.data["id"])
+        try:
+            delete_image(polygon_instance)
+        except:
+            pass
+        finally:
+            polygon_instance.delete()
+            return Response({"success": 'deleted'})
 
 class UpdatePolygon(APIView):
     """
@@ -77,10 +81,10 @@ class UpdatePolygon(APIView):
 
     def post(self, request):
         try:
-            polygon = Polygon.objects.get(polygon_id=request.data['id'])
-            polygon.polygon_data=str(request.data['geometry'])
-            polygon.save()
-            update_image_GEE(polygon)
+            polygon_instance = Polygon.objects.get(polygon_id=request.data['id'])
+            polygon_instance.polygon_data=str(request.data['geometry'])
+            polygon_instance.save()
+            update_image_GEE(polygon_instance)
             return Response({'success': 'updated'})
         except Exception:
             return Response({'lost': str(Exception)})

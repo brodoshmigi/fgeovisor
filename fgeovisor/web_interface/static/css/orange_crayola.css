@@ -1,0 +1,38 @@
+/* Акцентные цвета: #FCB03C */
+
+/* Прогресс-бар */
+.progress-bar {
+    background-color: #fcb03c;
+}
+
+#progressBar {
+    background: #fcb03c;
+}
+
+/* Кнопка открытия меню при наведении */
+.menu-button:hover {
+    background-color: #fcb03c;
+}
+
+a:hover {
+    color: #fcb03c;
+}
+
+/* Кнопка внутри всплывающего окна */
+.leaflet-popup-content-wrapper button {
+    background-color: #fcb03c;
+    color: white;
+}
+
+button {
+    background-color: #ffae42;
+}
+
+button:hover {
+    background-color: #fcb03c;
+}
+
+.calendar-day:hover {
+    background-color: #fcb03c;
+    color: white;
+}

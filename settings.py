@@ -16,6 +16,14 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+GOOGLE_API_KEY = ''
+CALENDAR_ID = ''
+
+NASA_CREDS = {
+    'username': '',
+    'password': '',
+}
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -27,6 +35,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+'''
+SECURE_SSL_REDIRECT = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+'''
 
 # Application definition
 

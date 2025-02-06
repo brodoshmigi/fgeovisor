@@ -23,3 +23,9 @@ __pycache__\
 site_back\migrations
 site_back/migrations
 migrations
+/ssl/
+ssl/
+ssl
+start_nginx.bat
+stop_nginx.bat
+api.js
