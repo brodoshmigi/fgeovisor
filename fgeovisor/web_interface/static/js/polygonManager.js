@@ -6,9 +6,11 @@ function getPolygons() {
     if (window.authcheck === "True") {
         fetch("get-polygons/")
             .then(function (response) {
+                console.log(response);
                 return response.json();
             })
             .then(function (data) {
+                console.log(data);
                 displayPolygons(data);
             });
     }
@@ -78,7 +80,6 @@ function displayPolygons(geojsonData) {
                 //конец блока всплывающего окна
             }
         },
-        //добавляем полигон на слой
     }).addTo(polygonLayerGroup);
 }
 
@@ -290,6 +291,7 @@ async function updatePolygon(geojson) {
 
 //Функция сохранения полигона
 async function savePolygon(geojson) {
+    console.log(geojson);
     fetch("create-polygon/", {
         method: "POST",
         headers: {
@@ -299,7 +301,7 @@ async function savePolygon(geojson) {
         body: JSON.stringify(geojson),
     })
         .then(function (response) {
-            //перехват респонса из джанго
+            console.log(response);
             return response.json();
         })
         .then(function (data) {

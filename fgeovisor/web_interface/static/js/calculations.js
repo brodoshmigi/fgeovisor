@@ -1,5 +1,6 @@
 //Функция рассчёта NDVI
-var ndviValueDisplay = null; // Инициализируем переменную как null
+var ndviValueDisplay = null;
+
 async function calcNdvi(layer, del) {
     var layerID = "ndviLayer_" + layer.id;
     var isPhotoRendered = map._layers[layerID];
@@ -14,25 +15,22 @@ async function calcNdvi(layer, del) {
     if (del === true) {
         return new Promise((resolve) => {
             if (isPhotoRendered) {
-                layer.setStyle({
-                    fillOpacity: 0.5, // Полупрозрачный полигон
-                });
+                console.log(layerID);
                 delete map._layers[layerID];
-                layer.off("mousemove");
-                layer.off("mouseout");
                 map.removeLayer(isPhotoRendered);
             }
             resolve();
         });
     } else {
         if (isPhotoRendered) {
-            map.removeLayer(isPhotoRendered);
+            console.log(layer);
             layer.setStyle({
-                fillOpacity: 0.5, // Полупрозрачный полигон
+                fillOpacity: 0.2, // Полупрозрачный полигон
             });
             delete map._layers[layerID];
             layer.off("mousemove");
             layer.off("mouseout");
+            map.removeLayer(isPhotoRendered);
         } else {
             latlngBounds = layer.getLatLngs();
             const requestURL = "/get-img/" + layer.id;
@@ -99,13 +97,13 @@ async function calcNdvi(layer, del) {
                             ).data;
 
                             var ndviValue = calculateNDVI(
-                                pixel[0],
-                                pixel[1],
-                                pixel[2]
+                                pixel[0],  // Red channel (B4)
+                                pixel[1],  // Green channel (unused here, but we could use it if needed)
+                                pixel[2]   // Blue channel (B2)
                             );
 
                             // Отображаем значение NDVI рядом с курсором
-                            var point = e.containerPoint; // Получаем координаты мыши относительно контейнера карты
+                            var point = e.containerPoint;
                             ndviValueDisplay.style.left = point.x + 10 + "px";
                             ndviValueDisplay.style.top = point.y + 10 + "px";
                             ndviValueDisplay.textContent =
@@ -117,12 +115,11 @@ async function calcNdvi(layer, del) {
                         };
                     });
 
-                    // Обработчик события mouseout на полигоне
                     layer.on("mouseout", function () {
                         if (ndviValueDisplay) {
                             ndviValueDisplay.textContent = "";
                             L.DomUtil.remove(ndviValueDisplay);
-                            ndviValueDisplay = null; // Сбрасываем переменную
+                            ndviValueDisplay = null;
                         }
                     });
                 });
@@ -131,18 +128,21 @@ async function calcNdvi(layer, del) {
 }
 
 // Функция для вычисления NDVI на основе RGB
-// !!! Переписать !!!
 function calculateNDVI(r, g, b) {
-    var nir = r;
-    var red = b;
-    var ndvi = (nir - red) / (nir + red);
-    if (ndvi < 0) {
-        ndvi = 0;
+    var red = r;
+    var nir = b;  // Используем канал ближнего инфракрасного
+    if (nir + red === 0) {
+        return 0;
     }
+    var ndvi = (nir - red) / (nir + red);
+    if (!isFinite(ndvi)) {
+        return "нет растений";
+    }
+    ndvi = (ndvi + 1) / 2;
+    ndvi = Math.max(0, Math.min(1, ndvi));
     return ndvi;
 }
 
-//Функция рассчёта площади поля
 
 function calculatePolygonArea(latlngs) {
     let area = 0;
