@@ -75,6 +75,7 @@ class CloudFileManager():
                             export_json: bool = True):
         """ Default web-request to file list in terabox | Not openapi """
         # Keep in mind, what developers may change they api's
+        self.get_info(ndus=ndus)
         fields: Dict[str, Any] = {
             'order': order,
             'desc': desc,
@@ -90,7 +91,6 @@ class CloudFileManager():
                                             headers={},
                                             fields=fields)
         serialized_resp: Dict = response.json()
-        self._check_ndus_valid(serialized_resp)
         for ans in serialized_resp['list']:
             self.container.add_new(self._filter_dict(ans))
 
@@ -131,13 +131,19 @@ class CloudFileManager():
         serialized_resp: Dict = response.json()
         return serialized_resp
 
-    def get_info(self, ndus: Dict[str, str] = NDUS_EXAMPLE):
+    def get_info(self, ndus: Dict[str, str] = NDUS_EXAMPLE, response_out: bool = False):
         """ need js interpretator for use this correct """
         response = self.__http.make_request('GET',
                                             '/api/home/info',
                                             token=ndus,
                                             headers={})
-        return response.json()
+        serialized_resp: Dict = response.json()
+        self._check_ndus_valid(serialized_response=serialized_resp)
+
+        if response_out:
+            return serialized_resp
+        
+        del serialized_resp
 
     def _filter_dict(self, fdict: Dict[str, Any]) -> Dict[str, Any]:
         temp = {
