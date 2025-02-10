@@ -290,18 +290,9 @@ a:hover {
 /* Стили для контейнера календаря */
 #datepicker-container {
     position: absolute; /* Позиционирование */
-    top: 50px; /* Расстояние от верхней части страницы */
-    left: 50px; /* Расстояние от левого края страницы */
+    top: 35%; /* Расстояние от верхней части страницы */
+    left: 50%; /* Расстояние от левого края страницы */
     z-index: 9999; /* Чтобы календарь был поверх других элементов */
-}
-
-/* Стили для input, который используется с Pikaday */
-#datepicker-container input {
-    padding: 5px 10px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 150px; /* Устанавливаем ширину для поля */
 }
 
 .event-button {

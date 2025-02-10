@@ -15,7 +15,8 @@ async function calcNdvi(layer, del) {
     if (del === true) {
         return new Promise((resolve) => {
             if (isPhotoRendered) {
-                console.log(layerID);
+                layer.off('mousemove');
+                layer.setStyle({ fillOpacity: 0.2 });
                 delete map._layers[layerID];
                 map.removeLayer(isPhotoRendered);
             }
@@ -95,13 +96,13 @@ async function calcNdvi(layer, del) {
                                         ((e.latlng.lng - bounds.getWest()) /
                                             (bounds.getEast() -
                                                 bounds.getWest())) *
-                                            img.width
+                                        img.width
                                     );
                                     var pixelY = Math.floor(
                                         ((bounds.getNorth() - e.latlng.lat) /
                                             (bounds.getNorth() -
                                                 bounds.getSouth())) *
-                                            img.height
+                                        img.height
                                     );
 
                                     // Получаем цвет пикселя
@@ -120,12 +121,14 @@ async function calcNdvi(layer, del) {
 
                                     // Отображаем значение NDVI рядом с курсором
                                     var point = e.containerPoint;
-                                    ndviValueDisplay.style.left =
-                                        point.x + 10 + "px";
-                                    ndviValueDisplay.style.top =
-                                        point.y + 10 + "px";
-                                    ndviValueDisplay.textContent =
-                                        "NDVI: " + ndviValue.toFixed(2);
+                                    if (ndviValueDisplay) {
+                                        ndviValueDisplay.style.left =
+                                            point.x + 10 + "px";
+                                        ndviValueDisplay.style.top =
+                                            point.y + 10 + "px";
+                                        ndviValueDisplay.textContent =
+                                            "NDVI: " + ndviValue.toFixed(2);
+                                    }
                                 };
 
                                 img.onerror = function () {

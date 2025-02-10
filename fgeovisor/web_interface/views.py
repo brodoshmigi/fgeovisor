@@ -96,19 +96,3 @@ class LogoutView(APIView):
     def post(self, request):
         logout(request)
         return Response("")
-
-def get_calendar_events(request):
-    """ Функция Карыча | Google Calendar """
-    GOOGLE_API_KEY = settings.GOOGLE_CALENDAR_API_KEY
-    CALENDAR_ID = settings.GOOGLE_CALENDAR_ID
-    url = (f'https://www.googleapis.com/calendar/v3/calendars/{CALENDAR_ID}/events?key={GOOGLE_API_KEY}')
-    http = PoolManager()
-
-    response = http.request('GET', url=url)
-    
-    if response.status == 200:
-        data = response.json()
-        return JsonResponse(data)
-    
-    print(response.status)
-    return JsonResponse({'api error': response.status})

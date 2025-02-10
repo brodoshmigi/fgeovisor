@@ -261,10 +261,11 @@ export function showThemeSettings() {
 window.showThemeSettings = showThemeSettings;
 
 export function handleCalendarClick() {
-    console.log("точка входа");
     return new Promise((resolve) => {
         const calendarWrapper = document.createElement("input");
         calendarWrapper.id = "datepicker-container";
+        calendarWrapper.style.opacity = "0";
+        calendarWrapper.style.pointerEvents = "none"
         document.body.appendChild(calendarWrapper);
         const picker = new Pikaday({
             field: calendarWrapper,
@@ -274,6 +275,7 @@ export function handleCalendarClick() {
                 resolve(date.toISOString().split("T")[0]);
             },
         });
+        picker.show();
     });
 }
 

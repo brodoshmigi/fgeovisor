@@ -31,3 +31,12 @@ button {
 button:hover {
     background-color: #6fb07f;
 }
+
+.pika-next:hover,
+.pica-prev:hover {
+    background-color: #6fb07f;
+}
+.pika-button:hover,
+.pika-row.pick-whole-week:hover .pika-button {
+    background: #6fb07f;
+}
