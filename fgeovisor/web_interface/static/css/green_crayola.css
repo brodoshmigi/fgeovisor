@@ -31,8 +31,3 @@ button {
 button:hover {
     background-color: #6fb07f;
 }
-
-.calendar-day:hover {
-    background-color: #6fb07f;
-    color: black;
-}

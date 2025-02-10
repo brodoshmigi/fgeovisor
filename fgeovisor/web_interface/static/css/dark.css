@@ -101,19 +101,6 @@ a:visited {
     color: #ffffff;
 }
 
-#calendarWrapper {
-    background-color: #38393c;
-    color: white;
-}
-
-.calendar-day {
-    background-color: #434853;
-}
-
-.calendar-container {
-    background-color: #38393c; /* Темный фон */
-}
-
 iframe {
     filter: invert(1) hue-rotate(180deg); /* Инверсия для темной темы */
 }

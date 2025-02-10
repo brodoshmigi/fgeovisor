@@ -7,6 +7,7 @@ from zipfile import ZipFile
 from numpy import seterr, nanmax
 from matplotlib.pyplot import (imshow, imsave)
 from matplotlib import use
+from json import dump
 
 from .models import Image
 from polygons.serializators import PolygonFromDbSerializer
@@ -58,7 +59,9 @@ class Image_From_GEE():
         use('agg')
         valid_array = imshow(ndvi).get_array()
         imsave((self.dir + '.png'), valid_array, vmin=0, vmax=1)
-        image_DB = Image(polygon=self.polygon, url=(self.dir + '.png'))
+        with open("test1.json", "w") as file:
+            dump(str(ndvi),indent=4, fp=file)
+        image_DB = Image(polygon=self.polygon, url=(self.dir + '.png'), date=self.date_start)
         image_DB.save()
         remove(self.dir + '/' + listdir(self.dir)[0])
         remove(self.dir + '/' + listdir(self.dir)[0])

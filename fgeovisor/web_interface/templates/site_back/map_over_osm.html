@@ -9,6 +9,11 @@
             href="{% static 'img/favicon.ico' %}"
             type="image/x-icon"
         />
+        <link
+            rel="stylesheet"
+            type="text/css"
+            href="https://cdn.jsdelivr.net/npm/pikaday/css/pikaday.css"
+        />
         <title>fgeovisor</title>
         <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
         <link id="theme" rel="stylesheet" href="{% static 'css/light.css' %}" />
@@ -45,20 +50,7 @@
             <!-- Добавляем кнопку календаря -->
         </div>
         <!-- Добавляем контейнер календаря -->
-        <div id="calendarWrapper" style="display: none">
-            <div class="calendar-container">
-                <div class="calendar-header">
-                    <h3>Календарь снимков</h3>
-                    <span
-                        class="close-calendar"
-                        onclick="document.getElementById('calendarWrapper').style.display='none'"
-                        >&times;</span
-                    >
-                </div>
-                <!-- Контейнер для событий -->
-                <div id="events-container"></div>
-            </div>
-        </div>
+        <div id="selected-date-container"></div>
 
         <div id="themeSettings" style="display: none">
             <div class="settings-panel">
@@ -246,6 +238,8 @@
         </script>
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/leaflet-editable@1.2.0/src/Leaflet.Editable.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.0/pikaday.min.js"></script>
+        <script src="static/js/js-colormaps.js"></script>
         <script type="module" src="static/js/mapInit.js"></script>
         <script src="static/js/utils.js"></script>
         <script src="static/js/polygonManager.js"></script>

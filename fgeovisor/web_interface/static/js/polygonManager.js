@@ -22,7 +22,7 @@ function displayPolygons(geojsonData) {
     // очищаем слой полигонов во избежание фатомных элементов
     polygonLayerGroup.clearLayers();
     // создаём полигон по заданным в файле параметрам
-    const savedColor = localStorage.getItem("selectedColor") || "blue_crayola";
+    const savedColor = localStorage.getItem("selectedColor") || "#1A4F63";
 
     // Создаем полигон с заданным цветом
     L.geoJSON(geojsonData, {

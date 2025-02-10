@@ -1,7 +1,4 @@
-import {
-    autoSwitchTheme,
-    switchsidebarcontent,
-} from "./uiControls.js";
+import { autoSwitchTheme, switchsidebarcontent } from "./uiControls.js";
 
 var map;
 function initMap() {
