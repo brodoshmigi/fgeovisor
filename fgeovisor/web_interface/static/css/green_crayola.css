@@ -32,7 +32,11 @@ button:hover {
     background-color: #6fb07f;
 }
 
-.calendar-day:hover {
+.pika-next:hover,
+.pica-prev:hover {
     background-color: #6fb07f;
-    color: black;
+}
+.pika-button:hover,
+.pika-row.pick-whole-week:hover .pika-button {
+    background: #6fb07f;
 }

@@ -1,6 +1,7 @@
 /* Общие стили для body */
 body {
-    background-color: #282c34; /* Цвет фона */
+    background-color: #282c34;
+    /* Цвет фона */
 }
 
 .leaflet-layer {
@@ -52,23 +53,27 @@ body {
 
 /* Контент модального окна */
 .modal-content {
-    background-color: #38393c; /* Цвет фона формы */
+    background-color: #38393c;
+    /* Цвет фона формы */
 }
 
 /* Заголовок модального окна */
 .modal-content h2 {
-    color: #ffffff; /* Цвет заголовка */
+    color: #ffffff;
+    /* Цвет заголовка */
     left: 0%;
 }
 
 /* Поля ввода */
 input {
-    border: 1px solid #ccc; /* Цвет границы */
+    border: 1px solid #ccc;
+    /* Цвет границы */
 }
 
 /* Стили для кнопки закрытия модального окна */
 .close {
-    color: white; /* Цвет текста кнопки закрытия */
+    color: white;
+    /* Цвет текста кнопки закрытия */
 }
 
 .a:link {
@@ -84,7 +89,8 @@ a:visited {
 }
 
 #themeButton:hover {
-    background-color: #434853; /* Цвет при наведении */
+    background-color: #434853;
+    /* Цвет при наведении */
 }
 
 #themeSettings {
@@ -101,24 +107,34 @@ a:visited {
     color: #ffffff;
 }
 
-#calendarWrapper {
-    background-color: #38393c;
-    color: white;
-}
-
-.calendar-day {
-    background-color: #434853;
-}
-
-.calendar-container {
-    background-color: #38393c; /* Темный фон */
-}
-
 iframe {
-    filter: invert(1) hue-rotate(180deg); /* Инверсия для темной темы */
+    filter: invert(1) hue-rotate(180deg);
+    /* Инверсия для темной темы */
 }
 
 .ndvi-value-display {
     background-color: #38393c;
     color: white;
+}
+
+.pika-label {
+    background-color: #38393c;
+}
+
+.pika-button {
+    color: #ffffff;
+    background: #0000;
+}
+
+.pika-prev {
+background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAQAAACGG/bgAAAAQ0lEQVR4Ae3KIQ4AIBTD0N0/IeHGI3UIRA3ut/Zl+ltXc5++htVAmIAwAWECwgSEKbgthEoIlRAqIVRCqINQB9nDgQd7ktwFo6UpWQAAAABJRU5ErkJggg==);
+}
+.pika-next {
+    background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAeCAQAAACGG/bgAAAAP0lEQVQ4y+3TMQoAMAgEwfwfAvvjTZ1uGzuvHhBPPGczEG+FRqqRaqQaqUaqkX6QBmmjacvQ6qEVTjsh+xizebvlaWptGXZAAAAAAElFTkSuQmCC);
+}
+.pika-single {
+    color: #fff;
+    background: #38393c;
+    border: 1px solid #666;
+    border-bottom-color: #999;
 }

@@ -260,61 +260,23 @@ export function showThemeSettings() {
 
 window.showThemeSettings = showThemeSettings;
 
-// Функция для получения событий из календаря
-async function fetchPublicCalendarEvents() {
-    const url = '/get-events/'
-
-    try {
-        const response = await fetch(url);
-        const data = await response.json();
-        return data.items;
-    } catch (error) {
-        console.error("Ошибка при получении событий:", error);
-        return [];
-    }
-}
-
-// Функция для отображения событий на странице
-export function displayEvents(events) {
-    const eventsContainer = document.getElementById("events-container");
-    if (!eventsContainer) {
-        console.error("Контейнер для событий не найден!");
-        return;
-    }
-
-    // Очищаем контейнер перед добавлением новых событий
-    eventsContainer.innerHTML = "";
-
-    if (events.length === 0) {
-        eventsContainer.innerHTML = "<p>Событий нет.</p>";
-        return;
-    }
-
+export function handleCalendarClick() {
     return new Promise((resolve) => {
-        events.forEach((event) => {
-            const eventElement = document.createElement("button");
-            eventElement.className = "event-button";
-            eventElement.innerHTML = `
-            <p>${new Date(event.start.date).toLocaleDateString()}</p>
-            `;
-            eventElement.addEventListener("click", function () {
-                calendarWrapper.style.display = "none";
-                resolve(event.start.date);
-            });
-            eventsContainer.appendChild(eventElement);
+        const calendarWrapper = document.createElement("input");
+        calendarWrapper.id = "datepicker-container";
+        calendarWrapper.style.opacity = "0";
+        calendarWrapper.style.pointerEvents = "none"
+        document.body.appendChild(calendarWrapper);
+        const picker = new Pikaday({
+            field: calendarWrapper,
+            format: "YYYY-MM-DD",
+            onSelect: function (date) {
+                document.body.removeChild(calendarWrapper);
+                resolve(date.toISOString().split("T")[0]);
+            },
         });
+        picker.show();
     });
-}
-
-// Функция для отображения календаря
-export async function handleCalendarClick() {
-    const calendarWrapper = document.getElementById("calendarWrapper");
-    if (calendarWrapper) {
-        calendarWrapper.style.display = "block";
-        const events = await fetchPublicCalendarEvents();
-        const selectedDate = await displayEvents(events);
-        return selectedDate;
-    }
 }
 
 window.handleCalendarClick = handleCalendarClick;

@@ -29,13 +29,6 @@ class CreatePolygon(APIView):
         polygon_instance = Polygon(owner=user, polygon_data=str(
                                     request.data['geometry']))
         polygon_instance.save()
-        polygon_image = Image_From_GEE(polygon_instance)
-        try:
-            polygon_image.download_image()
-            polygon_image.visualization()
-            My_errors.tmp_context['photo'] = True
-        except Exception:
-            pass
         return Response(My_errors.error_send())
 
     def get(self, request):
@@ -67,8 +60,8 @@ class DeletePolygon(APIView):
         polygon_instance = Polygons.get(polygon_id=request.data["id"])
         try:
             delete_image(polygon_instance)
-        except:
-            pass
+        except Exception as e:
+            print('Exception:',e)
         finally:
             polygon_instance.delete()
             return Response({"success": 'deleted'})

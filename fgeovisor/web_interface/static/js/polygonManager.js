@@ -1,4 +1,3 @@
-//Достаём полигоны из БД
 let polygonLayerGroup;
 function getPolygons() {
     polygonLayerGroup.eachLayer(function (layer) {
@@ -7,9 +6,11 @@ function getPolygons() {
     if (window.authcheck === "True") {
         fetch("get-polygons/")
             .then(function (response) {
+                console.log(response);
                 return response.json();
             })
             .then(function (data) {
+                console.log(data);
                 displayPolygons(data);
             });
     }
@@ -21,7 +22,7 @@ function displayPolygons(geojsonData) {
     // очищаем слой полигонов во избежание фатомных элементов
     polygonLayerGroup.clearLayers();
     // создаём полигон по заданным в файле параметрам
-    const savedColor = localStorage.getItem("selectedColor") || "blue_crayola";
+    const savedColor = localStorage.getItem("selectedColor") || "#1A4F63";
 
     // Создаем полигон с заданным цветом
     L.geoJSON(geojsonData, {
@@ -79,7 +80,6 @@ function displayPolygons(geojsonData) {
                 //конец блока всплывающего окна
             }
         },
-        //добавляем полигон на слой
     }).addTo(polygonLayerGroup);
 }
 
@@ -108,12 +108,16 @@ async function deletePolygon(layer) {
 
 //функция создания полигона
 function createPolygon() {
-    //манипуляции с кнопками в правой части экрана
+    document.querySelectorAll(".leaflet-interactive").forEach((el) => {
+        el.style.pointerEvents = "none";
+    });
+    if (document.querySelector(".leaflet-popup-close-button")) {
+        document.querySelector(".leaflet-popup-close-button").click();
+    }
     toggleButtonDisplay(false, true, true);
     const savedColor = localStorage.getItem("selectedColor") || "blue_crayola";
-
-    //создание пустого полигона и линий предпросмотра
     let latLng = [];
+    let markers = [];
     let newfield = L.polygon(latLng, {
         color: savedColor,
         dashArray: "10, 5",
@@ -122,26 +126,43 @@ function createPolygon() {
         map
     );
 
-    // Меняем курсор при старте создания полигона
     map.getContainer().style.cursor = "crosshair";
 
-    // Обработчик для кликов
-    function onMapClick(e) {
-        // Добавляем координаты клика в массив
-        latLng.push(e.latlng);
-        // Обновляем полигон с новыми координатами
-        newfield.setLatLngs(latLng);
-        // Задаем точку для линии предпросмотра
-        tempLine.setLatLngs([e.latlng, e.latlng]); // Исправлено e.latLng на e.latlng
+    function addMarker(latlng, index) {
+        let marker = L.marker(latlng, {
+            icon: L.divIcon({
+                className: "custom-marker",
+                iconSize: [10, 10], // Размер квадрата
+                html: '<div style="width:10px; height:10px; background: white;"></div>',
+            }),
+            draggable: false,
+        }).addTo(map);
+
+        marker.on("click", function () {
+            removePoint(index);
+        });
+
+        return marker;
+
+        // Если точка не находится внутри другого полигона, добавляем маркер
     }
 
-    // Функция обработчика движения мышкой
+    function updateMarkers() {
+        markers.forEach((marker) => map.removeLayer(marker));
+        markers = latLng.map((point, index) => addMarker(point, index));
+    }
+
+    function onMapClick(e) {
+        latLng.push(e.latlng);
+        newfield.setLatLngs(latLng);
+        tempLine.setLatLngs([e.latlng, e.latlng]);
+        updateMarkers();
+    }
+
     function onMapMouseMove(e) {
-        // Начинаем предпросмотр, если есть хотя бы 1 точка
         if (latLng.length > 0) {
-            tempLine.setLatLngs([latLng[latLng.length - 1], e.latlng]); // Исправлено e.latLng на e.latlng
+            tempLine.setLatLngs([latLng[latLng.length - 1], e.latlng]);
         }
-        // В случае двух, если есть хотя бы 2 точки, ведем линию ещё и к первой
         if (latLng.length > 1) {
             tempLine.setLatLngs([
                 latLng[latLng.length - 1],
@@ -151,61 +172,101 @@ function createPolygon() {
         }
     }
 
-    // Включаем обработчик кликов
-    map.on("click", onMapClick);
-    //включаем обработчик движения мышью
-    map.on("mousemove", onMapMouseMove);
+    function removePoint(index) {
+        if (latLng.length > 0) {
+            latLng.splice(index, 1);
+            newfield.setLatLngs(latLng);
+            updateMarkers();
 
-    //добавляем кнопке "Применить" функционал
-    document.getElementById("finishButton").onclick = function () {
-        //если у полигона больше 2 точек
-        if (latLng.length >= 3 && latLng.length < 21) {
-            //убираем пунктир у границ полигона
-            const newStyle = { dashArray: "0, 0" };
-            newfield.setStyle(newStyle);
-            // Отключаем обработчик кликов
+            if (latLng.length > 1) {
+                tempLine.setLatLngs([
+                    latLng[latLng.length - 1],
+                    map.mouseEventToLatLng(event),
+                ]);
+            } else {
+                tempLine.setLatLngs([]);
+            }
+        }
+    }
+
+    function finishCreation() {
+        document.removeEventListener("keydown", onKeyDown);
+        let areaerr;
+        let cornerr;
+        if (calculatePolygonArea(latLng) / 100 > 100) {
+            areaerr = "поле должно быть не более 10000 га.";
+        } else {
+            areaerr = null;
+        }
+        if (
+            latLng.length >= 3 &&
+            latLng.length < 51 &&
+            calculatePolygonArea(latLng) / 100 < 100
+        ) {
+            newfield.setStyle({ dashArray: "0, 0" });
             map.off("click", onMapClick);
-            //Выключиие обработчика движения мыши
             map.off("mousemove", onMapMouseMove);
-            // Возвращаем курсор в исходное состояние
+            document.removeEventListener("keydown", onKeyDown);
             map.getContainer().style.cursor = "";
-            //манипулируем кнопками на правой панели
             toggleButtonDisplay(true, false, false);
-            //формируем json
             let geojson = newfield.toGeoJSON();
-            //отправляем json в django
             savePolygon(geojson);
-            //удаляем локальный полигон и линии предпросмотра
             newfield.remove();
             tempLine.remove();
-        } else if (latLng.length > 20) {
-            //если у полигона больше 20 точек
-            alert("У поля должно быть меньше 20 углов!");
+            markers.forEach((marker) => map.removeLayer(marker));
+        } else if (latLng.length > 50) {
+            cornerr = "у поля должно быт не более 50 углов";
+        } else if (latLng.length < 3) {
+            cornerr = "у поля должно быть не менее 3 улов";
         } else {
-            //если у полигона меньше 3х точек
-            alert("У поля должно быть минимум 3 угла!");
+            cornerr = null;
         }
-    };
+        if (cornerr || areaerr) {
+            if (cornerr && areaerr) {
+                alert(cornerr + " и " + areaerr);
+            } else if (cornerr) {
+                alert(cornerr);
+            } else {
+                alert(areaerr);
+            }
+        }
+    }
 
-    //добавляем функционал кнопке отмены
+    function onKeyDown(event) {
+        if (event.key === "Backspace" || event.key === "Delete") {
+            removePoint(latLng.length - 1);
+        }
+        if (event.key === "Enter") {
+            finishCreation();
+        }
+    }
+
+    map.on("click", onMapClick);
+    map.on("mousemove", onMapMouseMove);
+    document.addEventListener("keydown", onKeyDown);
+
     document.getElementById("cancelButton").onclick = function () {
-        //выключаем обработчик кликов
+        document.removeEventListener("keydown", onKeyDown);
         map.off("click", onMapClick);
-        //выключаем обработчик движения мышью
         map.off("mousemove", onMapMouseMove);
-        //возвращаем курсор в исходное состояние
+        document.removeEventListener("keydown", onKeyDown);
         map.getContainer().style.cursor = "";
-        //манипулируем кнопками в правой части экрана
         toggleButtonDisplay(true, false, false);
-        //удаляем поле и линии предпросмотра
         newfield.remove();
         tempLine.remove();
+        markers.forEach((marker) => map.removeLayer(marker));
+        document.querySelectorAll(".leaflet-interactive").forEach((el) => {
+            el.style.pointerEvents = "auto";
+        });
     };
+
+    document.getElementById("finishButton").onclick = finishCreation;
 }
 
 //добавляем функцию кнопке "Создать"
 document.getElementById("createButton").onclick = function () {
     createPolygon();
+    document.getElementById("calendarWrapper").style.display = "none";
 };
 
 //функция обновления полигона
@@ -230,6 +291,7 @@ async function updatePolygon(geojson) {
 
 //Функция сохранения полигона
 async function savePolygon(geojson) {
+    console.log(geojson);
     fetch("create-polygon/", {
         method: "POST",
         headers: {
@@ -239,7 +301,7 @@ async function savePolygon(geojson) {
         body: JSON.stringify(geojson),
     })
         .then(function (response) {
-            //перехват респонса из джанго
+            console.log(response);
             return response.json();
         })
         .then(function (data) {
@@ -272,12 +334,18 @@ function enableEdit(layer) {
 
     //функция для применения изменений
     function finishEdit(layer) {
+        document.removeEventListener("keydown", kedown);
         //выключаем редактирование
         layer.disableEdit();
         //фиксируем изменения как новый полигон и удаляем старый
         geojson = layer.toGeoJSON();
         updatePolygon(geojson);
         toggleButtonDisplay(true, false, false);
+    }
+    document.addEventListener("keydown", kedown);
+
+    function kedown(event) {
+        if (event.key === "Enter") finishEdit(layer);
     }
 
     //функция  отмены изменений

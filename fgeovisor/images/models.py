@@ -9,3 +9,4 @@ class Image(models.Model):
     url = models.ImageField(upload_to='fgeovisor/images/IMAGES')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    date = models.DateField()
