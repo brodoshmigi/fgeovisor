@@ -15,12 +15,35 @@ function initMap() {
         zoomControl: false,
     }).setView([45.03, 41.96], 13);
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
+    const attributionControl = L.control
+        .attribution({
+            prefix: "",
+        })
+        .addTo(map);
+
+    L.tileLayer(
+        "https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}",
+        {
+            attribution: "© Яндекс",
+        }
+    ).addTo(map);
 
     window.map = map;
+
+    fetch("/static/geojson/Russia_regions.geojson")
+        .then((response) => response.json())
+        .then((data) => {
+            L.geoJSON(data, {
+                style: function (feature) {
+                    return {
+                        color: "#ff7800", // Цвет границы
+                        weight: 2, // Толщина линии
+                        opacity: 1, // Прозрачность линии
+                        fillOpacity: 0, // Прозрачность заливки
+                    };
+                },
+            }).addTo(map);
+        });
 
     //подгрузка полигонов из БД
     polygonLayerGroup = L.layerGroup().addTo(map);
