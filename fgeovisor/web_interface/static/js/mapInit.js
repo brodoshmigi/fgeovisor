@@ -15,18 +15,10 @@ function initMap() {
         zoomControl: false,
     }).setView([45.03, 41.96], 13);
 
-    const attributionControl = L.control
-        .attribution({
-            prefix: "",
-        })
-        .addTo(map);
-
-    L.tileLayer(
-        "https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}",
-        {
-            attribution: "© Яндекс",
-        }
-    ).addTo(map);
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+            '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
 
     window.map = map;
 
