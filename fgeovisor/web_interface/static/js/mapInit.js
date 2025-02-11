@@ -9,7 +9,7 @@ function initMap() {
     map = L.map("map", {
         editable: true, //Включаем пакет, позволяющий производить редактирование объектов leaflet
         attributionControl: false, //отключаем ссылку на нытьё хохла
-        maxBounds: bounds,
+        //maxBounds: bounds,
         maxBoundsViscosity: 1.0,
         minZoom: 3,
         zoomControl: false,
@@ -29,21 +29,6 @@ function initMap() {
     ).addTo(map);
 
     window.map = map;
-
-    fetch("/static/geojson/Russia_regions.geojson")
-        .then((response) => response.json())
-        .then((data) => {
-            L.geoJSON(data, {
-                style: function (feature) {
-                    return {
-                        color: "#ff7800", // Цвет границы
-                        weight: 2, // Толщина линии
-                        opacity: 1, // Прозрачность линии
-                        fillOpacity: 0, // Прозрачность заливки
-                    };
-                },
-            }).addTo(map);
-        });
 
     //подгрузка полигонов из БД
     polygonLayerGroup = L.layerGroup().addTo(map);
