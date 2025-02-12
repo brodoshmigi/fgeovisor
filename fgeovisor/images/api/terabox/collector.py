@@ -68,12 +68,15 @@ class CloudFileManager():
         self.container = container
         self.ndus = ndus
         # tokens = self.get_tokens()
-        # self.csrf = tokens['csrf']
-        # self.bdstoken, self.jstoken = tokens['bdstoken'], tokens['jsToken']
+        # self.tokens = {
+        #   'csrfToken': tokens['csrf']
+        #   'jsToken': tokens['jsToken']
+        #   'bdstoken': tokens['bdstoken']
+        # }
 
     def file_cloud_repr(
             self,
-            #ndus: Dict[str, str] = NDUS_EXAMPLE,
+            # ndus: Dict[str, str] = NDUS_EXAMPLE,
             order: str = 'time',
             desc: int = 0,
             num: int = 100,
@@ -97,7 +100,6 @@ class CloudFileManager():
         response = self.__http.make_request('GET',
                                             '/api/list',
                                             token=self.ndus,
-                                            headers={},
                                             fields=fields)
         serialized_resp: Dict = response.json()
 
@@ -128,21 +130,18 @@ class CloudFileManager():
         files_list.append(fid_list)
 
         fields: Dict[str, Any] = {
-        #    'jsToken': self.jstoken,
             'fidlist': files_list,
             'type': 'dlink',
             'vip': 2,
             'sign': create_sign(s1, s2),
             'timestamp': round(time()),
             'need_speed': 0,
-        #    'bdstoken': self.bdstoken,
         }
         fields.update(DEFAULT_PARAMS)
 
         response = self.__http.make_request('GET',
                                             '/api/download',
                                             token=self.ndus,
-                                            headers={},
                                             fields=fields)
         serialized_resp: Dict = response.json()
 
@@ -150,13 +149,12 @@ class CloudFileManager():
 
     def get_info(
             self,
-            #ndus: Dict[str, str] = NDUS_EXAMPLE,
+            # ndus: Dict[str, str] = NDUS_EXAMPLE,
             response_out: bool = False):
         """ need js interpretator for use this correct """
         response = self.__http.make_request('GET',
                                             '/api/home/info',
-                                            token=self.ndus,
-                                            headers={})
+                                            token=self.ndus)
 
         try:
             serialized_resp: Dict = response.json()
@@ -172,17 +170,15 @@ class CloudFileManager():
         """ makes a params dict """
         response = self.__http.make_request('GET',
                                             '/main',
-                                            token=self.ndus,
-                                            headers={})
+                                            token=self.ndus)
         tdata_regex = compile(r'<script>var templateData = (.*);</script>')
         mach = tdata_regex.search(response.data.decode())
         tdata = loads(mach.group(1)) if mach else {}
 
         if tdata['jsToken']:
-            tdata['jsToken'] = search(
-                r'%28%22(.*)%22%29',
-                tdata['jsToken']).group(1)
-            
+            tdata['jsToken'] = search(r'%28%22(.*)%22%29',
+                                      tdata['jsToken']).group(1)
+
         return tdata
 
     def _filter_dict(self, fdict: Dict[str, Any]) -> Dict[str, Any]:
