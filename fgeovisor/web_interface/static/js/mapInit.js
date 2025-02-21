@@ -9,7 +9,7 @@ function initMap() {
     map = L.map("map", {
         editable: true, //Включаем пакет, позволяющий производить редактирование объектов leaflet
         attributionControl: false, //отключаем ссылку на нытьё хохла
-        //maxBounds: bounds,
+        maxBounds: bounds,
         maxBoundsViscosity: 1.0,
         minZoom: 3,
         zoomControl: false,

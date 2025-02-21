@@ -115,7 +115,7 @@ function createPolygon() {
         document.querySelector(".leaflet-popup-close-button").click();
     }
     toggleButtonDisplay(false, true, true);
-    const savedColor = localStorage.getItem("selectedColor") || "blue_crayola";
+    const savedColor = localStorage.getItem("selectedColor") || "#1A4F63";
     let latLng = [];
     let markers = [];
     let newfield = L.polygon(latLng, {
