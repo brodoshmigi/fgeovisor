@@ -36,8 +36,10 @@ class Image_From_GEE():
             .filterBounds(self.coords) \
             .filter(ee.Filter.lt('CLOUD_COVERAGE_ASSESSMENT', 10)) \
             .select(['B4', 'B8']) \
-            .first()
-        return sentinel_image.clip(self.coords).getDownloadURL()
+            .first() \
+            .reproject(crs='EPSG:3857', scale=5) \
+            .clip(self.coords) 
+        return sentinel_image.getDownloadURL()
 
     def download_image(self):
         response = requests.get(self.get_download_url())
@@ -56,7 +58,6 @@ class Image_From_GEE():
         nir = GDALRaster(self.dir + '/' + list_of_rasters[1]).bands[0].data()
         seterr(divide='ignore', invalid='ignore')
         ndvi = (nir - red) / (nir + red)
-        use('agg')
         valid_array = imshow(ndvi).get_array()
         imsave((self.dir + '.png'), valid_array, vmin=0, vmax=1)
         image_DB = Image(polygon=self.polygon, url=(self.dir + '.png'), date=self.date_start)
