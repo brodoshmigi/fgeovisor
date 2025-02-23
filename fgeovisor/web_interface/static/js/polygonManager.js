@@ -85,6 +85,7 @@ function displayPolygons(geojsonData) {
 
 //удаление полигона
 async function deletePolygon(layer) {
+    await calcNdvi(layer, true);
     const data = {
         id: layer.id,
     };
@@ -99,7 +100,6 @@ async function deletePolygon(layer) {
         });
         const result = await response.json();
         console.log("Success:");
-        await calcNdvi(layer, true);
         layer.remove();
     } catch (error) {
         console.error("Error:", error);
@@ -115,7 +115,7 @@ function createPolygon() {
         document.querySelector(".leaflet-popup-close-button").click();
     }
     toggleButtonDisplay(false, true, true);
-    const savedColor = localStorage.getItem("selectedColor") || "blue_crayola";
+    const savedColor = localStorage.getItem("selectedColor") || "#1A4F63";
     let latLng = [];
     let markers = [];
     let newfield = L.polygon(latLng, {

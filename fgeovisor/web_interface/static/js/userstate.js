@@ -82,6 +82,11 @@ async function register(event) {
 }
 
 async function logout() {
+    polygonLayerGroup.eachLayer((layer) => {
+        Object.values(layer._layers).forEach((subLayer) => {
+            calcNdvi(subLayer, true);
+        });
+    });
     try {
         const response = await fetch("log-out/", {
             method: "POST",
@@ -96,11 +101,6 @@ async function logout() {
             switchsidebarcontent();
             toggleButtonDisplay(false, false, false);
             getCookie("csrftoken");
-            polygonLayerGroup.eachLayer((layer) => {
-                Object.values(layer._layers).forEach((subLayer) => {
-                    calcNdvi(subLayer.feature, true);
-                });
-            });
             displayPolygons();
         }
     } catch (error) {
