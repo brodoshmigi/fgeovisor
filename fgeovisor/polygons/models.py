@@ -1,15 +1,17 @@
 import uuid
+
 from django.contrib.gis.db import models
 from django.contrib.auth.models import User
 
 # 24.02.2025
+# SELECT pg_size_pretty( pg_relation_size( 'table' ) );
 
 class Polygons(models.Model):
     """ Абстрактная модель полигона """
     polygon_id = models.UUIDField(primary_key=True,
                                   default=uuid.uuid4,
                                   editable=False)
-    polygon_data = models.PolygonField(srid='3857')
+    polygon_data = models.PolygonField(srid=3857)
 
     class Meta:
         # unique_together = ['owner', 'polygon_data', 'polygon_id']

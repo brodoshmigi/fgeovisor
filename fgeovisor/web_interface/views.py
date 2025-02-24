@@ -2,21 +2,20 @@ from django.shortcuts import render
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import AnonymousUser
 
-import rest_framework.permissions as rp
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .serializators import (UserRegistrationSerializator,
                             UserLoginSerializator)
 from .staff import My_errors
-
 """ Классы представлений, которые отрабатывают обращения клиента """
 
 
 class MapView(APIView):
     """ Рендерит карту по запросу и проверяет авторизован пользователь или нет """
 
-    permission_classes = [rp.IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     # ТУТА ПРОВЕРКА ГУТ ГУТ
     def get(self, request):
@@ -41,7 +40,7 @@ class MapView(APIView):
 class RegistrationView(APIView):
     """ Класс регистрации аккаунта с простейшей валидацией на стороне сервера """
 
-    permission_classes = [rp.AllowAny]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         # Распакоука данных из сериализатора POST сессии
@@ -65,7 +64,7 @@ class RegistrationView(APIView):
 class LoginView(APIView):
     """ Класс логина в аккаунт """
 
-    permission_classes = [rp.AllowAny]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         # Распакоука данных из сериализатора POST сессии

@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.contrib.gis import admin
 from django.contrib.gis.forms.widgets import OSMWidget
-from .models import SessionStorage, ActivityLog
+
 from polygons.models import UserPolygon, ImageBounds
 from images.models import UserImage, NasaImage
+from .models import SessionStorage, ActivityLog
 
 
 @admin.register(UserPolygon, ImageBounds, UserImage, NasaImage)

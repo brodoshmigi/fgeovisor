@@ -1,5 +1,6 @@
-from rest_framework import serializers
 from django.contrib.auth.models import User
+
+from rest_framework import serializers
 """
 Тут храним сериализаторы данных из quaryset моделей, который в БД у нас
 Сериализаторы делают каткаткат и выдают нам красивые гейсоны

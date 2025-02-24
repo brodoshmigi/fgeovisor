@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
+
 from .models import UserPolygon, ImageBounds
 
 # Получает queryset из модели Polygon
@@ -9,7 +10,7 @@ class PolygonSerializator(serializers.ModelSerializer):
         model = UserPolygon
         fields = '__all__'
 
-class PolygonFromDbSerializer(GeoFeatureModelSerializer):
+class GeoJSONSerializer(GeoFeatureModelSerializer):
      
     class Meta:
         model = UserPolygon

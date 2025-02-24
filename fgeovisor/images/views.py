@@ -1,18 +1,19 @@
-import rest_framework.permissions as rp
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
 from polygons.models import UserPolygon
+from web_interface.staff import My_errors
 from .models import UserImage
 from .serializators import ImageSerializator
 from .staff import Image_From_GEE
-from web_interface.staff import My_errors
 
 
 class UploadImg(APIView):
     """
     Функция добавления фото
     """
-    permission_classes = [rp.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, id, date):
         polygons = UserPolygon.objects.filter(owner=self.request.user.id)
@@ -26,6 +27,7 @@ class ImageGEE(APIView):
     """
     Добавление фото из Google Earth Engine
     """
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, id, date):
         polygons = UserPolygon.objects.filter(owner=self.request.user.id)

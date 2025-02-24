@@ -4,10 +4,8 @@ import requests
 from os import (makedirs, remove, path, listdir, rmdir)
 from django.contrib.gis.gdal.raster.source import GDALRaster
 from zipfile import ZipFile
-from numpy import seterr, nanmax
+from numpy import seterr
 from matplotlib.pyplot import (imshow, imsave)
-from matplotlib import use
-from json import dump
 
 from .models import Image
 from polygons.serializators import PolygonFromDbSerializer
