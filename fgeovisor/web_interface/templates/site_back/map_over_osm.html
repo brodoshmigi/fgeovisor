@@ -57,11 +57,12 @@
                 <div class="section">
                     <div class="section-title">Тема</div>
                     <div class="theme-toggle">
-                        <button class="button" onclick="switchTheme('dark')">
-                            Тёмная
-                        </button>
-                        <button class="button" onclick="switchTheme('light')">
-                            Светлая
+                        <button
+                            class="button"
+                            id="mainThemeButton"
+                            onclick="switchTheme()"
+                        >
+                            Сменить тему
                         </button>
                     </div>
                 </div>
@@ -93,11 +94,6 @@
             </div>
         </div>
 
-        <div class="popup-button">
-            <button id="calcNDVI">NDVI</button>
-            <button id="deleteButton">Удалить</button>
-            <button id="editButton">Изменить</button>
-        </div>
         <div class="ui-button" id="ui-button">
             <button id="createButton">Добавить поле</button>
             <button id="finishButton" style="display: none">Применить</button>

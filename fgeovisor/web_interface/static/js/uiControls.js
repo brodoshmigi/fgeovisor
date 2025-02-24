@@ -166,10 +166,10 @@ export function switchsidebarcontent() {
 window.switchsidebarcontent = switchsidebarcontent;
 
 // Функции для работы с темами
-export function switchTheme(themChoose) {
+export function switchTheme() {
     const themeLink = document.getElementById("theme");
     if (themeLink) {
-        if (themChoose === "dark") {
+        if (themeLink.getAttribute("href") === staticUrls.light) {
             themeLink.setAttribute("href", staticUrls.dark);
             localStorage.setItem("theme", "dark");
             savedTheme = "dark";
@@ -265,7 +265,7 @@ export function handleCalendarClick() {
         const calendarWrapper = document.createElement("input");
         calendarWrapper.id = "datepicker-container";
         calendarWrapper.style.opacity = "0";
-        calendarWrapper.style.pointerEvents = "none"
+        calendarWrapper.style.pointerEvents = "none";
         document.body.appendChild(calendarWrapper);
         const picker = new Pikaday({
             field: calendarWrapper,

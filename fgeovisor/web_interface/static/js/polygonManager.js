@@ -1,7 +1,25 @@
+function createStandardButtons() {
+    const buttonContainer = document.createElement("div");
+    buttonContainer.className = "popup-button";
+    buttonContainer.style.display = "none"; // Скрываем контейнер
+
+    const deleteButton = document.createElement("button");
+    deleteButton.id = "deleteButton";
+    deleteButton.textContent = "Удалить";
+
+    const editButton = document.createElement("button");
+    editButton.id = "editButton";
+    editButton.textContent = "Изменить";
+
+    buttonContainer.appendChild(deleteButton);
+    buttonContainer.appendChild(editButton);
+    document.body.appendChild(buttonContainer);
+}
+
 let polygonLayerGroup;
 function getPolygons() {
     polygonLayerGroup.eachLayer(function (layer) {
-        calcNdvi(layer, true);
+        calcIndex(layer, true);
     });
     if (window.authcheck === "True") {
         fetch("get-polygons/")
@@ -52,31 +70,41 @@ function displayPolygons(geojsonData) {
                 areaText.textContent = `Площадь: ${area.toFixed(2)} га`;
                 popupContent.appendChild(areaText);
 
-                let calcB = document.getElementById("calcNDVI").cloneNode(true);
-                calcB.id = "calcBClone";
-                calcB.addEventListener("click", function () {
-                    calcNdvi(layer, false);
-                });
-
-                let deleteB = document
-                    .getElementById("deleteButton")
-                    .cloneNode(true);
-                deleteB.id = "deleteBClone";
-                deleteB.addEventListener("click", function () {
-                    deletePolygon(layer);
-                });
-
-                let editB = document
-                    .getElementById("editButton")
-                    .cloneNode(true);
-                editB.id = "editBClone";
-                editB.addEventListener("click", function () {
+                let editButton = document.createElement("button");
+                editButton.textContent = "Изменить";
+                editButton.addEventListener("click", function () {
                     enableEdit(layer);
                 });
-                popupContent.appendChild(calcB);
-                popupContent.appendChild(deleteB);
-                popupContent.appendChild(editB);
+                popupContent.appendChild(editButton);
+
+                let indicesButton = document.createElement("button");
+                indicesButton.textContent = "Индексы";
+                indicesButton.addEventListener("click", function () {
+                    showIndicesMenu(popupContent, layer);
+                });
+                popupContent.appendChild(indicesButton);
+
+                let deleteButton = document.createElement("button");
+                deleteButton.textContent = "Удалить";
+                deleteButton.addEventListener("click", function () {
+                    deletePolygon(layer);
+                });
+                popupContent.appendChild(deleteButton);
+
+                let cleanButton = document.createElement("button");
+                cleanButton.textContent = "Выключить";
+                cleanButton.addEventListener("click", function () {
+                    calcIndex(layer, true);
+                });
+                popupContent.appendChild(cleanButton);
+
                 layer.bindPopup(popupContent);
+
+                layer.on("popupopen", function () {
+                    if (document.getElementById("backButton")) {
+                        document.getElementById("backButton").click();
+                    }
+                });
                 //конец блока всплывающего окна
             }
         },
@@ -85,7 +113,7 @@ function displayPolygons(geojsonData) {
 
 //удаление полигона
 async function deletePolygon(layer) {
-    await calcNdvi(layer, true);
+    await calcIndex(layer, true);
     const data = {
         id: layer.id,
     };
@@ -266,7 +294,9 @@ function createPolygon() {
 //добавляем функцию кнопке "Создать"
 document.getElementById("createButton").onclick = function () {
     createPolygon();
-    document.getElementById("calendarWrapper").style.display = "none";
+    if (document.getElementById("calendarWrapper")) {
+        document.getElementById("calendarWrapper").style.display = "none";
+    }
 };
 
 //функция обновления полигона
@@ -317,7 +347,7 @@ async function savePolygon(geojson) {
 //Функция для редаактирования полигонов
 
 function enableEdit(layer) {
-    calcNdvi(layer, true);
+    calcIndex(layer, true);
     layer.enableEdit(); //включаем редактирование для элемента
     layer.closePopup(); // закрываемвсплывающее окно
     //проводим манипуляции с кнопками в првой части экрана
@@ -353,4 +383,64 @@ function enableEdit(layer) {
         toggleButtonDisplay(true, false, false);
         layer.disableEdit();
     }
+}
+
+// Добавляем новую функцию для отображения меню индексов
+function showIndicesMenu(popupContent, layer) {
+    popupContent.innerHTML = "";
+
+    let backButton = document.createElement("button");
+    backButton.id = "backButton";
+    backButton.textContent = "Назад";
+    backButton.addEventListener("click", function () {
+        // Восстанавливаем стандартное содержимое
+        const area = calculatePolygonArea(layer.getLatLngs()[0]);
+        popupContent.innerHTML = "";
+
+        let areaText = document.createElement("p");
+        areaText.textContent = `Площадь: ${area.toFixed(2)} га`;
+        popupContent.appendChild(areaText);
+
+        let editB = document.getElementById("editButton").cloneNode(true);
+        editB.id = "editBClone";
+        editB.addEventListener("click", function () {
+            enableEdit(layer);
+        });
+        popupContent.appendChild(editB);
+
+        let indicesButton = document.createElement("button");
+        indicesButton.textContent = "Индексы";
+        indicesButton.addEventListener("click", function () {
+            showIndicesMenu(popupContent, layer);
+        });
+        popupContent.appendChild(indicesButton);
+
+        let deleteB = document.getElementById("deleteButton").cloneNode(true);
+        deleteB.id = "deleteBClone";
+        deleteB.addEventListener("click", function () {
+            deletePolygon(layer);
+        });
+        
+        popupContent.appendChild(deleteB);
+        let cleanButton = document.createElement("button");
+        cleanButton.textContent = "Выключить";
+        cleanButton.addEventListener("click", function () {
+            calcIndex(layer, true);
+        });
+        popupContent.appendChild(cleanButton);
+    });
+    popupContent.appendChild(backButton);
+
+    // Массив индексов
+    const indices = ["NDVI", "EVI", "SAVI", "GNDVI", "MSAVI", "NDRE"];
+
+    // Создаем кнопки для каждого индекса
+    indices.forEach((index) => {
+        let indexButton = document.createElement("button");
+        indexButton.textContent = index;
+        indexButton.addEventListener("click", function () {
+            calcIndex(layer, false, index);
+        });
+        popupContent.appendChild(indexButton);
+    });
 }

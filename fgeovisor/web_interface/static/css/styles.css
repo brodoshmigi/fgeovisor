@@ -308,3 +308,28 @@ a:hover {
     font-size: 14px;
     pointer-events: none; /* Чтобы элемент не блокировал другие события */
 }
+
+.popup-content {
+    display: grid;
+    grid-template-columns: 1fr; /* Одна колонка для стандартного вида */
+    gap: 8px;
+}
+
+.popup-content button {
+    width: 188px; /* Кнопки на всю ширину */
+}
+
+/* Для меню индексов переопределяем стили */
+.popup-content {
+    grid-template-columns: repeat(2, 1fr); /* Две колонки для меню индексов */
+}
+
+.popup-content button {
+    width: 90px; /* Фиксированная ширина для кнопок в меню индексов */
+}
+
+.popup-content p,
+.popup-content button#backButton {
+    grid-column: span 2;
+    width: 188px;
+}
