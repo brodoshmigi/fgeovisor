@@ -1,8 +1,4 @@
-from urllib3 import PoolManager
-
 from django.shortcuts import render
-from django.conf import settings
-from django.http import JsonResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import AnonymousUser
 
