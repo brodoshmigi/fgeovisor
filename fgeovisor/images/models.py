@@ -21,7 +21,7 @@ class Image(models.Model):
         return h
 
     @abstractmethod
-    def check(self, request):
+    def check_uri(self, request):
         if self._next_handler:
             return self._next_handler.check()
 
@@ -53,13 +53,13 @@ class ImageType(models.Model):
 
 class NasaImage(Image):
     """ Example for NASA cloud-schema image (usually json) """
-    poly_bounds = models.ForeignKey(to=ImageBounds,
-                                    to_field='polygon_id',
-                                    related_name=('nasa_image'),
-                                    on_delete=models.CASCADE)
+    polygon_bounds = models.ForeignKey(to=ImageBounds,
+                                       to_field='polygon_id',
+                                       related_name=('nasa_image'),
+                                       on_delete=models.CASCADE)
     local_uri = models.JSONField(null=True)
 
-    def check(self, request) -> str:
+    def check_uri(self, request) -> str:
         if self.real_uri:
             return self.real_uri
 
@@ -79,7 +79,7 @@ class UserImage(Image, ImageType):
                                    related_name=('user_image'),
                                    on_delete=models.CASCADE)
 
-    def check(self, request) -> str:
+    def check_uri(self, request) -> str:
         if self.real_uri:
             return self.real_uri
 
