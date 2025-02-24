@@ -37,4 +37,5 @@ document.addEventListener("DOMContentLoaded", function () {
     bulling();
     switchsidebarcontent();
     autoSwitchTheme();
+    createStandardButtons();
 });

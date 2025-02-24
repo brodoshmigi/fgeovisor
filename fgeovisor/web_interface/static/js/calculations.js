@@ -1,7 +1,7 @@
 //Функция рассчёта NDVI
 var ndviValueDisplay = null;
 
-async function calcNdvi(layer, del) {
+async function calcIndex(layer, del /*, index*/) {
     var layerID = "ndviLayer_" + layer.id;
     var isPhotoRendered = map._layers[layerID];
     var popup = document.getElementsByClassName(
@@ -15,7 +15,7 @@ async function calcNdvi(layer, del) {
     if (del === true) {
         return new Promise((resolve) => {
             if (isPhotoRendered) {
-                layer.off('mousemove');
+                layer.off("mousemove");
                 layer.setStyle({ fillOpacity: 0.2 });
                 delete map._layers[layerID];
                 map.removeLayer(isPhotoRendered);
@@ -35,7 +35,7 @@ async function calcNdvi(layer, del) {
         } else {
             latlngBounds = layer.getLatLngs();
             let pic_date = await window.handleCalendarClick();
-            const requestURL = "/get-img-gee/" + layer.id + "/" + pic_date;
+            const requestURL = "/get-img-gee/" + layer.id + "/" + pic_date /* + index */;
             await fetch(requestURL, {
                 headers: {
                     "Content-Type": "application/json",
@@ -45,7 +45,7 @@ async function calcNdvi(layer, del) {
                 if (response.status == 507) {
                     alert("Снимка для этой даты не существует");
                 } else {
-                    fetch("/get-img/" + layer.id + "/" + pic_date, {
+                    fetch("/get-img/" + layer.id + "/" + pic_date /* + index */, {
                         headers: {
                             "Content-Type": "application/json",
                             "X-CSRFToken": csrfToken, // Добавляем CSRF-токен
@@ -96,13 +96,13 @@ async function calcNdvi(layer, del) {
                                         ((e.latlng.lng - bounds.getWest()) /
                                             (bounds.getEast() -
                                                 bounds.getWest())) *
-                                        img.width
+                                            img.width
                                     );
                                     var pixelY = Math.floor(
                                         ((bounds.getNorth() - e.latlng.lat) /
                                             (bounds.getNorth() -
                                                 bounds.getSouth())) *
-                                        img.height
+                                            img.height
                                     );
 
                                     // Получаем цвет пикселя
@@ -113,7 +113,7 @@ async function calcNdvi(layer, del) {
                                         1
                                     ).data;
 
-                                    var ndviValue = calculateNDVI(
+                                    var ndviValue = calculateIndex(
                                         pixel[0], // Red channel (B4)
                                         pixel[1], // Green channel (unused here, but we could use it if needed)
                                         pixel[2] // Blue channel (B2)
@@ -152,18 +152,18 @@ async function calcNdvi(layer, del) {
     }
 }
 
-function calculateNDVI(r, g, b) {
+function calculateIndex(r, g, b) {
     const keyPoints = [
-        { r: 68, g: 1, b: 84, value: 0.00 },   // Фиолетовый (0)
-        { r: 72, g: 35, b: 116, value: 0.10 }, // 
-        { r: 59, g: 82, b: 139, value: 0.20 },  // 
-        { r: 44, g: 114, b: 142, value: 0.30 }, // 
-        { r: 33, g: 144, b: 141, value: 0.40 }, // 
-        { r: 39, g: 173, b: 129, value: 0.50 }, // 
-        { r: 92, g: 200, b: 99, value: 0.60 },  // 
-        { r: 170, g: 220, b: 50, value: 0.70 },  // 
-        { r: 253, g: 231, b: 37, value: 0.80 },  // 
-        { r: 253, g: 231, b: 37, value: 1.00 }   // Желтый (1)
+        { r: 68, g: 1, b: 84, value: 0.0 }, // Фиолетовый (0)
+        { r: 72, g: 35, b: 116, value: 0.1 }, //
+        { r: 59, g: 82, b: 139, value: 0.2 }, //
+        { r: 44, g: 114, b: 142, value: 0.3 }, //
+        { r: 33, g: 144, b: 141, value: 0.4 }, //
+        { r: 39, g: 173, b: 129, value: 0.5 }, //
+        { r: 92, g: 200, b: 99, value: 0.6 }, //
+        { r: 170, g: 220, b: 50, value: 0.7 }, //
+        { r: 253, g: 231, b: 37, value: 0.8 }, //
+        { r: 253, g: 231, b: 37, value: 1.0 }, // Желтый (1)
     ];
 
     // Находим ближайшие ключевые точки
@@ -175,8 +175,8 @@ function calculateNDVI(r, g, b) {
     for (const point of keyPoints) {
         const distance = Math.sqrt(
             Math.pow(r - point.r, 2) +
-            Math.pow(g - point.g, 2) +
-            Math.pow(b - point.b, 2)
+                Math.pow(g - point.g, 2) +
+                Math.pow(b - point.b, 2)
         );
 
         if (distance < minDistance1) {
@@ -192,10 +192,13 @@ function calculateNDVI(r, g, b) {
 
     // Интерполяция между двумя ближайшими точками
     const distanceTotal = minDistance1 + minDistance2;
-    const weight1 = 1 - (minDistance1 / distanceTotal);
-    const weight2 = 1 - (minDistance2 / distanceTotal);
+    const weight1 = 1 - minDistance1 / distanceTotal;
+    const weight2 = 1 - minDistance2 / distanceTotal;
 
-    const interpolatedValue = (closestPoint1.value * weight1 + closestPoint2.value * weight2).toFixed(2);
+    const interpolatedValue = (
+        closestPoint1.value * weight1 +
+        closestPoint2.value * weight2
+    ).toFixed(2);
     return parseFloat(interpolatedValue);
 }
 
