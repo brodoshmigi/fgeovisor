@@ -51,8 +51,8 @@ function showProgressBar() {
                 setTimeout(() => {
                     progressContainer.style.display = "none";
                     resolve(); // Уведомляем, что прогресс-бар завершён
+                    blocker.style.display = "none";
                 }, 1000);
-                blocker.style.display = "none";
             }
         }, 400);
     });

@@ -1,5 +1,4 @@
 from copy import copy
-from PIL import Image
 
 """
 Аналог utils.py. Тут храним вспомогательный код.

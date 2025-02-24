@@ -91,17 +91,17 @@ class IODefaultAPI():
         if token is None:
             return prepared_headers, prepared_fields
 
-        if headers and add_in == 'h' or headers == {} and add_in == 'h':
+        if add_in == 'h':
             prepared_headers = self.prepare_headers(token=token,
                                                     headers=headers)
         else: 
             prepared_headers = {} if headers is None else headers
 
-        if fields and add_in == 'q' or fields == {} and add_in == 'q':
+        if add_in == 'q':
             prepared_fields = self.prepare_params(token=token, fields=fields)
         else: 
             prepared_fields = {} if fields is None else fields
-
+            
         return prepared_headers, prepared_fields
 
     def make_request(self,
@@ -112,6 +112,7 @@ class IODefaultAPI():
                      headers: Optional[Dict[str, str]] = None,
                      fields: Optional[Dict[str, str]] = None,
                      urltype: str = 'PROD',
+                     preload: bool = True,
                      **kwargs) -> BaseHTTPResponse:
         """
         Our http client realization
@@ -128,7 +129,8 @@ class IODefaultAPI():
         response = self.__http.request(method=method,
                                        url=url,
                                        headers=prepared_headers,
-                                       fields=prepared_fields)
+                                       fields=prepared_fields,
+                                       preload_content=preload)
         return response
 
 

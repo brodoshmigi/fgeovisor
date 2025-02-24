@@ -1,8 +1,9 @@
 from rest_framework import serializers
-from .models import Image
+
+from .models import UserImage, NasaImage
 
 class ImageSerializator(serializers.ModelSerializer):
 
     class Meta:
-        model = Image
+        model = UserImage
         fields = ['id', 'url']

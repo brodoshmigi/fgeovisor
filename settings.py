@@ -16,9 +16,6 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-GOOGLE_API_KEY = ''
-CALENDAR_ID = ''
-
 NASA_CREDS = {
     'username': '',
     'password': '',
