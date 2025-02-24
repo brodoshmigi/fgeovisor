@@ -70,7 +70,13 @@ function displayPolygons(geojsonData) {
                 areaText.textContent = `Площадь: ${area.toFixed(2)} га`;
                 popupContent.appendChild(areaText);
 
-                // Добавляем кнопку индексов
+                let editButton = document.createElement("button");
+                editButton.textContent = "Изменить";
+                editButton.addEventListener("click", function () {
+                    enableEdit(layer);
+                });
+                popupContent.appendChild(editButton);
+
                 let indicesButton = document.createElement("button");
                 indicesButton.textContent = "Индексы";
                 indicesButton.addEventListener("click", function () {
@@ -85,17 +91,19 @@ function displayPolygons(geojsonData) {
                 });
                 popupContent.appendChild(deleteButton);
 
-                let editButton = document.createElement("button");
-                editButton.textContent = "Изменить";
-                editButton.addEventListener("click", function () {
-                    enableEdit(layer);
+                let cleanButton = document.createElement("button");
+                cleanButton.textContent = "Выключить";
+                cleanButton.addEventListener("click", function () {
+                    calcIndex(layer, true);
                 });
-                popupContent.appendChild(editButton);
+                popupContent.appendChild(cleanButton);
 
                 layer.bindPopup(popupContent);
 
                 layer.on("popupopen", function () {
-                    document.getElementById("backButton").click();
+                    if (document.getElementById("backButton")) {
+                        document.getElementById("backButton").click();
+                    }
                 });
                 //конец блока всплывающего окна
             }
@@ -380,13 +388,11 @@ function enableEdit(layer) {
 // Добавляем новую функцию для отображения меню индексов
 function showIndicesMenu(popupContent, layer) {
     popupContent.innerHTML = "";
-    popupContent.classList.add("indices-menu"); // Добавляем класс для меню индексов
 
     let backButton = document.createElement("button");
     backButton.id = "backButton";
     backButton.textContent = "Назад";
     backButton.addEventListener("click", function () {
-        popupContent.classList.remove("indices-menu"); // Удаляем класс меню индексов
         // Восстанавливаем стандартное содержимое
         const area = calculatePolygonArea(layer.getLatLngs()[0]);
         popupContent.innerHTML = "";
@@ -394,6 +400,13 @@ function showIndicesMenu(popupContent, layer) {
         let areaText = document.createElement("p");
         areaText.textContent = `Площадь: ${area.toFixed(2)} га`;
         popupContent.appendChild(areaText);
+
+        let editB = document.getElementById("editButton").cloneNode(true);
+        editB.id = "editBClone";
+        editB.addEventListener("click", function () {
+            enableEdit(layer);
+        });
+        popupContent.appendChild(editB);
 
         let indicesButton = document.createElement("button");
         indicesButton.textContent = "Индексы";
@@ -407,15 +420,14 @@ function showIndicesMenu(popupContent, layer) {
         deleteB.addEventListener("click", function () {
             deletePolygon(layer);
         });
-
-        let editB = document.getElementById("editButton").cloneNode(true);
-        editB.id = "editBClone";
-        editB.addEventListener("click", function () {
-            enableEdit(layer);
-        });
-
+        
         popupContent.appendChild(deleteB);
-        popupContent.appendChild(editB);
+        let cleanButton = document.createElement("button");
+        cleanButton.textContent = "Выключить";
+        cleanButton.addEventListener("click", function () {
+            calcIndex(layer, true);
+        });
+        popupContent.appendChild(cleanButton);
     });
     popupContent.appendChild(backButton);
 

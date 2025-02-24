@@ -320,15 +320,16 @@ a:hover {
 }
 
 /* Для меню индексов переопределяем стили */
-.popup-content.indices-menu {
+.popup-content {
     grid-template-columns: repeat(2, 1fr); /* Две колонки для меню индексов */
 }
 
-.popup-content.indices-menu button {
+.popup-content button {
     width: 90px; /* Фиксированная ширина для кнопок в меню индексов */
 }
 
-.popup-content.indices-menu button#backButton {
+.popup-content p,
+.popup-content button#backButton {
     grid-column: span 2;
     width: 188px;
 }
