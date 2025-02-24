@@ -8,7 +8,7 @@ from numpy import seterr
 from matplotlib.pyplot import (imshow, imsave)
 
 from .models import Image
-from polygons.serializators import PolygonFromDbSerializer
+from polygons.serializators import GeoJSONSerializer
 
 ee.Authenticate()
 ee.Initialize(project='ee-cocafin1595')
@@ -23,7 +23,7 @@ class Image_From_GEE():
                  date_end=str(datetime.date.today())):
         self.polygon = polygon
         self.coords = ee.Geometry.Polygon(
-            PolygonFromDbSerializer(polygon).data['geometry']['coordinates'])
+            GeoJSONSerializer(polygon).data['geometry']['coordinates'])
         self.dir = IMAGE_DIR + ('/image' + str(len(listdir(IMAGE_DIR)) + 1))
         self.date_start = date_start
         self.date_end = date_end
@@ -36,7 +36,7 @@ class Image_From_GEE():
             .select(['B4', 'B8']) \
             .first() \
             .reproject(crs='EPSG:3857', scale=5) \
-            .clip(self.coords) 
+            .clip(self.coords)
         return sentinel_image.getDownloadURL()
 
     def download_image(self):
@@ -58,7 +58,9 @@ class Image_From_GEE():
         ndvi = (nir - red) / (nir + red)
         valid_array = imshow(ndvi).get_array()
         imsave((self.dir + '.png'), valid_array, vmin=0, vmax=1)
-        image_DB = Image(polygon=self.polygon, url=(self.dir + '.png'), date=self.date_start)
+        image_DB = Image(polygon=self.polygon,
+                         url=(self.dir + '.png'),
+                         date=self.date_start)
         image_DB.save()
         remove(self.dir + '/' + listdir(self.dir)[0])
         remove(self.dir + '/' + listdir(self.dir)[0])
