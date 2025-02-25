@@ -1,7 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import (RetrieveModelMixin, UpdateModelMixin,
+from rest_framework.mixins import (ListModelMixin, UpdateModelMixin,
                                    CreateModelMixin, DestroyModelMixin)
 from rest_framework.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
                                    HTTP_201_CREATED,
@@ -13,10 +13,10 @@ from polygons.models import UserPolygon
 from web_interface.staff import My_errors
 from .models import UserImage
 from .serializators import ImageSerializator
-from .staff import Image_From_GEE
+from .staff import Image_GEE
 
 
-class UploadImg(GenericViewSet, RetrieveModelMixin, UpdateModelMixin, 
+class UploadImg(GenericViewSet, ListModelMixin, UpdateModelMixin, 
                 CreateModelMixin, DestroyModelMixin):
     permission_classes = [IsAuthenticated]
 
@@ -24,13 +24,29 @@ class UploadImg(GenericViewSet, RetrieveModelMixin, UpdateModelMixin,
 
     def get_queryset(self):
         query_params = self.request.GET
-        polygon_id, index, date = query_params['id'], 
-        query_params['index'], query_params['date']
+        polygon_id, index, date = query_params['id'], \
+            query_params['index'].upper(), query_params['date']
+        polygon_object = UserPolygon.objects.get(polygon_id=polygon_id)
+        return UserImage.objects.filter(polygon_id=polygon_object,
+                                        image_index=index,
+                                        image_date=date)
+    
+    def list(self, request, *args, **kwargs) -> Response:
+        queryset : UserImage = self.filter_queryset(self.get_queryset())
+        polygon_object = UserPolygon.objects.get(polygon_id=self.request.GET['id'])
         
-        return UserPolygon.objects.get(polygon_id=polygon_id, 
-                                          image_index=index, 
-                                          image_date=date)
-
+        if not queryset:
+            #если скачиваются ужен скачанные снимки, воможно проблема в датах
+            image_object = Image_GEE(polygon_object,date_start=self.request.GET['date'])
+            image_object.download_image()
+            _image_object = image_object.calculate_index()
+            return Response(status=HTTP_201_CREATED, data=_image_object.check_uri(request='1'))
+        
+        serializer = self.get_serializer(queryset, many=True)
+        image_uri = queryset[0].check_uri(request='1')
+        if image_uri is not None:
+            return Response(image_uri)
+        return Response(serializer.data)
 
 class ImageGEE(APIView):
     """
@@ -41,7 +57,7 @@ class ImageGEE(APIView):
     def get(self, request, id, date):
         polygons = UserPolygon.objects.filter(owner=self.request.user.id)
         polygon_instance = polygons.get(polygon_id=id)
-        polygon_image = Image_From_GEE(polygon_instance, date_start=date)
+        polygon_image = Image_GEE(polygon_instance, date_start=date)
         """
         try:
             polygon_image.download_image()

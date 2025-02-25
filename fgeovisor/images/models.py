@@ -12,9 +12,9 @@ class Image(models.Model):
 
     _next_handler: models.Model = None
 
-    local_uri = models.ImageField(upload_to='fgeovisor/images/IMAGES',
-                                  null=True)
-    cloud_uri = models.URLField(unique=True, null=True)
+    local_uri = models.ImageField(upload_to='images/IMAGES',
+                                  blank=True)
+    cloud_uri = models.URLField(blank=True)
     image_date = models.DateField()
 
     def set_next(self, h: models.Model) -> models.Model:
@@ -61,13 +61,13 @@ class NasaImage(Image):
     local_uri = models.JSONField(null=True)
 
     def check_uri(self, request) -> str:
-        if self.real_uri:
-            return self.real_uri
+        if self.cloud_uri:
+            return self.cloud_uri
 
         if self.local_uri:
             return self.local_uri
 
-        return super().check(request)
+        return super().check_uri(request)
 
     class Meta:
         ordering = ['image_date']
@@ -82,13 +82,13 @@ class UserImage(Image, ImageType):
 
     def check_uri(self, request) -> str:
 
-        if self.real_uri:
-            return self.real_uri
+        if self.cloud_uri:
+            return self.cloud_uri
 
         if self.local_uri:
-            return self.local_uri
+            return self.local_uri.url
 
-        return super().check(request)
+        return super().check_uri(request)
 
     class Meta:
         ordering = ['polygon_id']
