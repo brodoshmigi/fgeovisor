@@ -1,6 +1,3 @@
-from django.shortcuts import redirect
-from django.urls import reverse
-
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
@@ -12,7 +9,6 @@ from rest_framework.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
                                    HTTP_400_BAD_REQUEST)
 from rest_framework.response import Response
 
-from web_interface.staff import My_errors
 from images.staff import delete_image, update_image_GEE
 from .models import UserPolygon
 from .serializators import GeoJSONSerializer
