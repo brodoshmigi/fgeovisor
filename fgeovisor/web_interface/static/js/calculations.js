@@ -24,7 +24,6 @@ async function calcIndex(layer, del /*, index*/) {
         });
     } else {
         if (isPhotoRendered) {
-            console.log(layer);
             layer.setStyle({
                 fillOpacity: 0.2, // Полупрозрачный полигон
             });

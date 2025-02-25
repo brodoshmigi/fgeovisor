@@ -11,7 +11,7 @@ class Polygons(models.Model):
     polygon_id = models.UUIDField(primary_key=True,
                                   default=uuid.uuid4,
                                   editable=False)
-    polygon_data = models.PolygonField(srid=3857)
+    polygon_data = models.PolygonField()
 
     class Meta:
         # unique_together = ['owner', 'polygon_data', 'polygon_id']
