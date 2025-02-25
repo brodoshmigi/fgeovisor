@@ -25,17 +25,7 @@ v1_rest_view = [
     re_path(r'^v1/polygon', views.PolygonsView.as_view(), name='v1-poly'),
 ]
 
-urlpatterns = [
-    path('create-polygon/',
-         views.CreatePolygon.as_view(),
-         name='create-polygon'),
-    path('get-polygons/', views.GetPolygons.as_view(), name='get-polygon'),
-    path('delete-polygon/',
-         views.DeletePolygon.as_view(),
-         name='delete-polygon'),
-    path('update-polygon/',
-         views.UpdatePolygon.as_view(),
-         name='update-poligon'),
-]
+urlpatterns = []
+
 urlpatterns += crud_poly_rest
 urlpatterns += v1_rest_view
