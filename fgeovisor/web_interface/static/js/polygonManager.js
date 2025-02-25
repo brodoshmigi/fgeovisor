@@ -22,13 +22,11 @@ function getPolygons() {
         calcIndex(layer, true);
     });
     if (window.authcheck === "True") {
-        fetch("get-polygons/")
+        fetch("crud/polygon")
             .then(function (response) {
-                console.log(response);
                 return response.json();
             })
             .then(function (data) {
-                console.log(data);
                 displayPolygons(data);
             });
     }
@@ -114,20 +112,15 @@ function displayPolygons(geojsonData) {
 //удаление полигона
 async function deletePolygon(layer) {
     await calcIndex(layer, true);
-    const data = {
-        id: layer.id,
-    };
     try {
-        const response = await fetch("delete-polygon/", {
-            method: "POST",
+        const response = await fetch("crud/polygon/" + layer.id, {
+            method: "Delete",
             headers: {
                 "Content-Type": "application/json",
                 "X-CSRFToken": csrfToken, // Добавляем CSRF-токен
             },
-            body: JSON.stringify(data),
         });
-        const result = await response.json();
-        console.log("Success:");
+        const result = await response.status;
         layer.remove();
     } catch (error) {
         console.error("Error:", error);
@@ -301,8 +294,8 @@ document.getElementById("createButton").onclick = function () {
 
 //функция обновления полигона
 async function updatePolygon(geojson) {
-    fetch("update-polygon/", {
-        method: "POST",
+    fetch("crud/polygon/" + geojson.id, {
+        method: "Put",
         headers: {
             "Content-Type": "application/json",
             "X-CSRFToken": csrfToken,
@@ -321,7 +314,6 @@ async function updatePolygon(geojson) {
 
 //Функция сохранения полигона
 async function savePolygon(geojson) {
-    console.log(geojson);
     fetch("create-polygon/", {
         method: "POST",
         headers: {
@@ -331,7 +323,6 @@ async function savePolygon(geojson) {
         body: JSON.stringify(geojson),
     })
         .then(function (response) {
-            console.log(response);
             return response.json();
         })
         .then(function (data) {
@@ -420,7 +411,7 @@ function showIndicesMenu(popupContent, layer) {
         deleteB.addEventListener("click", function () {
             deletePolygon(layer);
         });
-        
+
         popupContent.appendChild(deleteB);
         let cleanButton = document.createElement("button");
         cleanButton.textContent = "Выключить";
