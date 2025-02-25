@@ -10,7 +10,7 @@ from rest_framework.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
 from rest_framework.response import Response
 
 from images.staff import delete_image, update_image_GEE
-from .models import UserPolygon
+from .models import UserPolygon, User
 from .serializators import GeoJSONSerializer
 
 
@@ -25,6 +25,12 @@ class Polygons(GenericViewSet, ListModelMixin, UpdateModelMixin,
     def get_queryset(self):
         user_id = self.request.user.id
         return UserPolygon.objects.filter(owner=user_id)
+    
+    def create(self, request, *args, **kwargs):
+        # Сериализатор поел говна
+        user_object = {'owner': User.objects.get(pk=request.user.id)}
+        UserPolygon(owner=user_object, polygon_data=str(request.data['geometry'])).save()
+        return Response(status=HTTP_201_CREATED)
 
 
 class PolygonsView(APIView):
