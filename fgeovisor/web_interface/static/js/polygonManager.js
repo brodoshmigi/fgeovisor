@@ -314,7 +314,7 @@ async function updatePolygon(geojson) {
 
 //Функция сохранения полигона
 async function savePolygon(geojson) {
-    fetch("create-polygon/", {
+    fetch("crud/polygon", {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
