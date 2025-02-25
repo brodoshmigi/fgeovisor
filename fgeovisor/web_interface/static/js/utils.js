@@ -54,6 +54,6 @@ function showProgressBar() {
                     blocker.style.display = "none";
                 }, 1000);
             }
-        }, 400);
+        }, 20);
     });
 }

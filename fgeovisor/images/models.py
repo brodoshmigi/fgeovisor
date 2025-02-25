@@ -81,6 +81,7 @@ class UserImage(Image, ImageType):
                                    on_delete=models.CASCADE)
 
     def check_uri(self, request) -> str:
+
         if self.real_uri:
             return self.real_uri
 
