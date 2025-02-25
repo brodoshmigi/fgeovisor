@@ -3,7 +3,7 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from .models import UserPolygon, ImageBounds
 
-# Получает queryset из модели Polygon
+
 class PolygonSerializator(serializers.ModelSerializer):
 
     class Meta:
