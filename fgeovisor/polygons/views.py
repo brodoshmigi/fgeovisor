@@ -60,7 +60,7 @@ class PolygonsView(APIView):
 
         if pk is None:
             return Response(status=HTTP_400_BAD_REQUEST)
-        
+
         polygon_object = UserPolygon.objects.get(owner=self.request.user.id,
                                                  polygon_id=pk)
 
@@ -80,80 +80,12 @@ class PolygonsView(APIView):
             if pk is None:
                 return Response(status=HTTP_400_BAD_REQUEST)
 
-            polygon_object = UserPolygon.objects.get(owner=self.request.user.id,
-                                                    polygon_id=pk)
+            polygon_object = UserPolygon.objects.get(
+                owner=self.request.user.id, polygon_id=pk)
             polygon_object.polygon_data = str(request.data['geometry'])
             polygon_object.save()
             update_image_GEE(polygon_object)
             return Response(status=HTTP_200_OK)
         except Exception as e:
-            return Response({'error': str(e)}, status=HTTP_500_INTERNAL_SERVER_ERROR)
-
-""" Ниже Legacy """
-
-class CreatePolygon(APIView):
-    """
-    Методом научного тыка сохраняем данные из GeoJSON с фронта в БД ПОЛИГОН!!!!!!!!
-    """
-
-    def post(self, request):
-        user = self.request.user
-        polygon_instance = UserPolygon(owner=user,
-                                       polygon_data=str(
-                                           request.data['geometry']))
-        polygon_instance.save()
-        return Response(My_errors.error_send())
-
-    def get(self, request):
-        My_errors.tmp_context['create_error'] = True
-        return redirect(reverse('map'))
-
-
-class GetPolygons(APIView):
-    """
-    Возвращает полигоны пользователя
-    """
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        polygons_objects = UserPolygon.objects.filter(
-            owner=self.request.user.id).all()
-        polygons_serialized = GeoJSONSerializer(polygons_objects, many=True)
-        return Response(polygons_serialized.data)
-
-
-class DeletePolygon(APIView):
-    """
-    Удаляет полигоны по запросу с фронта по id полигона, 
-    т.к. у юзера есть доступ только к своему полигону
-    """
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        Polygons = UserPolygon.objects.filter(owner=self.request.user.id)
-        polygon_instance = UserPolygon.get(polygon_id=request.data["id"])
-        try:
-            delete_image(polygon_instance)
-        except Exception as e:
-            print('Exception:', e)
-        finally:
-            polygon_instance.delete()
-            return Response({"success": 'deleted'})
-
-
-class UpdatePolygon(APIView):
-    """
-    Функция изменения полигонов
-    """
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request):
-        try:
-            polygon_instance = UserPolygon.objects.get(
-                polygon_id=request.data['id'])
-            polygon_instance.polygon_data = str(request.data['geometry'])
-            polygon_instance.save()
-            update_image_GEE(polygon_instance)
-            return Response({'success': 'updated'})
-        except Exception:
-            return Response({'lost': str(Exception)})
+            return Response({'error': str(e)},
+                            status=HTTP_500_INTERNAL_SERVER_ERROR)
