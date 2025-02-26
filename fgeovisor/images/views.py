@@ -53,7 +53,12 @@ class UploadImg(GenericViewSet, ListModelMixin, UpdateModelMixin,
             image_object.download_image()
             _image_object = image_object.calculate_index()
             return Response(status=HTTP_201_CREATED,
-                            data={'url': _image_object.check_uri(request='1')})
+                            data={'url': _image_object.check_uri(request='1')},
+                            headers={
+                                'Cache-Control': 'no-cache, no-store, must-revalidate',
+                                'Pragma': 'no-cache',
+                                'Expires': '0'
+                                })
 
         serializer = self.get_serializer(queryset, many=True)
         image_uri = queryset[0].check_uri(request='1')

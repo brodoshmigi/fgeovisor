@@ -308,12 +308,12 @@ async function updatePolygon(geojson) {
                 return;
             }
             await showProgressBar();
+            getPolygons();
             return response.json();
         })
         .then(function (data) {
             console.log("Success:");
         });
-    getPolygons();
 }
 
 //Функция сохранения полигона
@@ -332,12 +332,12 @@ async function savePolygon(geojson) {
                 return;
             }
             await showProgressBar();
+            getPolygons();
             return response.status;
         })
         .catch(function (error) {
             console.error("Error", error);
         });
-    getPolygons();
 }
 
 //Функция для редаактирования полигонов

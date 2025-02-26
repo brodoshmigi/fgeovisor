@@ -39,7 +39,13 @@ class Polygons(GenericViewSet, ListModelMixin, UpdateModelMixin,
         # but need to add validation in perform_update
         # because users should not update polygons
         # unless they are the ones who created them.
-        return super().update(request, *args, **kwargs)
+        polygon_object = self.get_object()
+        try:
+            delete_image(polygon_object.polygon_id)
+        except Exception as e:
+            print('except: ', e)
+        finally:
+            return super().update(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):
         polygon_object = self.get_object()
