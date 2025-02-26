@@ -302,13 +302,17 @@ async function updatePolygon(geojson) {
         },
         body: JSON.stringify(geojson),
     })
-        .then(function (response) {
+        .then(async function (response) {
+            if (response.status == 400) {
+                alert("Не надо")
+                return;
+            }
+            await showProgressBar();
             return response.json();
         })
         .then(function (data) {
             console.log("Success:");
         });
-    await showProgressBar();
     getPolygons();
 }
 
@@ -322,13 +326,17 @@ async function savePolygon(geojson) {
         },
         body: JSON.stringify(geojson),
     })
-        .then(function (response) {
+        .then(async function (response) {
+            if (response.status == 400) {
+                alert("Не надо")
+                return;
+            }
+            await showProgressBar();
             return response.status;
         })
         .catch(function (error) {
-            console.error("Error:", error);
+            console.error("Error", error);
         });
-    await showProgressBar();
     getPolygons();
 }
 
