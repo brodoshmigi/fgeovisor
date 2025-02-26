@@ -323,10 +323,7 @@ async function savePolygon(geojson) {
         body: JSON.stringify(geojson),
     })
         .then(function (response) {
-            return response.json();
-        })
-        .then(function (data) {
-            console.log("Success:");
+            return response.status;
         })
         .catch(function (error) {
             console.error("Error:", error);

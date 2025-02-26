@@ -6,4 +6,4 @@ class ImageSerializator(serializers.ModelSerializer):
 
     class Meta:
         model = UserImage
-        fields = ['id', 'url']
+        fields = '__all__'

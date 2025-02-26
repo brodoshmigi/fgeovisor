@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from .models import UserPolygon, ImageBounds
+from .models import UserPolygon, ImageBounds, User
 
 
 class PolygonSerializator(serializers.ModelSerializer):
@@ -14,5 +14,5 @@ class GeoJSONSerializer(GeoFeatureModelSerializer):
      
     class Meta:
         model = UserPolygon
-        fields = ['polygon_id','polygon_data']
+        fields = ['polygon_id', 'polygon_data']
         geo_field = 'polygon_data'
