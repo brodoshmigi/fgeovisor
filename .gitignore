@@ -29,3 +29,4 @@ ssl
 start_nginx.bat
 stop_nginx.bat
 api.js
+GDAL-3.10.1-cp312-cp312-win_amd64.whl
