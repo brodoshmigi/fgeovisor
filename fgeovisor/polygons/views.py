@@ -26,11 +26,8 @@ class Polygons(GenericViewSet, ListModelMixin, UpdateModelMixin,
         user_id = self.request.user.id
         return UserPolygon.objects.filter(owner=user_id)
     
-    def create(self, request, *args, **kwargs):
-        # Сериализатор поел говна
-        user_object = User.objects.get(pk=request.user.id)
-        UserPolygon(owner=user_object, polygon_data=str(request.data['geometry'])).save()
-        return Response(status=HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class PolygonsView(APIView):
