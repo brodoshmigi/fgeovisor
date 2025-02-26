@@ -1,3 +1,5 @@
+from django.contrib.gis.geos import Polygon
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
@@ -25,9 +27,42 @@ class Polygons(GenericViewSet, ListModelMixin, UpdateModelMixin,
     def get_queryset(self):
         user_id = self.request.user.id
         return UserPolygon.objects.filter(owner=user_id)
+
+    def create(self, request, *args, **kwargs):
+        if self.polygon_is_valid():
+            return Response(status=HTTP_400_BAD_REQUEST)
+        return super().create(request, *args, **kwargs)
     
+    def update(self, request, *args, **kwargs):
+        if self.polygon_is_valid():
+            return Response(status=HTTP_400_BAD_REQUEST)
+        # but need to add validation in perform_update
+        # because users should not update polygons
+        # unless they are the ones who created them.
+        return super().update(request, *args, **kwargs)
+    
+    def destroy(self, request, *args, **kwargs):
+        polygon_object = self.get_object()
+
+        # we can look for instance relation
+        # and find all images, its a real solution
+        try:
+            delete_image(polygon_object.polygon_id)
+        except Exception as e:
+            print('except: ', e)
+        finally:
+            self.perform_destroy(polygon_object)
+
+        return Response(status=HTTP_204_NO_CONTENT)
+
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def polygon_is_valid(self):
+        input_polygon = Polygon(*self.request.data['geometry']['coordinates'])
+        polygon_objects = UserPolygon.objects.filter(
+            polygon_data__intersects=input_polygon)
+        return polygon_objects.exists()
 
 
 class PolygonsView(APIView):
