@@ -14,7 +14,7 @@ from polygons.models import UserPolygon
 
 
 def delete_image(polygon):
-    ImageInstances = UserImage.objects.filter(polygon=polygon)
+    ImageInstances = UserImage.objects.filter(polygon_id=polygon)
     for ImageInstance in ImageInstances:
         remove(str(ImageInstance.local_uri))
         ImageInstance.delete()
