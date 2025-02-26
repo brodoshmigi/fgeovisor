@@ -74,7 +74,14 @@ class NasaImage(Image):
 
 
 class UserImage(Image, ImageType):
-    """ Модель изображения для полигона пользователя """
+    """ 
+    fields:
+    - polygon_date
+    - local_uri
+    - cloud_uri
+    - image_date
+    - image_index
+    """
     polygon_id = models.ForeignKey(to=UserPolygon,
                                    to_field='polygon_id',
                                    related_name=('user_image'),
