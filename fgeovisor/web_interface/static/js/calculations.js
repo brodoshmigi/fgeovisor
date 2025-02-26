@@ -45,7 +45,10 @@ async function calcIndex(layer, del /*, index*/) {
             if (response.status == 507) {
                 alert("Снимка для этой даты не существует");
             } else {
-                fetch("/get-img/" + layer.id + "/" + pic_date /* + index */, {
+                fetch("/get-img?"+ new URLSearchParams({
+                    'id': layer.id,
+                    'date': pic_date,
+                    'index': index}), {
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRFToken": csrfToken, // Добавляем CSRF-токен
