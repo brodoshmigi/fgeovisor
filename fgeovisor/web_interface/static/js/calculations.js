@@ -37,7 +37,7 @@ async function calcIndex(layer, del, index) {
 
         // Запускаем прогресс-бар и fetch параллельно
         const [_, response] = await Promise.all([
-            showProgressBar(150), // Увеличим время для отображения прогресса
+            showProgressBar(200), // Увеличим время для отображения прогресса
             fetch(
                 "/get-img?" +
                     new URLSearchParams({
