@@ -27,20 +27,19 @@ class UploadImg(GenericViewSet, ListModelMixin, UpdateModelMixin,
     def get_queryset(self):
         query_params = self.request.GET
 
-        polygon_id, index, date = query_params['id'], \
-            query_params['index'].upper(), query_params['date']
+        polygon_id, date, index = query_params
 
         polygon_object = UserPolygon.objects.get(polygon_id=polygon_id)
         return UserImage.objects.filter(polygon_id=polygon_object,
-                                        image_index=index,
+                                        image_index=index.upper(),
                                         image_date=date)
 
     def list(self, request, *args, **kwargs) -> Response:
 
-        if not self.is_query_valid(request.GET):
+        if not self.is_query_valid(self.request.GET):
             error = {
                 'error':
-                f'You forgot {DEFAULT_PARAMS.keys()-request.GET.keys()}'
+                f'You forgot {DEFAULT_PARAMS.keys()-self.request.GET.keys()}'
             }
             return Response(status=HTTP_400_BAD_REQUEST, data=error)
 
