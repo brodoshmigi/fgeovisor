@@ -30,7 +30,7 @@ function delay(ms) {
     });
 }
 
-function showProgressBar() {
+function showProgressBar(time = 20) {
     return new Promise((resolve) => {
         const progressContainer = document.getElementById("progressContainer");
         const progressBar = document.getElementById("progressBar");
@@ -54,6 +54,6 @@ function showProgressBar() {
                     blocker.style.display = "none";
                 }, 1000);
             }
-        }, 20);
+        }, time);
     });
 }

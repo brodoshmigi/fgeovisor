@@ -1,7 +1,7 @@
 //Функция рассчёта NDVI
 var ndviValueDisplay = null;
 
-async function calcIndex(layer, del /*, index*/) {
+async function calcIndex(layer, del, index) {
     var layerID = "ndviLayer_" + layer.id;
     var isPhotoRendered = map._layers[layerID];
     var popup = document.getElementsByClassName(
@@ -32,101 +32,105 @@ async function calcIndex(layer, del /*, index*/) {
             layer.off("mouseout");
             map.removeLayer(isPhotoRendered);
         }
-        latlngBounds = layer.getLatLngs();
+        latlngBounds = L.latLngBounds(layer.getBounds());
         let pic_date = await window.handleCalendarClick();
 
-        fetch(
-            "/get-img?" +
-                new URLSearchParams({
-                    id: layer.id,
-                    date: pic_date,
-                    index: index,
-                }),
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": csrfToken, // Добавляем CSRF-токен
-                },
+        // Запускаем прогресс-бар и fetch параллельно
+        const [_, response] = await Promise.all([
+            showProgressBar(150), // Увеличим время для отображения прогресса
+            fetch(
+                "/get-img?" +
+                    new URLSearchParams({
+                        id: layer.id,
+                        date: pic_date,
+                        index: index,
+                    }),
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRFToken": csrfToken,
+                    },
+                }
+            ),
+        ]);
+
+        const data = await response.json();
+        const { url } = data;
+
+        layer.setStyle({
+            fillOpacity: 0,
+        });
+
+        // Создаем слой NDVI и добавляем его на карту
+        var ndviLayer = L.imageOverlay(url, latlngBounds);
+        ndviLayer.addTo(map);
+        map._layers[layerID] = ndviLayer;
+
+        // Обработчик события mousemove на полигоне
+        layer.on("mousemove", function (e) {
+            if (!ndviValueDisplay) {
+                ndviValueDisplay = L.DomUtil.create(
+                    "div",
+                    "ndvi-value-display"
+                );
+                document.body.appendChild(ndviValueDisplay);
             }
-        )
-            .then((response) => response.json())
-            .then((data) => {
-                const { id, url } = data;
-                layer.setStyle({
-                    fillOpacity: 0, // Полупрозрачный полигон
-                });
 
-                // Создаем слой NDVI и добавляем его на карту
-                var ndviLayer = L.imageOverlay(url, latlngBounds);
-                ndviLayer.addTo(map);
-                map._layers[layerID] = ndviLayer;
+            var canvas = document.createElement("canvas");
+            var ctx = canvas.getContext("2d");
+            var img = new Image();
+            img.crossOrigin = "Anonymous";
+            img.src = url;
 
-                // Обработчик события mousemove на полигоне
-                layer.on("mousemove", function (e) {
-                    if (!ndviValueDisplay) {
-                        ndviValueDisplay = L.DomUtil.create(
-                            "div",
-                            "ndvi-value-display"
-                        );
-                        document.body.appendChild(ndviValueDisplay);
-                    }
+            img.onload = function () {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                ctx.drawImage(img, 0, 0, img.width, img.height);
 
-                    var canvas = document.createElement("canvas");
-                    var ctx = canvas.getContext("2d");
-                    var img = new Image();
-                    img.crossOrigin = "Anonymous";
-                    img.src = url;
+                // Преобразуем координаты курсора в координаты изображения
+                var bounds = ndviLayer.getBounds();
+                var pixelX = Math.floor(
+                    ((e.latlng.lng - bounds.getWest()) /
+                        (bounds.getEast() - bounds.getWest())) *
+                        img.width
+                );
+                var pixelY = Math.floor(
+                    ((bounds.getNorth() - e.latlng.lat) /
+                        (bounds.getNorth() - bounds.getSouth())) *
+                        img.height
+                );
 
-                    img.onload = function () {
-                        canvas.width = img.width;
-                        canvas.height = img.height;
-                        ctx.drawImage(img, 0, 0, img.width, img.height);
+                // Получаем цвет пикселя
+                var pixel = ctx.getImageData(pixelX, pixelY, 1, 1).data;
 
-                        // Преобразуем координаты курсора в координаты изображения
-                        var bounds = ndviLayer.getBounds();
-                        var pixelX = Math.floor(
-                            ((e.latlng.lng - bounds.getWest()) /
-                                (bounds.getEast() - bounds.getWest())) *
-                                img.width
-                        );
-                        var pixelY = Math.floor(
-                            ((bounds.getNorth() - e.latlng.lat) /
-                                (bounds.getNorth() - bounds.getSouth())) *
-                                img.height
-                        );
+                var ndviValue = calculateIndex(
+                    pixel[0], // Red channel (B4)
+                    pixel[1], // Green channel (unused here, but we could use it if needed)
+                    pixel[2] // Blue channel (B2)
+                );
 
-                        // Получаем цвет пикселя
-                        var pixel = ctx.getImageData(pixelX, pixelY, 1, 1).data;
+                // Отображаем значение NDVI рядом с курсором
+                var point = e.containerPoint;
+                if (ndviValueDisplay) {
+                    ndviValueDisplay.style.left = point.x + 10 + "px";
+                    ndviValueDisplay.style.top = point.y + 10 + "px";
+                    ndviValueDisplay.textContent =
+                        "NDVI: " + ndviValue.toFixed(2);
+                }
+            };
 
-                        var ndviValue = calculateIndex(
-                            pixel[0], // Red channel (B4)
-                            pixel[1], // Green channel (unused here, but we could use it if needed)
-                            pixel[2] // Blue channel (B2)
-                        );
+            img.onerror = function () {
+                console.error("Ошибка загрузки изображения NDVI");
+            };
+        });
 
-                        // Отображаем значение NDVI рядом с курсором
-                        var point = e.containerPoint;
-                        if (ndviValueDisplay) {
-                            ndviValueDisplay.style.left = point.x + 10 + "px";
-                            ndviValueDisplay.style.top = point.y + 10 + "px";
-                            ndviValueDisplay.textContent =
-                                "NDVI: " + ndviValue.toFixed(2);
-                        }
-                    };
-
-                    img.onerror = function () {
-                        console.error("Ошибка загрузки изображения NDVI");
-                    };
-                });
-
-                layer.on("mouseout", function () {
-                    if (ndviValueDisplay) {
-                        ndviValueDisplay.textContent = "";
-                        L.DomUtil.remove(ndviValueDisplay);
-                        ndviValueDisplay = null;
-                    }
-                });
-            });
+        layer.on("mouseout", function () {
+            if (ndviValueDisplay) {
+                ndviValueDisplay.textContent = "";
+                L.DomUtil.remove(ndviValueDisplay);
+                ndviValueDisplay = null;
+            }
+        });
     }
 }
 
