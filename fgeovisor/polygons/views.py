@@ -29,18 +29,18 @@ class Polygons(GenericViewSet, ListModelMixin, UpdateModelMixin,
         return UserPolygon.objects.filter(owner=user_id)
 
     def create(self, request, *args, **kwargs):
-        if self.polygon_is_valid():
+        if self.check_create_valid():
             return Response(status=HTTP_400_BAD_REQUEST)
         return super().create(request, *args, **kwargs)
-    
+
     def update(self, request, *args, **kwargs):
-        if self.polygon_is_valid():
+        if self.check_update_valid():
             return Response(status=HTTP_400_BAD_REQUEST)
         # but need to add validation in perform_update
         # because users should not update polygons
         # unless they are the ones who created them.
         return super().update(request, *args, **kwargs)
-    
+
     def destroy(self, request, *args, **kwargs):
         polygon_object = self.get_object()
 
@@ -58,10 +58,17 @@ class Polygons(GenericViewSet, ListModelMixin, UpdateModelMixin,
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-    def polygon_is_valid(self):
+    def check_create_valid(self):
         input_polygon = Polygon(*self.request.data['geometry']['coordinates'])
         polygon_objects = UserPolygon.objects.filter(
             polygon_data__intersects=input_polygon)
+        return polygon_objects.exists()
+
+    def check_update_valid(self):
+        input_polygon = Polygon(*self.request.data['geometry']['coordinates'])
+        polygon_objects = UserPolygon.objects.exclude(
+            polygon_id=self.request.data['id']).filter(
+                polygon_data__intersects=input_polygon)
         return polygon_objects.exists()
 
 
