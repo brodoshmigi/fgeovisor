@@ -40,12 +40,12 @@ class UploadImg(GenericViewSet, ListModelMixin, UpdateModelMixin,
             image_object = Image_GEE(polygon_object,date_start=self.request.GET['date'])
             image_object.download_image()
             _image_object = image_object.calculate_index()
-            return Response(status=HTTP_201_CREATED, data=_image_object.check_uri(request='1'))
+            return Response(status=HTTP_201_CREATED, data={"url": _image_object.check_uri(request='1')})
         
         serializer = self.get_serializer(queryset, many=True)
         image_uri = queryset[0].check_uri(request='1')
         if image_uri is not None:
-            return Response(image_uri)
+            return Response({"url": image_uri})
         return Response(serializer.data)
 
 class ImageGEE(APIView):
