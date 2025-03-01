@@ -23,6 +23,8 @@ class UploadImg(GenericViewSet, ListModelMixin):
     serializer_class = ImageSerializator
 
     def get_queryset(self):
+        # drf said that query_params is more correct name than GET :)
+        # for us, it is a complex issue(like miyadzaki skill issue)
         query_params = self.request.GET
         polygon_id, date, index = query_params.values()
         polygon_object = UserPolygon.objects.get(polygon_id=polygon_id)
