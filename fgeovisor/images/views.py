@@ -1,8 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import (ListModelMixin, UpdateModelMixin,
-                                   CreateModelMixin, DestroyModelMixin)
+from rest_framework.mixins import ListModelMixin
 from rest_framework.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
                                    HTTP_201_CREATED,
                                    HTTP_500_INTERNAL_SERVER_ERROR,
@@ -18,8 +17,7 @@ from .staff import Image_GEE
 DEFAULT_PARAMS = {'id': '', 'date': '', 'index': ''}
 
 
-class UploadImg(GenericViewSet, ListModelMixin, UpdateModelMixin,
-                CreateModelMixin, DestroyModelMixin):
+class UploadImg(GenericViewSet, ListModelMixin):
     permission_classes = [IsAuthenticated]
 
     serializer_class = ImageSerializator
