@@ -1,40 +1,63 @@
 from django.shortcuts import render
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AnonymousUser, User
 
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import (IsAuthenticatedOrReadOnly, AllowAny,
+                                        IsAuthenticated)
+from rest_framework.viewsets import GenericViewSet
+from rest_framework.mixins import (RetrieveModelMixin, CreateModelMixin,
+                                   UpdateModelMixin)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializators import (UserRegistrationSerializator,
-                            UserLoginSerializator)
+from .serializators import (AuthRegisterSerializator, AuthSerializator,
+                            AuthSerializer)
 from .staff import My_errors
-""" Классы представлений, которые отрабатывают обращения клиента """
 
 
 class MapView(APIView):
-    """ Рендерит карту по запросу и проверяет авторизован пользователь или нет """
+    """ 
+    main view that uses for session gui on client 
+    we check request context and after manage our gui
+    """
 
     permission_classes = [IsAuthenticatedOrReadOnly]
 
-    # ТУТА ПРОВЕРКА ГУТ ГУТ
     def get(self, request):
         user = self.request.user
         context = My_errors.tmp_context
         if user.username == AnonymousUser.username:
-            # описание состояния пользователя дл js
             context['auth_check'] = False
             return render(request,
                           'site_back/map_over_osm.html',
                           context=My_errors.error_send())
-            #return Response(My_errors.error_send())
-        else:
-            # описание состояния пользователя дл js
-            context['auth_check'] = True
-            context['is_staff'] = user.is_staff
-            return render(request,
-                          'site_back/map_over_osm.html',
-                          context=My_errors.error_send())
+        context['auth_check'] = True
+        context['is_staff'] = user.is_staff
+        return render(request,
+                      'site_back/map_over_osm.html',
+                      context=My_errors.error_send())
+
+
+class UserAuth(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
+
+    permission_classes = AllowAny
+
+    serializer_class = AuthSerializer
+
+    queryset = User.objects.all()
+
+    def get_object(self):
+        '''
+        # !register is put
+        if self.request.method.lower() in ['post', 'delete']:
+            self.permission_classes = IsAuthenticated
+        # we can validate request for register by this methods
+        # self.get_parser_context, self.get_view_name|_description
+        # but we can simply use path var in request object
+        '''
+        if 'register' not in self.request.path:
+            self.permission_classes = IsAuthenticated
+        return super().get_object()
 
 
 class RegistrationView(APIView):
@@ -44,7 +67,7 @@ class RegistrationView(APIView):
 
     def post(self, request):
         # Распакоука данных из сериализатора POST сессии
-        data_serialized = UserRegistrationSerializator(data=request.data)
+        data_serialized = AuthRegisterSerializator(data=request.data)
         if data_serialized.is_valid():
             # Сохранение в БД
             data_serialized.save()
@@ -67,10 +90,8 @@ class LoginView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        # Распакоука данных из сериализатора POST сессии
-        data_serialized = UserLoginSerializator(data=request.data)
+        data_serialized = AuthSerializator(data=request.data)
         data_serialized.is_valid()
-        # автовход после регистрации
         username = data_serialized.data.get('username')
         password = data_serialized.data.get('password')
         user = authenticate(username=username, password=password)
