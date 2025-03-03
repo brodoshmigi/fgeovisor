@@ -4,10 +4,10 @@ from .views import (MapView, RegistryView, LoginView, UserAuthViewSet,
                     LogoutView)
 
 auth_path = [
-    re_path(r'^auth/profile',
+    re_path(r'^auth/profile$',
             UserAuthViewSet.as_view({'get': 'retrieve'}),
             name='user-profile'),
-    re_path(r'^auth/profile/forgot-password',
+    re_path(r'^auth/profile/forgot-password$',
             UserAuthViewSet.as_view({'patch': 'forgot_password'}),
             name='user-forget-password'),
     re_path(r'^auth/register$',
