@@ -214,3 +214,14 @@
 2025/03/01 14:15:46 [error] 25832#17764: *139 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
 2025/03/03 20:34:37 [emerg] 10124#13384: invalid method "UPDATE" in V:\nginx-1.26.2/conf/nginx.conf:25
 2025/03/03 20:34:45 [emerg] 8592#31732: invalid method "UPDATE" in V:\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 21:53:30 [emerg] 16004#2920: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 21:54:18 [emerg] 17588#18284: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 21:56:24 [emerg] 29552#29456: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 21:57:01 [emerg] 11400#28292: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 22:00:12 [emerg] 13952#18220: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 22:00:54 [emerg] 28676#19960: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 22:05:09 [emerg] 8784#28472: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 22:07:30 [emerg] 29196#21528: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 22:08:05 [emerg] 27880#9244: CreateDirectory() "C:\fgeovisor\nginx-1.26.2/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2025/03/03 22:11:49 [emerg] 28456#27700: CreateDirectory() "C:\fgeovisor\nginx-1.26.2/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2025/03/03 22:13:25 [notice] 29544#21648: signal process started
