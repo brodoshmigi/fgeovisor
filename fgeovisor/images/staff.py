@@ -3,12 +3,16 @@ import requests
 from datetime import date
 from os import (makedirs, remove, path, listdir, rmdir)
 from zipfile import ZipFile
-from numpy import seterr
 from matplotlib.pyplot import (imshow, imsave)
 
 from django.contrib.gis.gdal.raster.source import GDALRaster
+from osgeo.gdal import Warp
 
 from .models import UserImage
+from .calculations import (calculate_NDVI, calculate_EVI, 
+                           calculate_SAVI, calculate_GNDVI, 
+                           calculate_MSAVI, calculate_NDRE,
+                           crop_image)
 from polygons.serializators import GeoJSONSerializer
 from polygons.models import UserPolygon
 
@@ -24,40 +28,6 @@ def update_image_GEE(polygon):
     new_image = Image_GEE(polygon)
     new_image.download_image()
     new_image.visualization()
-
-def calculate_NDVI(image_url:str):
-    list_of_rasters = listdir(image_url)
-    red = GDALRaster(image_url + '/' + list_of_rasters[0]).bands[0].data()
-    nir = GDALRaster(image_url + '/' + list_of_rasters[1]).bands[0].data()
-    seterr(divide='ignore', invalid='ignore')
-    ndvi = (nir - red) / (nir + red)
-    return ndvi
-
-def calculate_EVI(image_url:str):
-    list_of_rasters = listdir(image_url)
-    red = GDALRaster(image_url + '/' + list_of_rasters[0]).bands[0].data()
-    nir = GDALRaster(image_url + '/' + list_of_rasters[1]).bands[0].data()
-    Blue = GDALRaster(image_url + '/' + list_of_rasters[2]).bands[0].data()
-    
-def calculate_SAVI(image_url:str, L:float= 0.5):
-    list_of_rasters = listdir(image_url)
-    red = GDALRaster(image_url + '/' + list_of_rasters[0]).bands[0].data()
-    nir = GDALRaster(image_url + '/' + list_of_rasters[1]).bands[0].data()
-    
-def calculate_GNDVI(image_url:str):
-    list_of_rasters = listdir(image_url)
-    green = GDALRaster(image_url + '/' + list_of_rasters[0]).bands[0].data()
-    nir = GDALRaster(image_url + '/' + list_of_rasters[1]).bands[0].data()
-
-def calculate_MSAVI(image_url:str, L:float= 0.5):
-    list_of_rasters = listdir(image_url)
-    red = GDALRaster(image_url + '/' + list_of_rasters[0]).bands[0].data()
-    nir = GDALRaster(image_url + '/' + list_of_rasters[1]).bands[0].data()
-
-def calculate_NDRE(image_url:str, L:float= 0.5):
-    list_of_rasters = listdir(image_url)
-    red_edge = GDALRaster(image_url + '/' + list_of_rasters[0]).bands[0].data()
-    nir = GDALRaster(image_url + '/' + list_of_rasters[1]).bands[0].data()
 
 
 IMAGE_DIR = path.dirname(path.abspath(__file__)) + '/IMAGES'
@@ -92,13 +62,13 @@ RATIO_ENUM_CALLBACK = {
 class Image_GEE():
 
     def __init__(self,
-                 polygon : UserPolygon,
-                 index : str ='NDVI',
-                 date_start : str ='2023-01-01',
-                 date_end : str =str(date.today())):
-        self.polygon = polygon
-        self.index = index.upper()
-        self.coords = ee.Geometry.Polygon(
+                 polygon: UserPolygon,
+                 index: str = 'NDVI',
+                 date_start: str = '2023-01-01',
+                 date_end: str = str(date.today())):
+        self.polygon_object: UserPolygon = polygon
+        self.index = index
+        self.polygon_EE = ee.Geometry.Polygon(
             GeoJSONSerializer(polygon).data['geometry']['coordinates'])
         self.dir = IMAGE_DIR + (f'/{index}' + str(len(listdir(IMAGE_DIR)) + 1))
         self.date_start = date_start
@@ -107,12 +77,12 @@ class Image_GEE():
     def get_download_url(self) -> str:
         sentinel_image = ee.ImageCollection('COPERNICUS/S2_SR_HARMONIZED') \
             .filterDate(self.date_start, self.date_end) \
-            .filterBounds(self.coords) \
+            .filterBounds(self.polygon_EE) \
             .filter(ee.Filter.lt('CLOUD_COVERAGE_ASSESSMENT', 10)) \
             .select(RATIO_ENUM_S2_BANDS[self.index]) \
             .first() \
-            .reproject(crs='EPSG:3857', scale=5) \
-            .clip(self.coords)
+            .reproject(crs='EPSG:4326', scale=10) \
+            .clip(self.polygon_EE)
         return sentinel_image.getDownloadURL()
 
     def download_image(self):
@@ -126,36 +96,35 @@ class Image_GEE():
             zip_ref.extractall(extract_to_directory)
         remove(path)
 
-    def calculate_index(self):
-        index = RATIO_ENUM_CALLBACK[self.index](self.dir)
-        valid_array = imshow(index).get_array()
-        imsave((self.dir + '.png'), valid_array, vmin=0, vmax=1)
-        image_DB = UserImage(polygon_id=self.polygon,
-                         local_uri=(self.dir + '.png'),
-                         image_date=self.date_start)
-        image_DB.save()
+    def read_bands(self) -> list[GDALRaster]:
+        list_of_rasters = listdir(self.dir)
+        
+        cords = self.polygon_object.polygon_data
+        crop_image(self.dir + '/' + list_of_rasters[0], cords)
+        #bands = [GDALRaster(self.dir + '/' + item).bands[0].data() for item in list_of_rasters]
+        #return bands
+    
+    def remove_bands(self):
         remove(self.dir + '/' + listdir(self.dir)[0])
         remove(self.dir + '/' + listdir(self.dir)[0])
         rmdir(self.dir)
+
+    def calculate_index(self):
+        index = RATIO_ENUM_CALLBACK[self.index](*self.read_bands())
+        valid_array = imshow(index).get_array()
+        imsave((self.dir + '.png'), valid_array, vmin=-1, vmax=1)
+        image_DB = UserImage(polygon_id=self.polygon_object,
+                             image_index=self.index,
+                             local_uri=(self.dir + '.png'),
+                             image_date=self.date_start)
+        #image_DB.save()
         return image_DB
 
-    '''
-    def visualization(self):
-        list_of_rasters = listdir(self.dir)
-        red = GDALRaster(self.dir + '/' + list_of_rasters[0]).bands[0].data()
-        nir = GDALRaster(self.dir + '/' + list_of_rasters[1]).bands[0].data()
-        seterr(divide='ignore', invalid='ignore')
-        ndvi = (nir - red) / (nir + red)
-        valid_array = imshow(ndvi).get_array()
-        imsave((self.dir + '.png'), valid_array, vmin=0, vmax=1)
-        image_DB = UserImage(polygon=self.polygon,
-                         url=(self.dir + '.png'),
-                         date=self.date_start)
-        image_DB.save()
-        remove(self.dir + '/' + listdir(self.dir)[0])
-        remove(self.dir + '/' + listdir(self.dir)[0])
-        rmdir(self.dir)
-    '''
+
+
+
+
+
 
 ee.Authenticate()
 ee.Initialize(project='ee-cocafin1595')
