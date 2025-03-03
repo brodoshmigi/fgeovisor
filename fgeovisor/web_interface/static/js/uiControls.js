@@ -116,6 +116,7 @@ export function showRegistrationForm() {
 
         const form = document.querySelector("form[action]");
         if (form) {
+            console.log(form);
             form.addEventListener("submit", function (event) {
                 const password = document.getElementById("regPassword").value;
                 const confirmPassword = document.getElementById(
@@ -154,7 +155,6 @@ export function showChangePasswd() {
                 const confirmPassword =
                     document.getElementById("rPassword").value;
                 if (password !== confirmPassword) {
-                    alert("Пароли не совпадают!");
                     event.preventDefault();
                 }
             });

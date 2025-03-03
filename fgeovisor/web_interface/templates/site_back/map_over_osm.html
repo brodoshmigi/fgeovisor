@@ -217,6 +217,9 @@
             </div>
         </div>
         <div id="changeForm">
+            <div class="errormsg" id="errormsg">
+                <p>Неверный пароль</p>
+            </div>
             <h2>Сменить пароль</h2>
             <form onsubmit="changePasswd(event)">
                 {% csrf_token %}
