@@ -40,6 +40,9 @@
                     <a href="{% url 'admin:index' %}">Панель админа</a>
                 </div>
                 <a href="javascript:void(0)" onclick="logout()">Выйти</a>
+                <a href="javascript:void(0)" onclick="showChangePasswd()"
+                    >Сменить пароль</a
+                >
             </div>
             <a
                 href="javascript:void(0)"
@@ -47,7 +50,6 @@
                 onclick="showThemeSettings()"
                 >Внешний вид</a
             >
-            <!-- Добавляем кнопку календаря -->
         </div>
         <!-- Добавляем контейнер календаря -->
         <div id="selected-date-container"></div>
@@ -213,6 +215,37 @@
                     <button type="submit">Зарегистрироваться</button>
                 </form>
             </div>
+        </div>
+        <div id="changeForm">
+            <h2>Сменить пароль</h2>
+            <form onsubmit="changePasswd(event)">
+                {% csrf_token %}
+                <input
+                    placeholder="Введите текущий пароль"
+                    type="password"
+                    id="oldPassword"
+                    name="password"
+                    autocomplete="password"
+                    required
+                />
+                <input
+                    placeholder="Введите новый пароль"
+                    type="password"
+                    id="newPassword"
+                    name="password"
+                    autocomplete="regPassword"
+                    required
+                />
+                <input
+                    placeholder="Повторите пароль"
+                    type="password"
+                    id="rPassword"
+                    name="password"
+                    autocomplete="regPassword"
+                    required
+                />
+                <button type="submit">Применить</button>
+            </form>
         </div>
         <script>
             var csrfToken = document.querySelector(

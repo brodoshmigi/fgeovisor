@@ -108,6 +108,28 @@ async function logout() {
     }
 }
 
+async function changePasswd(event) {
+    event.preventDefault();
+    const oldPass = document.getElementById("oldPassword").value;
+    const newPass = document.getElementById("newPassword").value;
+    const data = { password: oldPass, new_password: newPass };
+    console.log(data);
+    fetch("auth/profile/forgot-password", {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken,
+        },
+        body: JSON.stringify(data),
+    }).then(async function (response) {
+        if (response.status === 400) {
+            return response.json().then((error) => {
+                console.log(error.error);
+            });
+        }
+    });
+}
+
 function getCookie(name) {
     if (document.cookie && document.cookie !== "") {
         const cookies = document.cookie.split(";");
