@@ -116,6 +116,7 @@ export function showRegistrationForm() {
 
         const form = document.querySelector("form[action]");
         if (form) {
+            console.log(form);
             form.addEventListener("submit", function (event) {
                 const password = document.getElementById("regPassword").value;
                 const confirmPassword = document.getElementById(
@@ -131,6 +132,37 @@ export function showRegistrationForm() {
 }
 
 window.showRegistrationForm = showRegistrationForm;
+
+export function showChangePasswd() {
+    const modalBody = document.getElementById("modalBody");
+    const modal = document.getElementById("modal-content");
+
+    if (modalBody && modal) {
+        modalBody.innerHTML = document.getElementById("changeForm").innerHTML;
+        modal.style.width = "35%";
+        modal.style.height = "350px";
+        openModal();
+        const passwordFields = document.querySelectorAll(
+            "#modalBody input[type='password']"
+        );
+        passwordFields.forEach(function (field) {
+            field.style.width = "100%";
+        });
+        const form = document.querySelector("form[action]");
+        if (form) {
+            form.addEventListener("submit", function (event) {
+                const password = document.getElementById("newPassword").value;
+                const confirmPassword =
+                    document.getElementById("rPassword").value;
+                if (password !== confirmPassword) {
+                    event.preventDefault();
+                }
+            });
+        }
+    }
+}
+
+window.showChangePasswd = showChangePasswd;
 
 // Смена бокового меню для пользователя
 export function switchsidebarcontent() {
@@ -270,6 +302,35 @@ export function handleCalendarClick() {
         const picker = new Pikaday({
             field: calendarWrapper,
             format: "YYYY-MM-DD",
+            firstDay: 1,
+            i18n: {
+                previousMonth: "Предыдущий",
+                nextMonth: "Следующий",
+                months: [
+                    "Январь",
+                    "Февраль",
+                    "Март",
+                    "Апрель",
+                    "Май",
+                    "Июнь",
+                    "Июль",
+                    "Август",
+                    "Сентябрь",
+                    "Октябрь",
+                    "Ноябрь",
+                    "Декабрь",
+                ],
+                weekdays: [
+                    "Понедельник",
+                    "Вторник",
+                    "Среда",
+                    "Четверг",
+                    "Пятница",
+                    "Суббота",
+                    "Воскресенье",
+                ],
+                weekdaysShort: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+            },
             onSelect: function (date) {
                 document.body.removeChild(calendarWrapper);
                 resolve(date.toISOString().split("T")[0]);

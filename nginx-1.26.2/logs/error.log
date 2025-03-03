@@ -1,0 +1,227 @@
+2024/12/24 20:07:51 [notice] 6428#22328: signal process started
+2024/12/24 20:09:24 [notice] 18848#21620: signal process started
+2024/12/24 20:10:40 [notice] 22512#18464: signal process started
+2024/12/24 20:12:42 [notice] 24596#3688: signal process started
+2024/12/24 20:17:27 [notice] 2100#25728: signal process started
+2024/12/24 20:17:46 [notice] 6128#25372: signal process started
+2024/12/24 20:21:50 [notice] 21992#24640: signal process started
+2024/12/24 20:39:46 [notice] 12844#16892: signal process started
+2024/12/24 20:51:07 [error] 24328#27224: *127 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2024/12/24 20:51:10 [error] 24328#27224: *129 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2024/12/24 20:51:41 [error] 24328#27224: *135 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /static/css/crimson.css HTTP/1.1", upstream: "http://127.0.0.1:8000/static/css/crimson.css", host: "192.168.1.122"
+2024/12/24 20:51:47 [error] 24328#27224: *137 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /static/css/crimson.css HTTP/1.1", upstream: "http://127.0.0.1:8000/static/css/crimson.css", host: "192.168.1.122"
+2024/12/24 20:59:48 [error] 12036#12620: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2024/12/24 20:59:50 [error] 12036#12620: *3 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2024/12/24 21:00:23 [error] 26588#27320: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2024/12/24 21:00:25 [error] 26588#27320: *3 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2024/12/24 21:00:39 [error] 26588#27320: *5 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2024/12/24 21:00:41 [error] 26588#27320: *7 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2024/12/24 21:01:27 [error] 26588#27320: *9 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2024/12/24 21:01:29 [error] 26588#27320: *11 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2024/12/24 21:05:48 [notice] 21680#18696: signal process started
+2024/12/25 09:59:33 [notice] 7852#25584: signal process started
+2024/12/25 15:10:13 [notice] 17984#24244: signal process started
+2024/12/25 18:15:20 [notice] 4528#12404: signal process started
+2024/12/26 12:31:25 [notice] 4608#12476: signal process started
+2024/12/27 00:39:17 [notice] 19488#1988: signal process started
+2024/12/27 09:47:44 [error] 14036#14672: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2024/12/27 09:47:46 [error] 14036#14672: *3 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2024/12/28 18:45:02 [notice] 20976#1820: signal process started
+2024/12/29 00:01:12 [notice] 22128#3224: signal process started
+2024/12/29 00:11:29 [notice] 25664#23488: signal process started
+2024/12/29 00:11:29 [error] 25664#23488: CreateFile() "V:\nginx-1.26.2/logs/nginx.pid" failed (2: The system cannot find the file specified)
+2024/12/30 10:09:36 [notice] 8500#23200: signal process started
+2025/01/04 03:46:49 [notice] 26608#7092: signal process started
+2025/01/05 06:31:17 [alert] 10308#25896: worker process 6684 exited with code C0000142
+2025/01/05 06:31:17 [alert] 10308#25896: could not respawn worker
+2025/01/05 06:31:17 [alert] 10308#25896: worker process 17728 exited with code C0000142
+2025/01/05 06:31:17 [alert] 10308#25896: could not respawn worker
+2025/01/08 02:49:23 [error] 12044#13704: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/01/08 02:49:25 [error] 12044#13704: *3 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/01/08 09:37:54 [notice] 25452#15916: signal process started
+2025/01/08 10:53:27 [notice] 12596#26252: signal process started
+2025/01/09 15:51:38 [error] 16120#22764: *103 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /secretadmin/ HTTP/1.1", upstream: "http://127.0.0.1:8000/secretadmin/", host: "192.168.1.122"
+2025/01/09 15:51:40 [error] 16120#22764: *105 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/01/09 15:51:57 [notice] 9068#21580: signal process started
+2025/01/12 11:01:51 [notice] 24212#16516: signal process started
+2025/01/13 09:39:05 [notice] 25952#26376: signal process started
+2025/01/14 12:42:05 [notice] 20384#3828: signal process started
+2025/01/14 16:36:27 [error] 24136#7924: *51 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/01/14 16:36:29 [error] 24136#7924: *53 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/01/19 13:50:30 [notice] 21252#2800: signal process started
+2025/01/20 13:58:14 [notice] 4500#27096: signal process started
+2025/01/20 14:00:10 [notice] 9244#11324: signal process started
+2025/01/21 14:15:19 [notice] 15684#1464: signal process started
+2025/01/21 14:23:47 [notice] 6328#9148: signal process started
+2025/01/21 22:37:36 [notice] 21588#12868: signal process started
+2025/01/21 22:54:28 [notice] 17060#7832: signal process started
+2025/01/21 23:53:31 [notice] 13152#16740: signal process started
+2025/01/22 14:23:13 [notice] 2924#11292: signal process started
+2025/01/24 09:40:12 [notice] 21376#7832: signal process started
+2025/01/25 02:13:08 [notice] 28396#4412: signal process started
+2025/01/25 02:15:58 [error] 19640#28972: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/01/25 21:52:22 [error] 22836#1200: *1519 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/01/25 21:52:24 [error] 22836#1200: *1521 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/01/25 21:57:10 [notice] 23376#12088: signal process started
+2025/01/26 21:29:50 [notice] 9540#27252: signal process started
+2025/01/26 22:32:04 [notice] 1928#8160: signal process started
+2025/01/27 02:23:20 [error] 22588#30320: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/01/27 02:23:23 [error] 22588#30320: *3 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/01/27 02:25:04 [notice] 26232#28452: signal process started
+2025/01/28 16:03:47 [notice] 2636#29976: signal process started
+2025/01/28 20:43:48 [notice] 18276#11200: signal process started
+2025/01/29 19:46:32 [notice] 12308#11972: signal process started
+2025/01/30 01:06:37 [notice] 7932#5756: signal process started
+2025/01/30 01:07:26 [error] 12808#25192: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/01/30 01:07:28 [error] 12808#25192: *3 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/01/30 01:07:57 [notice] 18952#1984: signal process started
+2025/01/30 01:41:21 [notice] 20208#12356: signal process started
+2025/01/30 01:42:20 [notice] 2624#12592: signal process started
+2025/01/30 01:57:47 [alert] 4420#20096: worker process 2024 exited with code C0000142
+2025/01/30 01:57:47 [alert] 4420#20096: could not respawn worker
+2025/01/30 08:29:00 [error] 28372#28304: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /static/css/gold.css HTTP/1.1", upstream: "http://127.0.0.1:8000/static/css/gold.css", host: "192.168.1.122"
+2025/01/30 14:40:52 [notice] 19588#13152: signal process started
+2025/01/31 14:51:33 [notice] 11368#17296: signal process started
+2025/02/01 00:44:21 [notice] 8164#11608: signal process started
+2025/02/01 01:43:44 [notice] 14148#7080: signal process started
+2025/02/01 01:52:56 [notice] 23780#25972: signal process started
+2025/02/01 20:36:33 [notice] 18664#20400: signal process started
+2025/02/03 01:26:19 [notice] 16616#17088: signal process started
+2025/02/03 16:35:15 [notice] 19756#13236: signal process started
+2025/02/03 18:31:03 [notice] 25764#10508: signal process started
+2025/02/04 22:45:16 [error] 18188#26364: *101 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/05 00:35:41 [notice] 7940#21964: signal process started
+2025/02/05 16:10:50 [error] 24280#24328: *343 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /get-events/ HTTP/1.1", upstream: "http://127.0.0.1:8000/get-events/", host: "192.168.1.122"
+2025/02/06 17:19:27 [error] 21668#18652: *1807 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while reading response header from upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /V%3A/geodjangorainmarker/fgeovisor/images/IMAGES/image11.png HTTP/1.1", upstream: "http://127.0.0.1:8000/V%3A/geodjangorainmarker/fgeovisor/images/IMAGES/image11.png", host: "192.168.1.122"
+2025/02/06 17:19:29 [error] 21668#18652: *1809 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /V%3A/geodjangorainmarker/fgeovisor/images/IMAGES/image11.png HTTP/1.1", upstream: "http://127.0.0.1:8000/V%3A/geodjangorainmarker/fgeovisor/images/IMAGES/image11.png", host: "192.168.1.122"
+2025/02/06 17:19:29 [error] 21668#18652: *1811 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/06 17:19:31 [error] 21668#18652: *1813 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/06 17:19:35 [error] 21668#18652: *1815 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/06 17:45:10 [error] 21668#18652: *2655 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "POST /secretadmin/polygons/polygon/ HTTP/1.1", upstream: "http://127.0.0.1:8000/secretadmin/polygons/polygon/", host: "192.168.1.122"
+2025/02/06 18:12:34 [notice] 26556#12928: signal process started
+2025/02/06 19:32:12 [notice] 22044#12304: signal process started
+2025/02/06 20:17:17 [notice] 2628#15548: signal process started
+2025/02/07 01:45:03 [error] 26224#26936: *11385 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "POST /create-polygon/ HTTP/1.1", upstream: "http://127.0.0.1:8000/create-polygon/", host: "192.168.1.122"
+2025/02/07 01:45:08 [error] 26224#26936: *11387 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /get-polygons/ HTTP/1.1", upstream: "http://127.0.0.1:8000/get-polygons/", host: "192.168.1.122"
+2025/02/07 01:45:51 [alert] 2860#28424: worker process 17148 exited with code C0000142
+2025/02/07 01:45:51 [alert] 2860#28424: could not respawn worker
+2025/02/07 01:45:51 [alert] 27704#17288: worker process 15100 exited with code C0000142
+2025/02/07 01:45:51 [alert] 27704#17288: could not respawn worker
+2025/02/07 10:12:33 [error] 30492#11176: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/07 13:46:43 [error] 30492#11176: *39 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/07 13:46:45 [error] 30492#11176: *41 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/07 13:46:46 [error] 30492#11176: *43 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/07 13:46:47 [error] 30492#11176: *45 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/07 13:46:50 [error] 30492#11176: *47 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/07 13:46:53 [error] 30492#11176: *49 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/07 13:46:56 [error] 30492#11176: *51 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/07 13:46:57 [error] 30492#11176: *53 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/07 13:47:00 [error] 30492#11176: *55 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/07 14:04:31 [error] 30492#11176: *57 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/07 14:04:34 [error] 30492#11176: *59 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/07 14:14:44 [error] 30492#11176: *61 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /secretadmin/ HTTP/1.1", upstream: "http://127.0.0.1:8000/secretadmin/", host: "192.168.1.122"
+2025/02/07 14:14:47 [error] 30492#11176: *63 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/07 14:19:44 [error] 30492#11176: *67 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/07 15:06:53 [error] 30492#11176: *69 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/07 15:06:55 [error] 30492#11176: *71 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/07 15:06:56 [error] 30492#11176: *73 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/07 15:07:02 [error] 30492#11176: *75 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/08 17:40:56 [error] 10012#21004: *87 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/08 17:40:58 [error] 10012#21004: *89 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/08 17:41:01 [error] 10012#21004: *91 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/08 17:41:01 [error] 10012#21004: *93 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/08 17:41:03 [error] 10012#21004: *95 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/08 18:22:29 [error] 10012#21004: *107 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /secretadmin/ HTTP/1.1", upstream: "http://127.0.0.1:8000/secretadmin/", host: "192.168.1.122"
+2025/02/08 18:22:31 [error] 10012#21004: *109 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/09 08:05:00 [alert] 22772#14776: worker process 30728 exited with code C0000142
+2025/02/09 08:05:00 [alert] 22772#14776: could not respawn worker
+2025/02/10 17:37:10 [error] 16404#27236: *1 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/10 17:37:12 [error] 16404#27236: *3 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/10 19:07:29 [error] 16404#27236: *595 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/10 19:07:31 [error] 16404#27236: *597 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/10 19:14:31 [error] 16404#27236: *763 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/10 19:14:34 [error] 16404#27236: *765 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/11 01:20:42 [alert] 19712#19716: worker process 19632 exited with code C0000142
+2025/02/11 01:20:42 [alert] 19712#19716: could not respawn worker
+2025/02/11 01:20:42 [alert] 4500#19804: worker process 21976 exited with code C0000142
+2025/02/11 01:20:42 [alert] 4500#19804: could not respawn worker
+2025/02/11 01:20:42 [alert] 4500#19804: worker process 10248 exited with code C0000142
+2025/02/11 01:20:42 [alert] 4500#19804: could not respawn worker
+2025/02/11 01:20:42 [alert] 19712#19716: worker process 30124 exited with code C0000142
+2025/02/11 01:20:42 [alert] 19712#19716: could not respawn worker
+2025/02/11 01:20:42 [alert] 4500#19804: worker process 28476 exited with code C0000142
+2025/02/11 01:20:42 [alert] 4500#19804: could not respawn worker
+2025/02/11 01:20:42 [alert] 19712#19716: worker process 28224 exited with code C0000142
+2025/02/11 01:20:42 [alert] 19712#19716: could not respawn worker
+2025/02/11 01:20:42 [alert] 19712#19716: worker process 18196 exited with code C0000142
+2025/02/11 01:20:42 [alert] 19712#19716: could not respawn worker
+2025/02/11 01:20:42 [alert] 4500#19804: worker process 30700 exited with code C0000142
+2025/02/11 01:20:42 [alert] 4500#19804: could not respawn worker
+2025/02/12 14:10:01 [error] 13980#19104: *81 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/12 14:27:23 [notice] 1688#14060: signal process started
+2025/02/13 09:05:38 [error] 3100#12456: *2 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /secretadmin/ HTTP/1.1", upstream: "http://127.0.0.1:8000/secretadmin/", host: "192.168.1.122"
+2025/02/13 09:05:40 [error] 3100#12456: *5 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/15 03:24:54 [error] 26560#23208: *343 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/15 03:24:56 [error] 26560#23208: *345 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/15 16:50:24 [error] 26560#23208: *623 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/17 15:35:42 [notice] 15068#15948: signal process started
+2025/02/19 11:13:47 [notice] 5612#20940: signal process started
+2025/02/19 16:10:00 [error] 16272#15524: *29 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/19 16:10:02 [error] 16272#15524: *31 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/21 17:36:31 [error] 28392#28792: *889 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/21 18:57:00 [error] 28392#28792: *1127 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/21 18:57:02 [error] 28392#28792: *1129 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/21 19:55:45 [notice] 5564#31608: signal process started
+2025/02/23 16:33:09 [notice] 17768#23800: signal process started
+2025/02/24 14:16:59 [notice] 27844#25912: signal process started
+2025/02/24 20:10:01 [notice] 17968#11096: signal process started
+2025/02/25 00:23:25 [error] 24876#27108: *2633 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/25 00:23:28 [error] 24876#27108: *2635 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/25 00:23:32 [error] 24876#27108: *2637 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/25 00:23:35 [error] 24876#27108: *2639 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/25 00:35:40 [error] 24876#27108: *2765 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /get-img-gee/b7ec5efa-d9ea-4268-9793-bdb09552a9e5/2025-02-03 HTTP/1.1", upstream: "http://127.0.0.1:8000/get-img-gee/b7ec5efa-d9ea-4268-9793-bdb09552a9e5/2025-02-03", host: "192.168.1.122"
+2025/02/25 00:35:42 [error] 24876#27108: *2767 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /get-img/b7ec5efa-d9ea-4268-9793-bdb09552a9e5/2025-02-03 HTTP/1.1", upstream: "http://127.0.0.1:8000/get-img/b7ec5efa-d9ea-4268-9793-bdb09552a9e5/2025-02-03", host: "192.168.1.122"
+2025/02/25 00:35:43 [error] 24876#27108: *2769 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /static/css/styles.css HTTP/1.1", upstream: "http://127.0.0.1:8000/static/css/styles.css", host: "192.168.1.122"
+2025/02/25 00:35:43 [error] 24876#27108: *2770 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /static/css/dark.css HTTP/1.1", upstream: "http://127.0.0.1:8000/static/css/dark.css", host: "192.168.1.122"
+2025/02/25 00:37:29 [error] 24876#27108: *2773 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "POST /create-polygon/ HTTP/1.1", upstream: "http://127.0.0.1:8000/create-polygon/", host: "192.168.1.122"
+2025/02/25 00:37:34 [error] 24876#27108: *2775 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /get-polygons/ HTTP/1.1", upstream: "http://127.0.0.1:8000/get-polygons/", host: "192.168.1.122"
+2025/02/25 01:40:47 [notice] 9088#4784: signal process started
+2025/02/25 02:00:06 [alert] 27896#8588: worker process 9112 exited with code C0000142
+2025/02/25 02:00:06 [alert] 27896#8588: could not respawn worker
+2025/02/25 02:00:06 [alert] 27896#8588: worker process 17876 exited with code C0000142
+2025/02/25 02:00:06 [alert] 27896#8588: could not respawn worker
+2025/02/25 18:25:41 [notice] 21776#10272: signal process started
+2025/02/25 19:27:37 [error] 27884#13364: *407 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/25 19:27:39 [error] 27884#13364: *409 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/25 22:46:41 [error] 27884#13364: *1299 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/25 22:46:43 [error] 27884#13364: *1301 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/25 23:47:13 [error] 27884#13364: *1303 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/26 01:07:36 [alert] 9468#25296: worker process 18240 exited with code C0000142
+2025/02/26 01:07:36 [alert] 9468#25296: could not respawn worker
+2025/02/26 01:07:36 [alert] 9468#25296: worker process 25868 exited with code C0000142
+2025/02/26 01:07:36 [alert] 9468#25296: could not respawn worker
+2025/02/26 01:07:36 [alert] 9468#25296: worker process 24364 exited with code C0000142
+2025/02/26 01:07:36 [alert] 9468#25296: could not respawn worker
+2025/02/26 01:07:36 [alert] 9468#25296: worker process 2872 exited with code C0000142
+2025/02/26 01:07:36 [alert] 9468#25296: could not respawn worker
+2025/02/26 12:37:08 [error] 15672#17724: *99 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/26 12:37:10 [error] 15672#17724: *101 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/26 13:33:09 [notice] 10308#6428: signal process started
+2025/02/26 13:42:48 [error] 15672#17724: *1241 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "DELETE /crud/polygon/3b96ef57-1036-4df4-b21a-ca3c71c9297e HTTP/1.1", upstream: "http://127.0.0.1:8000/crud/polygon/3b96ef57-1036-4df4-b21a-ca3c71c9297e", host: "192.168.1.122"
+2025/02/27 14:35:27 [error] 29344#21288: *401 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/02/27 14:35:30 [error] 29344#21288: *403 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET /favicon.ico HTTP/1.1", upstream: "http://127.0.0.1:8000/favicon.ico", host: "192.168.1.122"
+2025/02/27 17:15:07 [notice] 14960#21784: signal process started
+2025/03/01 14:15:46 [error] 25832#17764: *139 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.1.1, server: field.geovisor.keenetic.pro, request: "GET / HTTP/1.1", upstream: "http://127.0.0.1:8000/", host: "192.168.1.122"
+2025/03/03 20:34:37 [emerg] 10124#13384: invalid method "UPDATE" in V:\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 20:34:45 [emerg] 8592#31732: invalid method "UPDATE" in V:\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 21:53:30 [emerg] 16004#2920: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 21:54:18 [emerg] 17588#18284: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 21:56:24 [emerg] 29552#29456: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 21:57:01 [emerg] 11400#28292: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 22:00:12 [emerg] 13952#18220: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 22:00:54 [emerg] 28676#19960: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 22:05:09 [emerg] 8784#28472: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 22:07:30 [emerg] 29196#21528: invalid method "UPDATE" in C:\fgeovisor\nginx-1.26.2/conf/nginx.conf:25
+2025/03/03 22:08:05 [emerg] 27880#9244: CreateDirectory() "C:\fgeovisor\nginx-1.26.2/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2025/03/03 22:11:49 [emerg] 28456#27700: CreateDirectory() "C:\fgeovisor\nginx-1.26.2/temp/client_body_temp" failed (3: The system cannot find the path specified)
+2025/03/03 22:13:25 [notice] 29544#21648: signal process started
