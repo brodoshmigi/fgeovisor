@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import AnonymousUser, User
+from django.contrib.auth.hashers import make_password, check_password
 
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly, AllowAny,
                                         IsAuthenticated)
@@ -9,9 +10,11 @@ from rest_framework.mixins import (RetrieveModelMixin, CreateModelMixin,
                                    UpdateModelMixin)
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.status import (HTTP_205_RESET_CONTENT,
+                                   HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN)
 
 from .serializators import (AuthRegisterSerializator, AuthSerializator,
-                            AuthSerializer)
+                            AuthSerializer, ResetPassword)
 from .staff import My_errors
 
 
@@ -40,27 +43,43 @@ class MapView(APIView):
 
 class UserAuth(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
 
-    permission_classes = AllowAny
+    # permission_classes = AllowAny
 
     serializer_class = AuthSerializer
+
+    # lookup_field = 'token' # def pk
 
     queryset = User.objects.all()
 
     def get_object(self):
-        '''
         # !register is put
-        if self.request.method.lower() in ['post', 'delete']:
-            self.permission_classes = IsAuthenticated
-        # we can validate request for register by this methods
-        # self.get_parser_context, self.get_view_name|_description
-        # but we can simply use path var in request object
+        if self.request.method.lower() in ['put', 'delete', 'get', 'patch']:
+            permission_classes = IsAuthenticated
         '''
         if 'register' not in self.request.path:
             self.permission_classes = IsAuthenticated
+        '''
         return super().get_object()
 
+    def forgot_password(self, request, *args, **kwargs):
+        # auto login not exists
+        if str(self.request.user.id) != self.kwargs['pk']:
+            return Response({'error': 'permission denied'},
+                            status=HTTP_403_FORBIDDEN)
 
-class RegistrationView(APIView):
+        serializer = ResetPassword(self.request.user, data=self.request.data)
+        if serializer.is_valid():
+            if not self.request.user.check_password(
+                    self.request.data.get('password')):
+                return Response({'error': 'wrong password'},
+                                status=HTTP_400_BAD_REQUEST)
+            self.request.user.set_password(self.request.data.get('new_password'))
+            self.request.user.save()
+            return Response(status=HTTP_205_RESET_CONTENT)
+        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+
+class RegistryView(APIView):
     """ Класс регистрации аккаунта с простейшей валидацией на стороне сервера """
 
     permission_classes = [AllowAny]

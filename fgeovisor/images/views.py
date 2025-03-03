@@ -16,6 +16,12 @@ from .staff import Image_GEE
 
 DEFAULT_PARAMS = {'id': '', 'date': '', 'index': ''}
 
+NO_CACHE_HEADERS = {
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+}
+
 
 class UploadImg(GenericViewSet, ListModelMixin):
     permission_classes = [IsAuthenticated]
@@ -52,18 +58,20 @@ class UploadImg(GenericViewSet, ListModelMixin):
                                      date_start=date)
             image_object.download_image()
             _image_object = image_object.calculate_index()
-            return Response(status=HTTP_201_CREATED,
-                            data={'url': _image_object.check_uri(request='1')},
-                            headers={
-                                'Cache-Control': 'no-cache, no-store, must-revalidate',
-                                'Pragma': 'no-cache',
-                                'Expires': '0'
-                                })
+            return Response(
+                status=HTTP_201_CREATED,
+                data={'url': _image_object.check_uri(request='1')},
+                # headers={'Location': _image_object.check_uri(request='1')}.update(NO_CACHE)
+            )
 
         serializer = self.get_serializer(queryset, many=True)
         image_uri = queryset[0].check_uri(request='1')
         if image_uri is not None:
-            return Response({'url': image_uri}, status=HTTP_302_FOUND)
+            return Response(
+                {'url': image_uri},
+                status=HTTP_302_FOUND,
+                # headers={'Location: _image_object.check_uri(request='1')'}.update(NO_CACHE)
+            )
 
         return Response(serializer.data, status=HTTP_204_NO_CONTENT)
 
