@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import AnonymousUser, User
 from django.contrib.auth.hashers import make_password, check_password
@@ -6,15 +6,18 @@ from django.contrib.auth.hashers import make_password, check_password
 from rest_framework.permissions import (IsAuthenticatedOrReadOnly, AllowAny,
                                         IsAuthenticated)
 from rest_framework.viewsets import GenericViewSet
-from rest_framework.mixins import (RetrieveModelMixin, CreateModelMixin,
-                                   UpdateModelMixin)
+from rest_framework.mixins import (RetrieveModelMixin, CreateModelMixin)
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.status import (HTTP_205_RESET_CONTENT,
-                                   HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN)
+                                   HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN,
+                                   HTTP_201_CREATED, HTTP_404_NOT_FOUND,
+                                   HTTP_500_INTERNAL_SERVER_ERROR,
+                                   HTTP_302_FOUND, HTTP_200_OK)
 
 from .serializators import (AuthRegisterSerializator, AuthSerializator,
-                            AuthSerializer, ResetPassword)
+                            AuthSerializer, ResetPasswordSerializer,
+                            LoginSerializer)
 from .staff import My_errors
 
 
@@ -41,42 +44,122 @@ class MapView(APIView):
                       context=My_errors.error_send())
 
 
-class UserAuth(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
+class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
 
-    # permission_classes = AllowAny
+    permission_classes = [AllowAny]
 
     serializer_class = AuthSerializer
 
     # lookup_field = 'token' # def pk
+    # lookup_url_kwarg = 'token' # def None'
 
     queryset = User.objects.all()
 
     def get_object(self):
+        ''' eto bredik
         # !register is put
         if self.request.method.lower() in ['put', 'delete', 'get', 'patch']:
-            permission_classes = IsAuthenticated
-        '''
+            self.permission_classes = [IsAuthenticated]
         if 'register' not in self.request.path:
-            self.permission_classes = IsAuthenticated
+            self.permission_classes = [IsAuthenticated]
         '''
-        return super().get_object()
+        queryset = self.filter_queryset(self.get_queryset())
+
+        # Perform the lookup filtering.
+        # lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+
+        filter_kwargs = {self.lookup_field: self.request.user.id}
+        obj = get_object_or_404(queryset, **filter_kwargs)
+
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+
+        return obj
+
+    def create(self, request, *args, **kwargs):
+        serializer: AuthSerializer = self.get_serializer(
+            data=self.request.data)
+
+        if not serializer.is_valid(raise_exception=True):
+            My_errors.tmp_context['is_vallid_error'] = True
+            return Response(
+                My_errors.error_send(),
+                # serializer.errors,
+                status=HTTP_400_BAD_REQUEST)
+
+        if not serializer.validated_data['email']:
+            My_errors.tmp_context['is_vallid_error'] = True
+            return Response(
+                My_errors.error_send(),
+                # {'error': 'email must be'},
+                status=HTTP_400_BAD_REQUEST)
+        # need more email validating
+
+        self.perform_create(serializer)
+
+        # when we call .save() password becomes hash
+        username, password = serializer.data['username'], self.request.data[
+            'password']
+
+        user = authenticate(self.request, username=username, password=password)
+
+        if user is not None:
+            login(self.request, user)
+
+            My_errors.tmp_context['auth_check'] = True
+            return Response(My_errors.error_send(), status=HTTP_201_CREATED)
+
+        return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def authenticate(self, request, *args, **kwargs):
+        serializer = LoginSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            username, password = serializer.data['username'], serializer.data[
+                'password']
+
+            user = authenticate(self.request,
+                                username=username,
+                                password=password)
+
+            if user is not None:
+                login(self.request, user)
+                My_errors.tmp_context['auth_check'] = True
+                My_errors.tmp_context['is_staff'] = self.request.user.is_staff
+                return Response(My_errors.error_send(), status=HTTP_302_FOUND)
+
+            My_errors.tmp_context['login_error'] = True
+            return Response(My_errors.error_send(), status=HTTP_404_NOT_FOUND)
+
+        print(serializer.errors)
+
+        My_errors.tmp_context['login_error'] = True
+        return Response(My_errors.error_send(), status=HTTP_404_NOT_FOUND)
 
     def forgot_password(self, request, *args, **kwargs):
         # auto login not exists
-        if str(self.request.user.id) != self.kwargs['pk']:
-            return Response({'error': 'permission denied'},
-                            status=HTTP_403_FORBIDDEN)
 
-        serializer = ResetPassword(self.request.user, data=self.request.data)
+        serializer = ResetPasswordSerializer(self.request.user,
+                                             data=self.request.data)
         if serializer.is_valid():
+            # all of it can be in update method in serializer
             if not self.request.user.check_password(
                     self.request.data.get('password')):
                 return Response({'error': 'wrong password'},
                                 status=HTTP_400_BAD_REQUEST)
-            self.request.user.set_password(self.request.data.get('new_password'))
+            self.request.user.set_password(
+                self.request.data.get('new_password'))
             self.request.user.save()
             return Response(status=HTTP_205_RESET_CONTENT)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+    def logout(self, request, *args, **kwargs):
+        logout(self.request)
+        return Response(status=HTTP_200_OK)
+
+
+"""----LEGACY----"""
 
 
 class RegistryView(APIView):
@@ -87,14 +170,12 @@ class RegistryView(APIView):
     def post(self, request):
         # Распакоука данных из сериализатора POST сессии
         data_serialized = AuthRegisterSerializator(data=request.data)
-        if data_serialized.is_valid():
-            # Сохранение в БД
-            data_serialized.save()
-        else:
-            # отрисовка карты, отправка ошибки на фронт
+
+        if not data_serialized.is_valid():
             My_errors.tmp_context['is_vallid_error'] = True
             return Response(My_errors.error_send())
-            #return Response(My_errors.error_send())
+
+        data_serialized.save()
         username = data_serialized.data.get('username')
         password = request.data['password']
         user = authenticate(request, username=username, password=password)
