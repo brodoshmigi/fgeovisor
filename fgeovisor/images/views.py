@@ -23,7 +23,7 @@ NO_CACHE_HEADERS = {
 }
 
 
-class UploadImg(GenericViewSet, ListModelMixin):
+class UploadImgViewSet(GenericViewSet, ListModelMixin):
     permission_classes = [IsAuthenticated]
 
     serializer_class = ImageSerializator

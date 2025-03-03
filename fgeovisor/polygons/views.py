@@ -16,8 +16,8 @@ from .models import UserPolygon, User
 from .serializators import GeoJSONSerializer
 
 
-class Polygons(GenericViewSet, ListModelMixin, UpdateModelMixin,
-               CreateModelMixin, DestroyModelMixin):
+class PolygonsViewSet(GenericViewSet, ListModelMixin, UpdateModelMixin,
+                      CreateModelMixin, DestroyModelMixin):
     """ CRUD by DRF-viewset """
 
     permission_classes = [IsAuthenticated]

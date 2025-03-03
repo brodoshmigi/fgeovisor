@@ -112,7 +112,7 @@ class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
         return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
 
     def authenticate(self, request, *args, **kwargs):
-        serializer = LoginSerializer(data=request.data)
+        serializer: AuthSerializer = LoginSerializer(data=request.data)
 
         if serializer.is_valid():
 
