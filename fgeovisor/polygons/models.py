@@ -19,7 +19,12 @@ class Polygons(models.Model):
 
 
 class UserPolygon(Polygons):
-    """ Модель полигонов, которые создаются пользователями """
+    """ 
+    fields:
+    - polygond_id
+    - polygon_data
+    - owner
+    """
     owner = models.ForeignKey(User,
                               related_name=('polygons'),
                               verbose_name=("created by"),
