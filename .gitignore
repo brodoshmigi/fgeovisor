@@ -28,3 +28,7 @@ ssl/
 ssl
 api.js
 GDAL-3.10.1-cp312-cp312-win_amd64.whl
+nginx-1.26.2/logs/*
+nginx-1.26.2/temp/*
+!nginx-1.26.2/logs/.gitkeep
+!nginx-1.26.2/temp/.gitkeep
