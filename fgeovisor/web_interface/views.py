@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.status import (HTTP_205_RESET_CONTENT,
                                    HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN,
+                                   HTTP_401_UNAUTHORIZED,
                                    HTTP_201_CREATED, HTTP_404_NOT_FOUND,
                                    HTTP_500_INTERNAL_SERVER_ERROR,
                                    HTTP_302_FOUND, HTTP_200_OK)
@@ -132,7 +133,7 @@ class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
             My_errors.tmp_context['login_error'] = True
             return Response(My_errors.error_send(), status=HTTP_404_NOT_FOUND)
 
-        print(serializer.errors)
+        # print(serializer.errors)
 
         My_errors.tmp_context['login_error'] = True
         return Response(My_errors.error_send(), status=HTTP_404_NOT_FOUND)

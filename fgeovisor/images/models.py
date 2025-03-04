@@ -31,6 +31,14 @@ class Image(models.Model):
     class Meta:
         abstract = True
 
+class ImageHandler(models.Model):
+
+    def check_uri(self, request = None):
+        pass
+
+
+    class Meta:
+        abstract = True
 
 class ImageType(models.Model):
     """ Абстрактный миксин для добавления коэффициентов """
