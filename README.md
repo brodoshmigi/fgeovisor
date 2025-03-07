@@ -75,6 +75,7 @@ PostGIS устанавливается для win через appbuilder, кот�
 2. [The "" relation does not exist](#the-field-relation-does-not-exist)
 3. [Tables doesnt create](#tables-doesnt-create)
 4. [OSError: WinError 127](#winerror-127)
+5. [DATABASES](#databases-error)
 
 > [!TIP]
 > Для того, чтобы ошибок возникало меньше или их не было вообще, следуйте инструкциям крайне внимательно.
@@ -145,6 +146,18 @@ PostGIS устанавливается для win через appbuilder, кот�
 >```
 > Решения:
 > 1. Возможно в `libgdal.py` указана версия `gdal`, которой у вас нет, хотя все остальные есть. Способ - удалить ее из списка. Например, `gdal 310` у вас нет, но `gdal 309` есть - удалите `gdal 310`
+
+[Top](#project-info) |
+[Back to errors list](#common-errors)
+
+#### DATABASES ERROR
+
+> ``` python
+> django.core.exceptions.ImproperlyConfigured: settings.DATABASES is improperly configured.
+> Please supply the NAME or OPTIONS['service'] value.
+>```
+> Решения:
+> 1. Установите точку входа в базу данных в setting.py в корне проекта.
 
 [Top](#project-info) |
 [Back to errors list](#common-errors)
