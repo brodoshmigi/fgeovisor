@@ -1,7 +1,6 @@
 FROM python:3.12-slim AS build
 
 # maybe usefull package's to fix GDAL ERRORS)
-# python3-gdal
 # libopenblas-dev
 # libgeos++-dev
 # proj-bin
@@ -21,21 +20,23 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-FROM python:3.12-slim
+# bedni multistage
+#FROM python:3.12-slim
 
-RUN apt-get update \
-    && apt-get install -y libblas3 liblapack3
+# its crutch, if dont know how to fix - comment all code from 23 to 40
+#RUN apt-get update \
+#    && apt-get install -y libblas3 liblapack3
 
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV LD_LIBRARY_PATH=/usr/lib:/usr/local/lib
+#ENV PYTHONUNBUFFERED=1
+#ENV PYTHONDONTWRITEBYTECODE=1
+#ENV LD_LIBRARY_PATH=/usr/lib:/usr/local/lib
 
-WORKDIR /app
+#WORKDIR /app
 
-COPY --from=build /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
-COPY --from=build /usr/bin/ /usr/bin/
-COPY --from=build /usr/lib/ /usr/lib/
-COPY --from=build /usr/lib64/ /usr/lib64/
+#COPY --from=build /usr/local/lib/python3.12/site-packages /usr/local/lib/python3.12/site-packages
+#COPY --from=build /usr/bin/ /usr/bin/
+#COPY --from=build /usr/lib/ /usr/lib/
+#COPY --from=build /usr/lib64/ /usr/lib64/
 
 COPY ./fgeovisor .
 COPY settings.py visor_bend_site/
