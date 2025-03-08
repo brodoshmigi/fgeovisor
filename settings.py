@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,7 +29,7 @@ NASA_CREDS = {
 SECRET_KEY = 'django-insecure-z1k!c2qfp+h4%jcnl1vxdz57*q)6o6=yec)p%58ngm=86ensu_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.environ.get("DEBUG", default=0))
 
 ALLOWED_HOSTS = []
 
@@ -51,7 +52,6 @@ INSTALLED_APPS = [
     "django.contrib.gis",
     "rest_framework",
     "rest_framework_gis",
-    #"site_back.apps.SiteBackConfig",
     "web_interface.apps.WebInterfaceConfig",
     "images.apps.ImagesConfig",
     "polygons.apps.PolygonsConfig"
@@ -91,6 +91,7 @@ WSGI_APPLICATION = 'visor_bend_site.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
@@ -101,7 +102,17 @@ DATABASES = {
         'PORT': '',
     }
 }
-
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': os.environ.get("POSTGRES_DB_NAME", "fgeovisor"),
+        'USER': os.environ.get("POSTGRES_USER", "postgres"),
+        'PASSWORD': os.environ.get("POSTGRES_USER", "f_123"),
+        'HOST': os.environ.get("POSTGRES_HOST", "localhost"),
+        'PORT': os.environ.get("POSTGRES_PORT", " "),
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
