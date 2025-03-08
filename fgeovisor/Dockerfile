@@ -10,7 +10,7 @@ FROM python:3.12-slim AS build
 
 # 2 layer, but we can create more for package's we want to cache
 # i called this umomsk
-RUN apt-get update
+RUN apt-get update \
     && apt-get install -y gdal-bin libgdal-dev
 RUN apt-get update \
     && apt-get install -y libproj-dev binutils \
