@@ -5,8 +5,6 @@ FROM python:3.12-slim AS build
 # libopenblas-dev
 # libgeos++-dev
 # proj-bin
-# software-properties-common
-# add-apt-repository ppa:ubuntugis/ppa
 
 # 2 layer, but we can create more for package's we want to cache
 # i called this umomsk
@@ -15,12 +13,8 @@ RUN apt-get update \
 RUN apt-get update \
     && apt-get install -y libproj-dev binutils \
     && apt-get install -y libpq-dev \
-    && apt-get install -y libblas3 liblapack3 \
     && apt-get install -y libproj-dev
 RUN rm -rf /var/lib/apt/lists/*
-
-# RUN adduser --system --uid 1000 appuser
-# USER appuser
 
 WORKDIR /app
 COPY requirements.txt .
@@ -28,6 +22,9 @@ RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
 FROM python:3.12-slim
+
+RUN apt-get update \
+    && apt-get install -y libblas3 liblapack3
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -46,3 +43,6 @@ COPY settings.py visor_bend_site/
 EXPOSE 8000
 
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+
+# RUN adduser --system --uid 1000 appuser
+# USER appuser
