@@ -21,3 +21,4 @@ nginx/*
 !scripts/nginx
 !nginx/.gitkeep
 !nginx/README.md
+!nginx/Dockerfile
