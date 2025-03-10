@@ -1,12 +1,6 @@
 FROM python:3.12-slim AS build
 
-# maybe usefull package's to fix GDAL ERRORS)
-# libopenblas-dev
-# libgeos++-dev
-# proj-bin
-
 # 2 layer, but we can create more for package's we want to cache
-# i called this umomsk
 RUN apt-get update \
     && apt-get install -y gdal-bin libgdal-dev
 RUN apt-get update \
@@ -23,13 +17,10 @@ RUN pip install --upgrade pip && \
 # bedni multistage
 #FROM python:3.12-slim
 
-# its crutch, if dont know how to fix - comment all code from 23 to 40
-#RUN apt-get update \
-#    && apt-get install -y libblas3 liblapack3
-
 #ENV PYTHONUNBUFFERED=1
 #ENV PYTHONDONTWRITEBYTECODE=1
-#ENV LD_LIBRARY_PATH=/usr/lib:/usr/local/lib
+#ENV LD_LIBRARY_PATH=/usr/lib # multistage fix cache 1
+#COPY --from=build /etc/ /etc/ # .co files | multistage fix cache 2
 
 #WORKDIR /app
 
