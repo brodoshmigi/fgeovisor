@@ -17,7 +17,7 @@ RUN pip install --upgrade pip && \
 # bedni multistage
 #FROM python:3.12-slim
 
-#ENV PYTHONUNBUFFERED=1
+ENV PYTHONUNBUFFERED=1
 #ENV PYTHONDONTWRITEBYTECODE=1
 #ENV LD_LIBRARY_PATH=/usr/lib # multistage fix cache 1
 #COPY --from=build /etc/ /etc/ # .co files | multistage fix cache 2
@@ -34,7 +34,8 @@ COPY settings.py visor_bend_site/
 
 EXPOSE 8000
 
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD python manage.py makemigrations; python manage.py migrate; python manage.py runserver 0.0.0.0:8000
+# ENTRYPOINT ['django-start.sh']
 
 # RUN adduser --system --uid 1000 appuser
 # USER appuser

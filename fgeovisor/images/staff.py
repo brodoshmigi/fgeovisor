@@ -157,5 +157,5 @@ class Image_GEE():
         rmdir(self.dir)
     '''
 
-ee.Authenticate()
-ee.Initialize(project='ee-cocafin1595')
+#ee.Authenticate()
+#ee.Initialize(project='ee-cocafin1595')
