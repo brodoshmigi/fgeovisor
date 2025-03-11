@@ -34,7 +34,7 @@ COPY settings.py visor_bend_site/
 
 EXPOSE 8000
 
-CMD python manage.py makemigrations; python manage.py migrate; python manage.py runserver 0.0.0.0:8000
+CMD python manage.py makemigrations; python manage.py migrate; python manage.py createsuperuser --no-input;python manage.py runserver 0.0.0.0:8000
 # ENTRYPOINT ['django-start.sh']
 
 # RUN adduser --system --uid 1000 appuser
