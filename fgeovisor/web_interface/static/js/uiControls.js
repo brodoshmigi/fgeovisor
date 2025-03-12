@@ -200,16 +200,17 @@ window.switchsidebarcontent = switchsidebarcontent;
 // Функции для работы с темами
 export function switchTheme() {
     const themeLink = document.getElementById("theme");
-    if (themeLink) {
-        if (themeLink.getAttribute("href") === staticUrls.light) {
-            themeLink.setAttribute("href", staticUrls.dark);
-            localStorage.setItem("theme", "dark");
-            savedTheme = "dark";
-        } else {
-            themeLink.setAttribute("href", staticUrls.light);
-            localStorage.setItem("theme", "light");
-            savedTheme = "light";
-        }
+    let currentTheme = localStorage.getItem("theme") || "auto";
+
+    if (currentTheme === "light") {
+        localStorage.setItem("theme", "dark");
+        themeLink.setAttribute("href", staticUrls.dark);
+    } else if (currentTheme === "dark") {
+        localStorage.setItem("theme", "auto");
+        applyAutoTheme();
+    } else {
+        localStorage.setItem("theme", "light");
+        themeLink.setAttribute("href", staticUrls.light);
     }
 }
 
@@ -217,23 +218,15 @@ window.switchTheme = switchTheme;
 
 export function autoSwitchTheme() {
     const themeLink = document.getElementById("theme");
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme = localStorage.getItem("theme") || "auto";
     const savedColor = localStorage.getItem("selectedColor");
 
-    if (themeLink) {
-        if (savedTheme) {
-            if (savedTheme === "dark") {
-                themeLink.setAttribute("href", staticUrls.dark);
-            } else {
-                themeLink.setAttribute("href", staticUrls.light);
-            }
-        } else {
-            if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-                themeLink.setAttribute("href", staticUrls.dark);
-            } else {
-                themeLink.setAttribute("href", staticUrls.light);
-            }
-        }
+    if (savedTheme === "light") {
+        themeLink.setAttribute("href", staticUrls.light);
+    } else if (savedTheme === "dark") {
+        themeLink.setAttribute("href", staticUrls.dark);
+    } else {
+        applyAutoTheme();
     }
 
     if (savedColor) {
@@ -245,6 +238,15 @@ export function autoSwitchTheme() {
         if (colorLink) {
             colorLink.setAttribute("href", staticUrls[savedColor]);
         }
+    }
+}
+
+function applyAutoTheme() {
+    const themeLink = document.getElementById("theme");
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        themeLink.setAttribute("href", staticUrls.dark);
+    } else {
+        themeLink.setAttribute("href", staticUrls.light);
     }
 }
 
