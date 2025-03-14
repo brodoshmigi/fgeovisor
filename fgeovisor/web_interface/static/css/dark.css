@@ -84,17 +84,21 @@ a:visited {
     color: white;
 }
 
-#themeButton {
-    background-color: #38393c;
+#mainThemeButton.button {
+    background: white;
 }
 
-#themeButton:hover {
-    background-color: #434853;
-    /* Цвет при наведении */
+#mainThemeButton.button:hover {
+    background-color: white;
 }
 
-#themeSettings {
-    color: white;
+#mainThemeButton.button::before {
+    clip-path: none;
+}
+#mainThemeButton.button::after {
+    content: "Сменить тему";
+    color: black;
+    clip-path: none;
 }
 
 .section-title {

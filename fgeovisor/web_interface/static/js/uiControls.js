@@ -205,12 +205,14 @@ export function switchTheme() {
     if (currentTheme === "light") {
         localStorage.setItem("theme", "dark");
         themeLink.setAttribute("href", staticUrls.dark);
+        removeAutoTheme();
     } else if (currentTheme === "dark") {
         localStorage.setItem("theme", "auto");
         applyAutoTheme();
     } else {
         localStorage.setItem("theme", "light");
         themeLink.setAttribute("href", staticUrls.light);
+        removeAutoTheme();
     }
 }
 
@@ -223,14 +225,16 @@ export function autoSwitchTheme() {
 
     if (savedTheme === "light") {
         themeLink.setAttribute("href", staticUrls.light);
+        removeAutoTheme();
     } else if (savedTheme === "dark") {
         themeLink.setAttribute("href", staticUrls.dark);
+        removeAutoTheme();
     } else {
         applyAutoTheme();
     }
 
     if (savedColor) {
-        polygonLayerGroup.eachLayer(function (layer) {
+        polygonLayerGroup.eachLayer((layer) => {
             layer.setStyle({ color: savedColor });
         });
 
@@ -243,10 +247,27 @@ export function autoSwitchTheme() {
 
 function applyAutoTheme() {
     const themeLink = document.getElementById("theme");
+    let autoThemeLink = document.getElementById("auto-theme");
+
     if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
         themeLink.setAttribute("href", staticUrls.dark);
     } else {
         themeLink.setAttribute("href", staticUrls.light);
+    }
+
+    if (!autoThemeLink) {
+        autoThemeLink = document.createElement("link");
+        autoThemeLink.id = "auto-theme";
+        autoThemeLink.rel = "stylesheet";
+        autoThemeLink.href = staticUrls.auto;
+        document.head.appendChild(autoThemeLink);
+    }
+}
+
+function removeAutoTheme() {
+    const autoThemeLink = document.getElementById("auto-theme");
+    if (autoThemeLink) {
+        autoThemeLink.remove();
     }
 }
 
