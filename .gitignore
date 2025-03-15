@@ -33,6 +33,7 @@ ssl
 # some feature of root repository
 api.js
 GDAL-3.10.1-cp312-cp312-win_amd64.whl
+service.json
 
 # nginx folder politics
 nginx/*
