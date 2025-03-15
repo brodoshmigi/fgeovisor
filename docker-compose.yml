@@ -47,7 +47,7 @@ services:
       watch:
         - action: sync
           path: /fgeovisor
-          target: /usr/src/app
+          target: /app
           ignore:
             - /fgeovisor/images/IMAGES/
     depends_on:
