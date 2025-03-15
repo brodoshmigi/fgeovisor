@@ -1,7 +1,7 @@
 import ee
 import requests
 from datetime import date
-from os import (makedirs, remove, path, listdir, rmdir)
+from os import (makedirs, remove, path, listdir, rmdir, name)
 from zipfile import ZipFile
 from numpy import seterr
 from matplotlib.pyplot import (imshow, imsave)
@@ -157,5 +157,9 @@ class Image_GEE():
         rmdir(self.dir)
     '''
 
-#ee.Authenticate()
-#ee.Initialize(project='ee-cocafin1595')
+if name == 'posix':
+    credentials = ee.ServiceAccountCredentials('', './service.json')
+    ee.Initialize(credentials=credentials)
+else:
+    ee.Authenticate()
+    ee.Initialize(project='ee-cocafin1595')

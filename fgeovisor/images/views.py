@@ -28,6 +28,7 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
 
     serializer_class = ImageSerializator
 
+    # можно сделать get_queryset(self, **kwargs) и не будет реюз кода
     def get_queryset(self):
         # drf said that query_params is more correct name than GET :)
         # for us, it is a complex issue(like miyadzaki skill issue)

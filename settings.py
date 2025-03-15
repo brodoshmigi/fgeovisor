@@ -150,7 +150,9 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-MEDIA_ROOT = '.'
+# STATICFILEDIRS
+
+MEDIA_ROOT = '..' if os.name == 'posix' else BASE_DIR
 MEDIA_URL = '/media/'
 
 # Default primary key field type
