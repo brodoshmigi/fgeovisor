@@ -205,12 +205,14 @@ export function setTheme(themeName) {
 
     if (themeName === "light") {
         themeLink.setAttribute("href", staticUrls.light);
-        removeAutoTheme();
     } else if (themeName === "dark") {
         themeLink.setAttribute("href", staticUrls.dark);
-        removeAutoTheme();
     } else {
-        applyAutoTheme();
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            themeLink.setAttribute("href", staticUrls.dark);
+        } else {
+            themeLink.setAttribute("href", staticUrls.light);
+        }
     }
 }
 
@@ -223,12 +225,14 @@ export function autoSwitchTheme() {
 
     if (savedTheme === "light") {
         themeLink.setAttribute("href", staticUrls.light);
-        removeAutoTheme();
     } else if (savedTheme === "dark") {
         themeLink.setAttribute("href", staticUrls.dark);
-        removeAutoTheme();
     } else {
-        applyAutoTheme();
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            themeLink.setAttribute("href", staticUrls.dark);
+        } else {
+            themeLink.setAttribute("href", staticUrls.light);
+        }
     }
 
     if (savedColor) {
@@ -242,32 +246,6 @@ export function autoSwitchTheme() {
         }
     }
 }
-
-function applyAutoTheme() {
-    const themeLink = document.getElementById("theme");
-    let autoThemeLink = document.getElementById("auto-theme");
-
-    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-        themeLink.setAttribute("href", staticUrls.dark);
-    } else {
-        themeLink.setAttribute("href", staticUrls.light);
-    }
-
-    if (!autoThemeLink) {
-        autoThemeLink = document.createElement("link");
-        autoThemeLink.id = "auto-theme";
-        autoThemeLink.rel = "stylesheet";
-        document.head.appendChild(autoThemeLink);
-    }
-}
-
-function removeAutoTheme() {
-    const autoThemeLink = document.getElementById("auto-theme");
-    if (autoThemeLink) {
-        autoThemeLink.remove();
-    }
-}
-
 window.autoSwitchTheme = autoSwitchTheme;
 
 export function switchColor(color) {
