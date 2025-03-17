@@ -11,7 +11,7 @@ from rest_framework.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
                                    HTTP_400_BAD_REQUEST)
 from rest_framework.response import Response
 
-from images.staff import delete_image, update_image_GEE
+from images.GEE import delete_image, update_image_GEE
 from .models import UserPolygon, User
 from .serializators import GeoJSONSerializer
 

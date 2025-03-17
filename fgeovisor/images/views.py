@@ -12,7 +12,7 @@ from polygons.models import UserPolygon
 from web_interface.staff import My_errors
 from .models import UserImage
 from .serializators import ImageSerializator
-from .staff import Image_GEE
+from .GEE import Image_GEE
 
 DEFAULT_PARAMS = {'id': '', 'date': '', 'index': ''}
 
@@ -59,6 +59,7 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
                                      date_start=date)
             image_object.download_image()
             _image_object = image_object.calculate_index()
+            image_object.remove_bands()
             return Response(
                 status=HTTP_201_CREATED,
                 data={'url': _image_object.check_uri(request='1')},
