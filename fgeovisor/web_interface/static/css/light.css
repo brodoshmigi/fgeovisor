@@ -94,18 +94,6 @@ a:visited {
 .ndvi-value-display {
     background-color: #f5f5f5;
 }
-
-#mainThemeButton.button {
-    background-color: #38393c;
-    color: inherit;
-}
-
-#mainThemeButton.button::before {
-    color: white; /* Обычный цвет текста */
-    clip-path: none; /* Убираем разделение */
-}
-#mainThemeButton.button::after {
-    content: "Сменить тему"; /* Оставляем текст по умолчанию */
-    color: white; /* Обычный цвет текста */
-    clip-path: none; /* Убираем разделение */
+#lightThemeButton.button {
+    border: 2px solid black;
 }

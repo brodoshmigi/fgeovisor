@@ -84,23 +84,6 @@ a:visited {
     color: white;
 }
 
-#mainThemeButton.button {
-    background: white;
-}
-
-#mainThemeButton.button:hover {
-    background-color: white;
-}
-
-#mainThemeButton.button::before {
-    clip-path: none;
-}
-#mainThemeButton.button::after {
-    content: "Сменить тему";
-    color: black;
-    clip-path: none;
-}
-
 .section-title {
     color: white;
 }
@@ -141,9 +124,4 @@ iframe {
     background: #38393c;
     border: 1px solid #666;
     border-bottom-color: #999;
-}
-
-#mainThemeButton {
-    background-color: #fff;
-    color: #38393c;
 }

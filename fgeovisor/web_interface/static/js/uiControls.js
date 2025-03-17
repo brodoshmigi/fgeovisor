@@ -198,25 +198,23 @@ export function switchsidebarcontent() {
 window.switchsidebarcontent = switchsidebarcontent;
 
 // Функции для работы с темами
-export function switchTheme() {
+export function setTheme(themeName) {
     const themeLink = document.getElementById("theme");
-    let currentTheme = localStorage.getItem("theme") || "auto";
 
-    if (currentTheme === "light") {
-        localStorage.setItem("theme", "dark");
-        themeLink.setAttribute("href", staticUrls.dark);
-        removeAutoTheme();
-    } else if (currentTheme === "dark") {
-        localStorage.setItem("theme", "auto");
-        applyAutoTheme();
-    } else {
-        localStorage.setItem("theme", "light");
+    localStorage.setItem("theme", themeName);
+
+    if (themeName === "light") {
         themeLink.setAttribute("href", staticUrls.light);
         removeAutoTheme();
+    } else if (themeName === "dark") {
+        themeLink.setAttribute("href", staticUrls.dark);
+        removeAutoTheme();
+    } else {
+        applyAutoTheme();
     }
 }
 
-window.switchTheme = switchTheme;
+window.setTheme = setTheme;
 
 export function autoSwitchTheme() {
     const themeLink = document.getElementById("theme");
@@ -259,7 +257,6 @@ function applyAutoTheme() {
         autoThemeLink = document.createElement("link");
         autoThemeLink.id = "auto-theme";
         autoThemeLink.rel = "stylesheet";
-        autoThemeLink.href = staticUrls.auto;
         document.head.appendChild(autoThemeLink);
     }
 }

@@ -60,10 +60,23 @@
                     <div class="section-title">Тема</div>
                     <div class="theme-toggle">
                         <button
+                        class="button"
+                        id="lightThemeButton"
+                        onclick="setTheme('light')"
+                        style="background-color: white; color: black"
+                        >Светлая</button>
+                        <button
                             class="button"
-                            id="mainThemeButton"
-                            onclick="switchTheme()"
-                        ></button>
+                            id="darkThemeButton"
+                            onclick="setTheme('dark')"
+                            style="background-color: black"
+                        >Тёмная</button>
+                        <button
+                            class="button"
+                            id="autoThemeButton"
+                            onclick="setTheme('auto')"
+                            style="background-color: grey"
+                        >Авто</button>
                     </div>
                 </div>
                 <div class="section">
@@ -260,7 +273,6 @@
             const staticUrls = {
                 light: "{% static 'css/light.css' %}",
                 dark: "{% static 'css/dark.css' %}",
-                auto: "{% static 'css/auto.css' %}",
                 "#1A4F63": "{% static 'css/blue_crayola.css' %}",
                 "#068587": "{% static 'css/dark_cyan.css' %}",
                 "#6FB07F": "{% static 'css/green_crayola.css' %}",
