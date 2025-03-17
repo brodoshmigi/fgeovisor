@@ -12,8 +12,7 @@ class Image(models.Model):
 
     _next_handler: models.Model = None
 
-    local_uri = models.ImageField(upload_to='images/IMAGES',
-                                  blank=True)
+    local_uri = models.ImageField(blank=True)
     cloud_uri = models.URLField(blank=True)
     image_date = models.DateField()
 
@@ -84,7 +83,7 @@ class NasaImage(Image):
 class UserImage(Image, ImageType):
     """ 
     fields:
-    - polygon_date
+    - polygon_id
     - local_uri
     - cloud_uri
     - image_date
@@ -104,6 +103,9 @@ class UserImage(Image, ImageType):
             return self.local_uri.url
 
         return super().check_uri(request)
+    
+    def __str__(self):
+        return f'{self.image_index} - {self.image_date}'
 
     class Meta:
         ordering = ['polygon_id']

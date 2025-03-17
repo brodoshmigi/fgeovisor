@@ -1,0 +1,3 @@
+fgeovisor/**/migrations/*
+!fgeovisor/**/migrations/__init__.py
+fgeovisor/**/__pycache__/

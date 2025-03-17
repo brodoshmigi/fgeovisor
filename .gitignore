@@ -1,22 +1,41 @@
+# venv ignore
 venv
 geodjangorainmarker_venv/
 fgeovisor_venv/
 geodjrep_venv/
-migrations
+
+# Ignore all personal migrations, only generic or common
+fgeovisor/*/migrations/*
+!fgeovisor/*/migrations/__init__.py
+
+# Ignore the settings.py file, as it may contain personal information.
 fgeovisor/visor_bend_site/settings.py
+
+# venv config and his alter name
 prac\prac-env\pyvenv.cfg
 prac
+
+# cringe
 geodjangorainmarker
 geodjango
+
+# pycache ignore
 *.pyc
 __pycache__
 *.py[cod]
 *$py.class
+
+#
 /ssl/
 ssl/
 ssl
+
+# some feature of root repository
 api.js
 GDAL-3.10.1-cp312-cp312-win_amd64.whl
+service.json
+
+# nginx folder politics
 nginx/*
 !scripts/nginx
 !nginx/.gitkeep
