@@ -24,4 +24,5 @@ python fgeovisor\manage.py migrate
 reg add "%regKey%" /v "%regValue%" /t REG_SZ /d "Запущен %date% %time%" /f
 :end
 call %folder_name%_venv\Scripts\activate.bat
-python fgeovisor\manage.py runserver %DJANGO_RUNSERVER_ADDR%:%DJANGO_RUNSERVER_PORT%
+cd fgeovisor
+python manage.py runserver %DJANGO_RUNSERVER_ADDR%:%DJANGO_RUNSERVER_PORT%
