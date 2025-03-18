@@ -7,7 +7,7 @@ RUN apt-get update \
     && apt-get install -y libproj-dev binutils \
     && apt-get install -y libpq-dev
 RUN apt-get update \
-    && apt-get install -y wget build-essential curl ca-certificates cmake
+    && apt-get install -y wget build-essential curl ca-certificates cmake \
     && apt-get install -y g++ gcc ninja-build
 RUN rm -rf /var/lib/apt/lists/*
 
