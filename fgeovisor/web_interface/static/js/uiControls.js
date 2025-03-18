@@ -198,46 +198,45 @@ export function switchsidebarcontent() {
 window.switchsidebarcontent = switchsidebarcontent;
 
 // Функции для работы с темами
-export function switchTheme() {
+export function setTheme(themeName) {
     const themeLink = document.getElementById("theme");
-    if (themeLink) {
-        if (themeLink.getAttribute("href") === staticUrls.light) {
+
+    localStorage.setItem("theme", themeName);
+
+    if (themeName === "light") {
+        themeLink.setAttribute("href", staticUrls.light);
+    } else if (themeName === "dark") {
+        themeLink.setAttribute("href", staticUrls.dark);
+    } else {
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
             themeLink.setAttribute("href", staticUrls.dark);
-            localStorage.setItem("theme", "dark");
-            savedTheme = "dark";
         } else {
             themeLink.setAttribute("href", staticUrls.light);
-            localStorage.setItem("theme", "light");
-            savedTheme = "light";
         }
     }
 }
 
-window.switchTheme = switchTheme;
+window.setTheme = setTheme;
 
 export function autoSwitchTheme() {
     const themeLink = document.getElementById("theme");
-    const savedTheme = localStorage.getItem("theme");
+    const savedTheme = localStorage.getItem("theme") || "auto";
     const savedColor = localStorage.getItem("selectedColor");
 
-    if (themeLink) {
-        if (savedTheme) {
-            if (savedTheme === "dark") {
-                themeLink.setAttribute("href", staticUrls.dark);
-            } else {
-                themeLink.setAttribute("href", staticUrls.light);
-            }
+    if (savedTheme === "light") {
+        themeLink.setAttribute("href", staticUrls.light);
+    } else if (savedTheme === "dark") {
+        themeLink.setAttribute("href", staticUrls.dark);
+    } else {
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+            themeLink.setAttribute("href", staticUrls.dark);
         } else {
-            if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-                themeLink.setAttribute("href", staticUrls.dark);
-            } else {
-                themeLink.setAttribute("href", staticUrls.light);
-            }
+            themeLink.setAttribute("href", staticUrls.light);
         }
     }
 
     if (savedColor) {
-        polygonLayerGroup.eachLayer(function (layer) {
+        polygonLayerGroup.eachLayer((layer) => {
             layer.setStyle({ color: savedColor });
         });
 
@@ -247,7 +246,6 @@ export function autoSwitchTheme() {
         }
     }
 }
-
 window.autoSwitchTheme = autoSwitchTheme;
 
 export function switchColor(color) {

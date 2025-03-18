@@ -1,4 +1,3 @@
-//Функция рассчёта NDVI
 var ndviValueDisplay = null;
 
 async function calcIndex(layer, del, index) {
@@ -102,11 +101,10 @@ async function calcIndex(layer, del, index) {
 
                 // Получаем цвет пикселя
                 var pixel = ctx.getImageData(pixelX, pixelY, 1, 1).data;
-
                 var ndviValue = calculateIndex(
-                    pixel[0], // Red channel (B4)
-                    pixel[1], // Green channel (unused here, but we could use it if needed)
-                    pixel[2] // Blue channel (B2)
+                    pixel[0], //r
+                    pixel[1], //g
+                    pixel[2] //b
                 );
 
                 // Отображаем значение NDVI рядом с курсором
@@ -134,53 +132,65 @@ async function calcIndex(layer, del, index) {
 }
 
 function calculateIndex(r, g, b) {
-    const keyPoints = [
-        { r: 68, g: 1, b: 84, value: 0.0 }, // Фиолетовый (0)
-        { r: 72, g: 35, b: 116, value: 0.1 }, //
-        { r: 59, g: 82, b: 139, value: 0.2 }, //
-        { r: 44, g: 114, b: 142, value: 0.3 }, //
-        { r: 33, g: 144, b: 141, value: 0.4 }, //
-        { r: 39, g: 173, b: 129, value: 0.5 }, //
-        { r: 92, g: 200, b: 99, value: 0.6 }, //
-        { r: 170, g: 220, b: 50, value: 0.7 }, //
-        { r: 253, g: 231, b: 37, value: 0.8 }, //
-        { r: 253, g: 231, b: 37, value: 1.0 }, // Желтый (1)
-    ];
-
-    // Находим ближайшие ключевые точки
-    let minDistance1 = Infinity;
-    let minDistance2 = Infinity;
-    let closestPoint1 = null;
-    let closestPoint2 = null;
-
-    for (const point of keyPoints) {
+    // const keyPoints = [
+    //     { r: 68, g: 1, b: 84, value: 0.0 }, // Фиолетовый (0)
+    //     { r: 72, g: 35, b: 116, value: 0.1 }, //
+    //     { r: 59, g: 82, b: 139, value: 0.2 }, //
+    //     { r: 44, g: 114, b: 142, value: 0.3 }, //
+    //     { r: 33, g: 144, b: 141, value: 0.4 }, //
+    //     { r: 39, g: 173, b: 129, value: 0.5 }, //
+    //     { r: 92, g: 200, b: 99, value: 0.6 }, //
+    //     { r: 170, g: 220, b: 50, value: 0.7 }, //
+    //     { r: 253, g: 231, b: 37, value: 0.8 }, //
+    //     { r: 253, g: 231, b: 37, value: 1.0 }, // Желтый (1)
+    // ];
+    // // Находим ближайшие ключевые точки
+    // let minDistance1 = Infinity;
+    // let minDistance2 = Infinity;
+    // let closestPoint1 = null;
+    // let closestPoint2 = null;
+    // for (const point of keyPoints) {
+    //     const distance = Math.sqrt(
+    //         Math.pow(r - point.r, 2) +
+    //             Math.pow(g - point.g, 2) +
+    //             Math.pow(b - point.b, 2)
+    //     );
+    //     if (distance < minDistance1) {
+    //         minDistance2 = minDistance1;
+    //         closestPoint2 = closestPoint1;
+    //         minDistance1 = distance;
+    //         closestPoint1 = point;
+    //     } else if (distance < minDistance2) {
+    //         minDistance2 = distance;
+    //         closestPoint2 = point;
+    //     }
+    // }
+    // // Интерполяция между двумя ближайшими точками
+    // const distanceTotal = minDistance1 + minDistance2;
+    // const weight1 = 1 - minDistance1 / distanceTotal;
+    // const weight2 = 1 - minDistance2 / distanceTotal;
+    // const interpolatedValue = (
+    //     closestPoint1.value * weight1 +
+    //     closestPoint2.value * weight2
+    // ).toFixed(2);
+    let closestIndex = null;
+    let minDistance = Infinity;
+    for (let i = 0; i < viridis.length; i++) {
+        const color = viridis[i];
         const distance = Math.sqrt(
-            Math.pow(r - point.r, 2) +
-                Math.pow(g - point.g, 2) +
-                Math.pow(b - point.b, 2)
+            Math.pow(color[0] - r, 2) + // r
+                Math.pow(color[1] - g, 2) + // g
+                Math.pow(color[2] - b, 2) // b
         );
-
-        if (distance < minDistance1) {
-            minDistance2 = minDistance1;
-            closestPoint2 = closestPoint1;
-            minDistance1 = distance;
-            closestPoint1 = point;
-        } else if (distance < minDistance2) {
-            minDistance2 = distance;
-            closestPoint2 = point;
+        if (distance < minDistance) {
+            minDistance = distance;
+            closestIndex = i;
         }
     }
-
-    // Интерполяция между двумя ближайшими точками
-    const distanceTotal = minDistance1 + minDistance2;
-    const weight1 = 1 - minDistance1 / distanceTotal;
-    const weight2 = 1 - minDistance2 / distanceTotal;
-
-    const interpolatedValue = (
-        closestPoint1.value * weight1 +
-        closestPoint2.value * weight2
-    ).toFixed(2);
-    return parseFloat(interpolatedValue);
+    const normalizedValue = closestIndex / (viridis.length - 1);
+    // Интерполируем в диапазон от -1 до 1
+    const scaledValue = normalizedValue * 2 - 1;
+    return scaledValue;
 }
 
 function calculatePolygonArea(latlngs) {

@@ -29,7 +29,7 @@ def update_image_GEE(polygon):
     new_image.visualization()
 
 
-IMAGE_DIR = 'images/IMAGES'
+IMAGE_DIR = 'fgeovisor/images/IMAGES' if name != 'posix' else 'images/IMAGES'
 
 RATIO_ENUM_S2_BANDS = {
         'NDVI': ['B4', 'B8'],            # Вегетационный индекс растительности

@@ -84,19 +84,6 @@ a:visited {
     color: white;
 }
 
-#themeButton {
-    background-color: #38393c;
-}
-
-#themeButton:hover {
-    background-color: #434853;
-    /* Цвет при наведении */
-}
-
-#themeSettings {
-    color: white;
-}
-
 .section-title {
     color: white;
 }
@@ -137,9 +124,4 @@ iframe {
     background: #38393c;
     border: 1px solid #666;
     border-bottom-color: #999;
-}
-
-#mainThemeButton {
-    background-color: #fff;
-    color: #38393c;
 }
