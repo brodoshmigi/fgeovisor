@@ -112,8 +112,7 @@ async function calcIndex(layer, del, index) {
                 if (ndviValueDisplay) {
                     ndviValueDisplay.style.left = point.x + 10 + "px";
                     ndviValueDisplay.style.top = point.y + 10 + "px";
-                    ndviValueDisplay.textContent =
-                        "NDVI: " + ndviValue.toFixed(2);
+                    ndviValueDisplay.textContent = index + " " + ndviValue.toFixed(2);
                 }
             };
 
