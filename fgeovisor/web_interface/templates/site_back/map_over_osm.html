@@ -60,23 +60,29 @@
                     <div class="section-title">Тема</div>
                     <div class="theme-toggle">
                         <button
-                        class="button"
-                        id="lightThemeButton"
-                        onclick="setTheme('light')"
-                        style="background-color: white; color: black"
-                        >Светлая</button>
+                            class="button"
+                            id="lightThemeButton"
+                            onclick="setTheme('light')"
+                            style="background-color: white; color: black"
+                        >
+                            Светлая
+                        </button>
                         <button
                             class="button"
                             id="darkThemeButton"
                             onclick="setTheme('dark')"
                             style="background-color: black"
-                        >Тёмная</button>
+                        >
+                            Тёмная
+                        </button>
                         <button
                             class="button"
                             id="autoThemeButton"
                             onclick="setTheme('auto')"
                             style="background-color: grey"
-                        >Авто</button>
+                        >
+                            Авто
+                        </button>
                     </div>
                 </div>
                 <div class="section">
@@ -279,9 +285,24 @@
                 "#FCB03C": "{% static 'css/orange_crayola.css' %}",
             };
         </script>
-        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/leaflet-editable@1.2.0/src/Leaflet.Editable.js"></script>
+        <script type="module">
+            import colormap from "https://cdn.jsdelivr.net/npm/colormap@2.3.2/+esm";
+            const viridis = colormap({
+                colormap: "viridis",
+                nshades: 256,
+                format: "rgb",
+                alpha: 1,
+            });
+            window.viridis = viridis;
+        </script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.0/pikaday.min.js"></script>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script
+            src="https://cdn.jsdelivr.net/npm/leaflet-editable@1.2.0/src/Leaflet.Editable.js"
+        >
+            </scrip>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/pikaday/1.8.0/pikaday.min.js">
+        </script>
         <script type="module" src="static/js/mapInit.js"></script>
         <script src="static/js/utils.js"></script>
         <script src="static/js/polygonManager.js"></script>
