@@ -152,7 +152,7 @@ STATIC_URL = 'static/'
 
 # STATICFILEDIRS
 
-MEDIA_ROOT = '..' if os.name == 'posix' else BASE_DIR
+MEDIA_ROOT = '.'
 MEDIA_URL = '/media/'
 
 # Default primary key field type
