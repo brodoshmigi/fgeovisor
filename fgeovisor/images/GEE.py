@@ -29,7 +29,7 @@ def update_image_GEE(polygon):
     new_image.visualization()
 
 
-IMAGE_DIR = 'fgeovisor/images/IMAGES' if name != 'posix' else 'images/IMAGES'
+IMAGE_DIR = 'images/IMAGES' if name != 'posix' else 'images/IMAGES'
 
 RATIO_ENUM_S2_BANDS = {
         'NDVI': ['B4', 'B8'],            # Вегетационный индекс растительности
@@ -98,7 +98,7 @@ class Image_GEE():
 
     def read_bands(self) -> list[GDALRaster]:
         list_of_rasters = listdir(self.dir)
-        bands = [GDALRaster(self.dir + '/' + item).bands[0].data() for item in list_of_rasters]
+        bands = [GDALRaster(self.dir + '/' + item).bands[0].data().astype('float64') for item in list_of_rasters]
         return bands
     
     def remove_bands(self):
