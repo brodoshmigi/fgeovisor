@@ -6,7 +6,7 @@
 Tools used: 
 1. [Django/Geodjango](https://github.com/django/django)
 2. [Pystac/Pystac_client](https://github.com/stac-utils/pystac-client)
-3. Google Earth Engine | Python lib
+3. Google Earth Engine | Python lib | OsGEO
 4. Nasa cloud storage
 5. Terabox cloud storage
 
