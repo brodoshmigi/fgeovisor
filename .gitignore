@@ -41,3 +41,6 @@ nginx/*
 !nginx/.gitkeep
 !nginx/README.md
 !nginx/Dockerfile
+
+# images ignore politics
+*.png
