@@ -68,16 +68,12 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
 
             if not queryset:
                 # если скачиваются ужен скачанные снимки, воможно проблема в датах
-                polygon_obj = UserPolygon.objects.get(polygon_id=polygon_id)
-                image_object = Image_GEE(polygon_obj,
-                                         index=index.upper(),
-                                         date_start=date)
-                image_object.download_image()
-                _image_object = image_object.calculate_index()
-                image_object.remove_bands()
+                obj = self.get_image_from_google(id=polygon_id,
+                                                 date=date,
+                                                 index=index)
                 return Response(
                     status=HTTP_201_CREATED,
-                    data={'url': _image_object.check_uri(request='1')},
+                    data={'url': obj.check_uri(request='1')},
                     # headers={'Location': _image_object.check_uri(request='1')}.update(NO_CACHE)
                 )
 
@@ -95,6 +91,16 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
 
         error = {'error': f'You forgot {query_equals}'}
         return Response(status=HTTP_400_BAD_REQUEST, data=error)
+
+    def get_image_from_google(self, id, date, index):
+        polygon_obj = UserPolygon.objects.get(polygon_id=id)
+        image_object = Image_GEE(polygon_obj,
+                                 index=index.upper(),
+                                 date_start=date)
+        image_object.download_image()
+        _image_object = image_object.calculate_index()
+        image_object.remove_bands()
+        return _image_object
 
     def is_query_valid(self, query_dict, q_equals) -> bool:
         query_len = len(query_dict.keys())
