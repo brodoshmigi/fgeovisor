@@ -26,7 +26,7 @@ auth_path = [
 ]
 
 urlpatterns = [
-    path('', MapView.as_view(), name='map'),
+    path('csrf', MapView.as_view(), name='map'),
     path('sign-in/', RegistryView.as_view(), name='sign-in'),
     path('log-in/', LoginView.as_view(), name='log-in'),
     path('log-out/', LogoutView.as_view(), name='log-out'),

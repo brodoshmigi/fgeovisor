@@ -35,14 +35,15 @@ class MapView(APIView):
         context = My_errors.tmp_context
         if user.username == AnonymousUser.username:
             context['auth_check'] = False
-            return render(request,
-                          'site_back/map_over_osm.html',
-                          context=My_errors.error_send())
+            return Response(status=HTTP_200_OK)
         context['auth_check'] = True
         context['is_staff'] = user.is_staff
+        """
         return render(request,
                       'site_back/map_over_osm.html',
                       context=My_errors.error_send())
+        """
+        return Response(status=HTTP_200_OK,data=My_errors.error_send())
 
 
 class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
@@ -119,11 +120,9 @@ class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
 
             username, password = serializer.data['username'], serializer.data[
                 'password']
-
             user = authenticate(self.request,
                                 username=username,
                                 password=password)
-
             if user is not None:
                 login(self.request, user)
                 My_errors.tmp_context['auth_check'] = True
@@ -136,7 +135,7 @@ class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
         # print(serializer.errors)
 
         My_errors.tmp_context['login_error'] = True
-        return Response(My_errors.error_send(), status=HTTP_404_NOT_FOUND)
+        return Response(My_errors.error_send(), status=HTTP_400_BAD_REQUEST)
 
     def forgot_password(self, request, *args, **kwargs):
         # auto login not exists
