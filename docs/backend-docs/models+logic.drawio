@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:135.0) Gecko/20100101 Firefox/135.0" version="26.0.15">
+<mxfile host="localhost" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:137.0) Gecko/20100101 Firefox/137.0" version="26.2.8">
   <diagram name="Страница — 1" id="WusRuuyAXhUo5n-OF-j5">
-    <mxGraphModel dx="2261" dy="764" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
+    <mxGraphModel dx="2255" dy="769" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="none" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -30,17 +30,6 @@
         <mxCell id="Q2ZTKyAX25ePQhJRz6t--3" value="&lt;div&gt;UserImages&lt;/div&gt;&lt;div&gt;model&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="130" y="300" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--39" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=none;endFill=0;" parent="1" source="Q2ZTKyAX25ePQhJRz6t--5" target="Q2ZTKyAX25ePQhJRz6t--3" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="40" y="440" />
-              <mxPoint x="190" y="440" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--5" value="&lt;div align=&quot;justify&quot;&gt;Google-EE своим наличием скипает большую часть процессов(обрезка, обработка и т.д.).&amp;nbsp;&lt;/div&gt;&lt;div align=&quot;justify&quot;&gt;Ограничен на 17 мб на снимок или 10 км&lt;sup&gt;2&lt;/sup&gt;.&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="-40" y="475" width="160" height="90" as="geometry" />
-        </mxCell>
         <mxCell id="Q2ZTKyAX25ePQhJRz6t--28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=2;" parent="1" source="Q2ZTKyAX25ePQhJRz6t--6" target="Q2ZTKyAX25ePQhJRz6t--1" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
@@ -50,25 +39,13 @@
         <mxCell id="Q2ZTKyAX25ePQhJRz6t--6" value="&lt;div&gt;NasaImages&lt;/div&gt;&lt;div&gt;model&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="380" y="300" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=none;endFill=0;" parent="1" source="Q2ZTKyAX25ePQhJRz6t--9" target="Q2ZTKyAX25ePQhJRz6t--6" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <Array as="points">
-              <mxPoint x="255" y="450" />
-              <mxPoint x="440" y="450" />
-            </Array>
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--9" value="&lt;div align=&quot;justify&quot;&gt;Доп. функцоионал, правда еще дописывать нужно что-то типо обрезки фото и т.д.&lt;/div&gt;&lt;div align=&quot;justify&quot;&gt;Ограничение - они минимум 100 км&lt;sup&gt;2&lt;/sup&gt;. И много весят - один канал 25 мб. Вся территория будет весить больше 500 мб.&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="160" y="465" width="190" height="120" as="geometry" />
-        </mxCell>
         <mxCell id="Q2ZTKyAX25ePQhJRz6t--10" value="&lt;div align=&quot;center&quot;&gt;Fields&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div align=&quot;justify&quot;&gt;| URI&lt;/div&gt;&lt;div align=&quot;justify&quot;&gt;| Date&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;horizontal=1;verticalAlign=top;" parent="1" vertex="1">
           <mxGeometry x="200" y="140" width="120" height="70" as="geometry" />
         </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;" parent="1" source="Q2ZTKyAX25ePQhJRz6t--17" target="Q2ZTKyAX25ePQhJRz6t--1" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--17" value="абстрактные модели работают иначе абстрактных классов" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="620" y="165" width="170" height="30" as="geometry" />
+        <mxCell id="Q2ZTKyAX25ePQhJRz6t--42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;" parent="1" target="Q2ZTKyAX25ePQhJRz6t--1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="620" y="180" as="sourcePoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="Q2ZTKyAX25ePQhJRz6t--37" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=2;" parent="1" source="Q2ZTKyAX25ePQhJRz6t--19" target="Q2ZTKyAX25ePQhJRz6t--1" edge="1">
           <mxGeometry relative="1" as="geometry">
@@ -81,12 +58,6 @@
         <mxCell id="Q2ZTKyAX25ePQhJRz6t--19" value="&lt;div&gt;CloudUserImages&lt;/div&gt;&lt;div&gt;model&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="600" y="300" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=none;endFill=0;" parent="1" source="Q2ZTKyAX25ePQhJRz6t--25" target="Q2ZTKyAX25ePQhJRz6t--6" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--25" value="&lt;div align=&quot;justify&quot;&gt;У них сразу фото можно не качать, а сохранять ссылки&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="382.5" y="475" width="115" height="45" as="geometry" />
-        </mxCell>
         <mxCell id="Q2ZTKyAX25ePQhJRz6t--30" value="Cliped" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="290" y="300" width="60" height="30" as="geometry" />
         </mxCell>
@@ -96,28 +67,16 @@
         <mxCell id="Q2ZTKyAX25ePQhJRz6t--36" value="&lt;div&gt;Fields&lt;/div&gt;&lt;div align=&quot;justify&quot;&gt;+ Polygon_id&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="50" y="305" width="80" height="50" as="geometry" />
         </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--40" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;endArrow=none;endFill=0;" parent="1" source="Q2ZTKyAX25ePQhJRz6t--38" target="Q2ZTKyAX25ePQhJRz6t--19" edge="1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--38" value="&lt;div align=&quot;justify&quot;&gt;Это облако, и поидеи оно вообще должно наследовать сразу две модели, но как то это черезчурр&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="580" y="475" width="160" height="70" as="geometry" />
-        </mxCell>
         <mxCell id="Q2ZTKyAX25ePQhJRz6t--41" value="&lt;div&gt;Fields&lt;/div&gt;&lt;div align=&quot;justify&quot;&gt;+ FK UserImages&lt;/div&gt;&lt;div align=&quot;justify&quot;&gt;+ FK NasaImages&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=top;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="720" y="300" width="120" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="Q2ZTKyAX25ePQhJRz6t--43" edge="1">
-          <mxGeometry relative="1" as="geometry">
-            <mxPoint x="440" y="243.125" as="targetPoint" />
-          </mxGeometry>
-        </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--43" value="&lt;div align=&quot;justify&quot;&gt;Между всем этим логично поставить какой-нибудь request handler(или еще одну модель, или view или триггер или функцию хз, который прочекает БД. Суть в том, что изображение может быть где угодно: local, не скачано, не обработано или в облаке. И будет очень не красиво, если мы ради этого будем делать тысячу разных запросов в БД.&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="880" y="140" width="150" height="206.25" as="geometry" />
         </mxCell>
         <mxCell id="Q2ZTKyAX25ePQhJRz6t--56" value="&lt;div align=&quot;left&quot;&gt;POLYGONS APP&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=top;" parent="1" vertex="1">
           <mxGeometry x="780" y="360" width="470" height="230" as="geometry" />
         </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;" parent="1" source="Q2ZTKyAX25ePQhJRz6t--54" target="Q2ZTKyAX25ePQhJRz6t--48" edge="1">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="Q2ZTKyAX25ePQhJRz6t--55" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;" parent="1" target="Q2ZTKyAX25ePQhJRz6t--48" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1112" y="420" as="sourcePoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="Q2ZTKyAX25ePQhJRz6t--50" value="UserPolygons" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
           <mxGeometry x="805" y="495" width="120" height="60" as="geometry" />
@@ -130,9 +89,6 @@
         </mxCell>
         <mxCell id="Q2ZTKyAX25ePQhJRz6t--49" value="ABC" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="925" y="360" width="60" height="30" as="geometry" />
-        </mxCell>
-        <mxCell id="Q2ZTKyAX25ePQhJRz6t--54" value="&lt;div align=&quot;justify&quot;&gt;Это расширяет функциональность и так легче будет делать запросы на вытягивание&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="1112" y="370" width="129" height="100" as="geometry" />
         </mxCell>
         <mxCell id="Q2ZTKyAX25ePQhJRz6t--52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;strokeWidth=2;" parent="1" source="Q2ZTKyAX25ePQhJRz6t--50" target="Q2ZTKyAX25ePQhJRz6t--48" edge="1">
           <mxGeometry relative="1" as="geometry" />
