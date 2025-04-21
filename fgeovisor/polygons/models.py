@@ -40,3 +40,17 @@ class ImageBounds(Polygons):
     """ Границы снимка наса """
     class Meta:
         ordering = ['polygon_data']
+
+# class Bounds(models.Model):
+#     id = models.CharField(max_length=0)
+#     adm0_code = models.IntegerField()
+#     adm0_name = models.CharField(max_length=0)
+#     adm1_code = models.IntegerField()
+#     adm1_name = models.CharField(max_length=0)
+#     disp_area = models.CharField(max_length=0)
+#     exp1_year = models.IntegerField()
+#     status = models.CharField(max_length=0)
+#     str1_year = models.IntegerField()
+#     shape_area = models.FloatField()
+#     shape_leng = models.FloatField()
+#     geom = models.GeometryField()
