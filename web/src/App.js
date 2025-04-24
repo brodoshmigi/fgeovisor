@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { ThemeProvider } from "styled-components";
 import MapBackground from "./components/MapBackground";
+import InteractiveMap from "./components/InteractiveMap";
 import LoginPage from "./components/LoginPage";
 import RegistrationPage from "./components/RegistrationPage";
 import SettingsMenu from "./components/SettingsMenu";
@@ -73,10 +74,10 @@ function App() {
         <>
             <GlobalStyles />
             <div style={{ backgroundColor: "transparent", height: "100vh" }}>
-                <MapBackground
-                    theme={theme}
-                    isAuthenticated={isAuthenticated}
-                />
+                <MapBackground theme={theme} isAuthenticated={isAuthenticated} />
+                {isAuthenticated && (
+                    <InteractiveMap theme={theme} isAuthenticated={isAuthenticated} />
+                )}
                 <ThemeProvider theme={theme}>
                     {isAuthenticated && (
                         <SidePanel
