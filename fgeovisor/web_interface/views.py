@@ -57,13 +57,6 @@ class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
     queryset = User.objects.all()
 
     def get_object(self):
-        ''' eto bredik
-        # !register is put
-        if self.request.method.lower() in ['put', 'delete', 'get', 'patch']:
-            self.permission_classes = [IsAuthenticated]
-        if 'register' not in self.request.path:
-            self.permission_classes = [IsAuthenticated]
-        '''
         queryset = self.filter_queryset(self.get_queryset())
 
         # Perform the lookup filtering.

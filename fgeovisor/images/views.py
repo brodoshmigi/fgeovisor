@@ -46,14 +46,12 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
     # filter_backends = [и создать свой бекенд для фильтрации]
     # И в нашем случае, раз мы используем, что-то типо get_obj 10 из 10,
     # Нужно будет переписать логику чисто get_object, а queryset оставить серьезным дядям
-    def get_queryset(self, **kwargs):
-        polygon_id, date, index = kwargs.values()
-        return UserImage.objects.filter(polygon_id__pk=polygon_id,
-                                        image_index=index.upper(),
-                                        image_date=date)
+    def get_queryset(self, polygon_id, date, index):
+        return UserImage.objects.all().filter(polygon_id__pk=polygon_id,
+                                              image_index=index.upper(),
+                                              image_date=date)
 
     def list(self, request, *args, **kwargs) -> Response:
-        # REST canonical with Location, without - not canonical.
         query_params = self.request.GET
         query_equals = DEFAULT_PARAMS.keys() - query_params.keys()
 
@@ -66,9 +64,10 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
                                   date=date,
                                   index=index))
 
-            if not queryset:
+            # exists exists exists exists
+            if not queryset.exists():
                 # если скачиваются ужен скачанные снимки, воможно проблема в датах
-                obj = self.get_image_from_google(id=polygon_id,
+                obj = self.get_image_from_google(polygon_id=polygon_id,
                                                  date=date,
                                                  index=index)
                 return Response(
@@ -78,13 +77,13 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
                 )
 
             serializer = self.get_serializer(queryset, many=True)
-            image_uri = queryset[0].check_uri(request='1')
+            obj = queryset.first()
 
-            if image_uri is not None:
+            if obj is not None:
                 return Response(
-                    {'url': image_uri},
+                    {'url': obj.check_uri(request='1')},
                     status=HTTP_302_FOUND,
-                    # headers={'Location: _image_object.check_uri(request='1')'}.update(NO_CACHE)
+                    # headers={'Location: obj.check_uri(request='1')'}.update(NO_CACHE)
                 )
 
             return Response(serializer.data, status=HTTP_204_NO_CONTENT)
@@ -92,8 +91,10 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
         error = {'error': f'You forgot {query_equals}'}
         return Response(status=HTTP_400_BAD_REQUEST, data=error)
 
-    def get_image_from_google(self, id, date, index):
-        polygon_obj = UserPolygon.objects.get(polygon_id=id)
+    # overload
+    def get_image_from_google(self, polygon_id, date, index):
+        """ Зубов во рту должно быть столько, сколько ты можешь себе позволить вылечить. """
+        polygon_obj = UserPolygon.objects.filter(polygon_id=polygon_id).first()
         image_object = Image_GEE(polygon_obj,
                                  index=index.upper(),
                                  date_start=date)

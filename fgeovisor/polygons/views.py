@@ -12,8 +12,31 @@ from rest_framework.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
 from rest_framework.response import Response
 
 from images.GEE import delete_image, update_image_GEE
-from .models import UserPolygon, User
+from .models import UserPolygon, User, Bounds
 from .serializators import GeoJSONSerializer
+"""
+— Я исполню три ваших желания. Но очень плохо.
+— А ты кто?
+— Джун.
+
+░░░░░░░░░░░░▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄░░░░░░░░░░░░░
+░░░░░▄▄▄▄█▀▀▀░░░░░░░░░░░░▀▀██░░░░░░░░░░░
+░░▄███▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄█▄▄▄░░░░░░░
+▄▀▀░█░░░░▀█▄▀▄▀██████░▀█▄▀▄▀████▀░░░░░░░
+█░░░█░░░░░░▀█▄█▄███▀░░░░▀▀▀▀▀▀▀░▀▀▄░░░░░
+█░░░█░▄▄▄░░░░░░░░░░░░░░░░░░░░░▀▀░░░█░░░░
+█░░░▀█░░█░░░░▄░░░░▄░░░░░▀███▀░░░░░░░█░░░
+█░░░░█░░▀▄░░░░░░▄░░░░░░░░░█░░░░░░░░█▀▄░░
+░▀▄▄▀░░░░░▀▀▄▄▄░░░░░░░▄▄▄▀░▀▄▄▄▄▄▀▀░░█░░
+░█▄░░░░░░░░░░░░▀▀▀▀▀▀▀░░░░░░░░░░░░░░█░░░
+░░█░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▄██░░░░
+░░▀█▄░░░░░░░░░░░░░░░░░░░░░░░░░▄▀▀░░░▀█░░
+█▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀█
+█░░█▀▄ █▀▀ █▀█ █░░░░█░▄░█ █ ▀█▀ █░█░░█ ▀█▀░█
+█░░█░█ █▀▀ █▀█ █░░░░▀▄▀▄▀ █ ░█░ █▀█░░█ ░█░░█
+█░░▀▀░ ▀▀▀ ▀░▀ ▀▀▀░░░▀░▀░ ▀ ░▀░ ▀░▀░░▀ ░▀░░█
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+"""
 
 
 class PolygonsViewSet(GenericViewSet, ListModelMixin, UpdateModelMixin,
@@ -25,27 +48,29 @@ class PolygonsViewSet(GenericViewSet, ListModelMixin, UpdateModelMixin,
     serializer_class = GeoJSONSerializer
 
     def get_queryset(self):
-        user_id = self.request.user.id
-        return UserPolygon.objects.filter(owner=user_id)
+        return UserPolygon.objects.all().filter(
+            owner=self.request.user.id,
+            district__code=self.request.GET['code'])
 
     def create(self, request, *args, **kwargs):
-        if self.check_create_valid():
-            return Response(status=HTTP_400_BAD_REQUEST)
-        return super().create(request, *args, **kwargs)
+        input_polygon = Polygon(*self.request.data['geometry']['coordinates'])
+        if self.check_district_valid(input_polygon):
+            if self.check_create_valid(input_polygon):
+                return super().create(request, *args, **kwargs)
+        return Response(status=HTTP_400_BAD_REQUEST)
 
     def update(self, request, *args, **kwargs):
-        if self.check_update_valid():
-            return Response(status=HTTP_400_BAD_REQUEST)
-        # but need to add validation in perform_update
-        # because users should not update polygons
-        # unless they are the ones who created them.
-        polygon_object = self.get_object()
-        try:
-            delete_image(polygon_object.polygon_id)
-        except Exception as e:
-            print('except: ', e)
-        finally:
-            return super().update(request, *args, **kwargs)
+        input_polygon = Polygon(*self.request.data['geometry']['coordinates'])
+        if self.check_district_valid(input_polygon):
+            if self.check_update_valid(input_polygon):
+                polygon_object = self.get_object()
+                try:
+                    delete_image(polygon_object.polygon_id)
+                except Exception as e:
+                    print('except: ', e)
+                finally:
+                    return super().update(request, *args, **kwargs)
+        return Response(status=HTTP_400_BAD_REQUEST)
 
     def destroy(self, request, *args, **kwargs):
         polygon_object = self.get_object()
@@ -62,20 +87,30 @@ class PolygonsViewSet(GenericViewSet, ListModelMixin, UpdateModelMixin,
         return Response(status=HTTP_204_NO_CONTENT)
 
     def perform_create(self, serializer):
+        serializer.save(
+            owner=self.request.user,
+            district=Bounds.objects.get(code=self.request.GET['code']))
+
+    def perform_update(self, serializer):
         serializer.save(owner=self.request.user)
 
-    def check_create_valid(self):
-        input_polygon = Polygon(*self.request.data['geometry']['coordinates'])
+    # Всю валидацию можно перенести в constraints в БД или в МОДЕЛИ ЙОООУ
+    def check_district_valid(self, input_polygon) -> bool:
+        district_geom = Bounds.objects.filter(code=int(
+            self.request.GET['code']),
+                                              geom__contains=input_polygon)
+        return district_geom.exists()
+
+    def check_create_valid(self, input_polygon) -> bool:
         polygon_objects = UserPolygon.objects.filter(
             polygon_data__intersects=input_polygon)
-        return polygon_objects.exists()
+        return not polygon_objects.exists()
 
-    def check_update_valid(self):
-        input_polygon = Polygon(*self.request.data['geometry']['coordinates'])
+    def check_update_valid(self, input_polygon) -> bool:
         polygon_objects = UserPolygon.objects.exclude(
             polygon_id=self.request.data['id']).filter(
                 polygon_data__intersects=input_polygon)
-        return polygon_objects.exists()
+        return not polygon_objects.exists()
 
 
 class PolygonsView(APIView):

@@ -18,6 +18,7 @@ prac
 # cringe
 geodjangorainmarker
 geodjango
+districts.geojson
 
 # pycache ignore
 *.pyc

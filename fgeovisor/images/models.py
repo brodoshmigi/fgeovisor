@@ -44,16 +44,16 @@ class ImageType(models.Model):
 
     # len = 6
     enum_index = {
-        'NDVI': 'ndvi',     # Вегетационный индекс растительности
-        'EVI': 'evi',       # Улучшенный индекс растительности
-        'SAVI': 'savi',     # Индекс растительности с поправкой на почву
-        'GNDVI': 'gndvi',   # NDVI только с зеленым каналом
-        'MSAVI': 'msavi',   # Модификация savi
-        'NDRE': 'ndre'      # Нормализованный индекс красного края (хз что это)
+        "NDVI": "ndvi",     # Вегетационный индекс растительности
+        "EVI": "evi",       # Улучшенный индекс растительности
+        "SAVI": "savi",     # Индекс растительности с поправкой на почву
+        "GNDVI": "gndvi",   # NDVI только с зеленым каналом
+        "MSAVI": "msavi",   # Модификация savi
+        "NDRE": "ndre"      # Нормализованный индекс красного края (хз что это)
     }
     image_index = models.CharField(max_length=5,
                                    choices=enum_index,
-                                   default='NDVI')
+                                   default="NDVI")
 
     class Meta:
         abstract = True
@@ -62,8 +62,8 @@ class ImageType(models.Model):
 class NasaImage(Image):
     """ Example for NASA cloud-schema image (usually json) """
     polygon_bounds = models.ForeignKey(to=ImageBounds,
-                                       to_field='polygon_id',
-                                       related_name=('nasa_image'),
+                                       to_field="polygon_id",
+                                       related_name=("nasa_image"),
                                        on_delete=models.CASCADE)
     local_uri = models.JSONField(null=True)
 
@@ -77,7 +77,7 @@ class NasaImage(Image):
         return super().check_uri(request)
 
     class Meta:
-        ordering = ['image_date']
+        ordering = ["image_date"]
 
 
 class UserImage(Image, ImageType):
@@ -90,8 +90,8 @@ class UserImage(Image, ImageType):
     - image_index
     """
     polygon_id = models.ForeignKey(to=UserPolygon,
-                                   to_field='polygon_id',
-                                   related_name=('user_image'),
+                                   to_field="polygon_id",
+                                   related_name=("user_image"),
                                    on_delete=models.CASCADE)
 
     def check_uri(self, request) -> str:
@@ -105,7 +105,7 @@ class UserImage(Image, ImageType):
         return super().check_uri(request)
     
     def __str__(self):
-        return f'{self.image_index} - {self.image_date}'
+        return f"{self.image_index} - {self.image_date}"
 
     class Meta:
-        ordering = ['polygon_id']
+        ordering = ["polygon_id"]
