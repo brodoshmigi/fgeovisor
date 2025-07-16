@@ -11,7 +11,7 @@ class Bounds(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     code = models.IntegerField()
     name = models.CharField(max_length=35)
-    geom = models.GeometryField()
+    geom = models.GeometryField(srid=4326)
 
     def __str__(self):
         return f"{self.name}"
@@ -25,7 +25,7 @@ class Polygons(models.Model):
     polygon_id = models.UUIDField(primary_key=True,
                                   default=uuid4,
                                   editable=False)
-    polygon_data = models.PolygonField()
+    polygon_data = models.PolygonField(srid=4326)
 
     # need index
     district = models.ForeignKey(Bounds,

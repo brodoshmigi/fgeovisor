@@ -3,9 +3,14 @@ from abc import abstractmethod
 from django.db import models
 
 from polygons.models import UserPolygon, ImageBounds
-""" check() к сожалению нарушает DRY ((( из-за этого никто не апнет предатора в апексе """
+""" check() к сожалению нарушает DRY(пофиксите) ((( из-за этого никто не апнет предатора в апексе """
 # 24.02.2025
 
+""" 
+Если я долго работал без выходных, можно ли говорить, 
+что у меня есть стаж в перерабатывающей промышленности?
+"""
+# 16.07.2025
 
 class Image(models.Model):
     """ Абстрактная модель изображения """
@@ -34,7 +39,6 @@ class ImageHandler(models.Model):
 
     def check_uri(self, request = None):
         pass
-
 
     class Meta:
         abstract = True
@@ -95,7 +99,6 @@ class UserImage(Image, ImageType):
                                    on_delete=models.CASCADE)
 
     def check_uri(self, request) -> str:
-
         if self.cloud_uri:
             return self.cloud_uri
 

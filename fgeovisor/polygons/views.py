@@ -8,7 +8,7 @@ from rest_framework.mixins import (ListModelMixin, UpdateModelMixin,
 from rest_framework.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
                                    HTTP_201_CREATED,
                                    HTTP_500_INTERNAL_SERVER_ERROR,
-                                   HTTP_400_BAD_REQUEST)
+                                   HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN)
 from rest_framework.response import Response
 
 from images.GEE import delete_image, update_image_GEE
@@ -48,9 +48,11 @@ class PolygonsViewSet(GenericViewSet, ListModelMixin, UpdateModelMixin,
     serializer_class = GeoJSONSerializer
 
     def get_queryset(self):
-        return UserPolygon.objects.all().filter(
-            owner=self.request.user.id,
-            district__code=self.request.GET['code'])
+        queryset = UserPolygon.objects.filter(owner=self.request.user.id)
+        code = self.request.GET.get('code')
+        if code:
+            queryset = queryset.filter(district__code=code)
+        return queryset
 
     def create(self, request, *args, **kwargs):
         input_polygon = Polygon(*self.request.data['geometry']['coordinates'])
@@ -89,7 +91,7 @@ class PolygonsViewSet(GenericViewSet, ListModelMixin, UpdateModelMixin,
     def perform_create(self, serializer):
         serializer.save(
             owner=self.request.user,
-            district=Bounds.objects.get(code=self.request.GET['code']))
+            district=Bounds.objects.get(code=self.request.data['code']))
 
     def perform_update(self, serializer):
         serializer.save(owner=self.request.user)
@@ -97,7 +99,7 @@ class PolygonsViewSet(GenericViewSet, ListModelMixin, UpdateModelMixin,
     # Всю валидацию можно перенести в constraints в БД или в МОДЕЛИ ЙОООУ
     def check_district_valid(self, input_polygon) -> bool:
         district_geom = Bounds.objects.filter(code=int(
-            self.request.GET['code']),
+            self.request.data['code']),
                                               geom__contains=input_polygon)
         return district_geom.exists()
 
@@ -108,7 +110,7 @@ class PolygonsViewSet(GenericViewSet, ListModelMixin, UpdateModelMixin,
 
     def check_update_valid(self, input_polygon) -> bool:
         polygon_objects = UserPolygon.objects.exclude(
-            polygon_id=self.request.data['id']).filter(
+            polygon_id=self.kwargs['pk']).filter(
                 polygon_data__intersects=input_polygon)
         return not polygon_objects.exists()
 
