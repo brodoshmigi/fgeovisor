@@ -7,3 +7,4 @@ from django.contrib.auth.models import User
 
 from images.models import UserImage
 from polygons.models import UserPolygon, Bounds
+from metrics.models import Metrics

@@ -12,6 +12,15 @@ from polygons.models import UserPolygon, ImageBounds
 """
 # 16.07.2025
 
+
+"""
+Спорят два мужика. Кто говно съест, тому другой даст миллион рублей. 
+Сидели-сидели, решился первый съесть, получил свои миллион рублей. 
+Другой подумал-подумал: "миллион рублей деньги всё-таки" и тоже съел, первый дал ему миллион. 
+И тут один говорит: "Мы, кажется, сейчас в стартапе поучаствовали и должны остались". 
+"""
+# 9.09.2025
+
 class Image(models.Model):
     """ Абстрактная модель изображения """
 
@@ -19,6 +28,7 @@ class Image(models.Model):
 
     local_uri = models.ImageField(blank=True)
     cloud_uri = models.URLField(blank=True)
+    
     image_date = models.DateField()
 
     def set_next(self, h: models.Model) -> models.Model:
@@ -26,9 +36,9 @@ class Image(models.Model):
         return h
 
     @abstractmethod
-    def check_uri(self, request):
+    def check_uri(self) -> str:
         if self._next_handler:
-            return self._next_handler.check()
+            return self._next_handler.check_uri()
 
         return None
 
@@ -37,7 +47,7 @@ class Image(models.Model):
 
 class ImageHandler(models.Model):
 
-    def check_uri(self, request = None):
+    def check_uri(self) -> str:
         pass
 
     class Meta:
@@ -69,16 +79,17 @@ class NasaImage(Image):
                                        to_field="polygon_id",
                                        related_name=("nasa_image"),
                                        on_delete=models.CASCADE)
+    # человек яйца
     local_uri = models.JSONField(null=True)
 
-    def check_uri(self, request) -> str:
+    def check_uri(self) -> str:
         if self.cloud_uri:
             return self.cloud_uri
 
         if self.local_uri:
             return self.local_uri
 
-        return super().check_uri(request)
+        return super().check_uri()
 
     class Meta:
         ordering = ["image_date"]
@@ -90,22 +101,22 @@ class UserImage(Image, ImageType):
     - polygon_id
     - local_uri
     - cloud_uri
-    - image_date
     - image_index
+    - image_date
     """
     polygon_id = models.ForeignKey(to=UserPolygon,
                                    to_field="polygon_id",
                                    related_name=("user_image"),
                                    on_delete=models.CASCADE)
 
-    def check_uri(self, request) -> str:
+    def check_uri(self) -> str:
         if self.cloud_uri:
             return self.cloud_uri
 
         if self.local_uri:
             return self.local_uri.url
 
-        return super().check_uri(request)
+        return super().check_uri()
     
     def __str__(self):
         return f"{self.image_index} - {self.image_date}"

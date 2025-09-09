@@ -2,11 +2,11 @@ from json import loads
 from datetime import date
 
 from django.test import TestCase
-from django.urls import reverse
 from django.contrib.auth.models import User
 
 from images.models import UserImage
 from polygons.models import UserPolygon, Bounds
+from metrics.models import Metrics
 """
 TestCase - нужен, если у нас происходят операции с БД (Создает тестовую БД).
 SimpleTestCase - не создает тестовую БД.
@@ -15,11 +15,39 @@ Client - имитация пользователя [get, post, put, delete] дл
 В Django встроен автоматический поиск любых тестов test*.py
 """
 
-wkt = "POLYGON((41.863781 45.117765, 42.096478 45.117765, 42.096478 44.969087, \
+WKT = "POLYGON((41.863781 45.117765, 42.096478 45.117765, 42.096478 44.969087, \
     41.863781 44.969087, 41.863781 45.117765))"
 
-bds = "POLYGON((39.5195 46.2876, 45.3642 46.2876, 45.3642 43.7804, 39.5195 43.7804, \
+BDS = "POLYGON((39.5195 46.2876, 45.3642 46.2876, 45.3642 43.7804, 39.5195 43.7804, \
                 39.5195 46.2876))"
+
+TEST_METRIC = {
+    "ndvi": {
+        "min": 0.1,
+        "max": 0.2,
+        "mean": 1
+    },
+    "evi": {
+        "min": 0.1,
+        "max": 0.2,
+        "mean": 1
+    },
+}
+
+TEST_POLY = {
+    "code": "2558",
+    "type": "Feature",
+    "geometry": {
+        "type":
+        "Polygon",
+        "coordinates": [[[42.6149711781, 44.9005496272],
+                         [42.8476680988, 44.9005496272],
+                         [42.8476680988, 45.049405198],
+                         [42.6149711781, 45.049405198],
+                         [42.6149711781, 44.9005496272]]]
+    },
+    "properties": {}
+}
 
 
 class BaseUrlsTests(TestCase):
@@ -27,7 +55,7 @@ class BaseUrlsTests(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        global user, polygon_instance
+        global user, polygon_instance, metrica
 
         user = User.objects.create_user(username='Bombokly2',
                                         password='1X<ISRUkw+tuK')
@@ -35,13 +63,18 @@ class BaseUrlsTests(TestCase):
 
         bounds = Bounds.objects.create(code=2558,
                                        name="Stavropolsky kray",
-                                       geom=bds)
+                                       geom=BDS)
         bounds.save()
 
         polygon_instance = UserPolygon.objects.create(owner=user,
-                                                      polygon_data=wkt,
+                                                      polygon_data=WKT,
                                                       district=bounds)
         polygon_instance.save()
+
+        metrica = Metrics.objects.create(polygon_id=polygon_instance.pk,
+                                         date=date.today(),
+                                         storage=TEST_METRIC)
+        metrica.save()
 
         image_instance = UserImage.objects.create(
             polygon_id=polygon_instance,
@@ -80,19 +113,7 @@ class BaseUrlsTests(TestCase):
 
     def test_for_create_polygon_post_request_raw(self):
         authentificate = self.client.force_login(user=user)
-        post_data = {
-            "code": "2558",
-            "type": "Feature",
-            "geometry": {
-                "type": "Polygon",
-                "coordinates": [[[42.6149711781, 44.9005496272],
-                                 [42.8476680988, 44.9005496272],
-                                 [42.8476680988, 45.049405198],
-                                 [42.6149711781, 45.049405198],
-                                 [42.6149711781, 44.9005496272]]]
-            },
-            "properties": {}
-        }
+        post_data = TEST_POLY
         response = self.client.post('/crud/polygon',
                                     data=post_data,
                                     content_type='application/json')
@@ -110,20 +131,7 @@ class BaseUrlsTests(TestCase):
 
     def test_for_update_polygon_post_request_raw(self):
         authentificate = self.client.force_login(user=user)
-        post_data = {
-            "code": "2558",
-            "type": "Feature",
-            "geometry": {
-                "type":
-                "Polygon",
-                "coordinates": [[[41.870123116, 44.9825878056],
-                                 [42.0849997762, 44.9825878056],
-                                 [42.0849997762, 45.1072174208],
-                                 [41.870123116, 45.1072174208],
-                                 [41.870123116, 44.9825878056]]]
-            },
-            "properties": {}
-        }
+        post_data = TEST_POLY
         response = self.client.put(f'/crud/polygon/{polygon_instance.pk}',
                                    data=post_data,
                                    content_type='application/json')
@@ -135,6 +143,14 @@ class BaseUrlsTests(TestCase):
             f"/get-img?id={polygon_instance.pk}&date={date.today()}&index=NDVI",
             content_type="application/json")
         self.assertEqual(response.status_code, 302)
+
+    def test_metrics_get(self):
+        authentificate = self.client.force_login(user=user)
+        response = self.client.get(
+            f"/metrics?id={polygon_instance.pk}&from={date.today() - 5}&to={date.today()}"
+        )
+        print(response.json())
+        self.assertEqual(response.json(), TEST_POLY)
 
     def _valid_create_check(self, response):
         self.assertEqual(response.status_code, 201)

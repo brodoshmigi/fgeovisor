@@ -69,7 +69,8 @@ class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
         self.check_object_permissions(self.request, obj)
 
         return obj
-
+    
+    # 30 + 3 < 50
     def create(self, request, *args, **kwargs):
         serializer: AuthSerializer = self.get_serializer(
             data=self.request.data)
