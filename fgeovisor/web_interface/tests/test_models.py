@@ -1,3 +1,4 @@
+import logging
 from datetime import date
 
 from django.test import TestCase
@@ -19,6 +20,9 @@ Client - имитация пользователя [get, post, put, delete] дл
 ▌▀▄─▐──▀▄─▐▄─▐▄▐▄─▐▄─▐▄
 
 """
+
+# Убрать если нужны логи с тестов
+logger = logging.disable()
 
 wkt = "POLYGON((-12.12890625 58.768200159239576, 1.1865234375 58.49369382056807, \
                 5.537109375 50.2612538275847, -12.9638671875 49.18170338770662, \

@@ -1,14 +1,16 @@
+import uuid
+
 from django.contrib.gis.db import models
 from django.contrib.auth.models import User
 
 # 24.02.2025
 # SELECT pg_size_pretty( pg_relation_size( 'table' ) );
 
-# 9.09.25 - index поменял на int64
+# 9.09.25 - index поменял на int64 (не работает)
 
 
 class Bounds(models.Model):
-    id = models.BigAutoField(primary_key=True, default=1, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     code = models.IntegerField()
     name = models.CharField(max_length=35)
     geom = models.GeometryField(srid=4326)
@@ -22,9 +24,9 @@ class Bounds(models.Model):
 
 class Polygons(models.Model):
     """ Абстрактная модель полигона """
-    polygon_id = models.BigAutoField(primary_key=True,
-                                     default=1,
-                                     editable=False)
+    polygon_id = models.UUIDField(primary_key=True,
+                                  default=uuid.uuid4,
+                                  editable=False)
     polygon_data = models.PolygonField(srid=4326)
 
     # need index

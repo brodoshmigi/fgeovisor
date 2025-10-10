@@ -11,3 +11,6 @@ class Metrics(models.Model):
 
     storage = models.JSONField()
     date = models.DateField()
+
+    def __str__(self):
+        return f"{self.date} - {self.polygon_id}"

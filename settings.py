@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     "rest_framework_gis",
     "web_interface.apps.WebInterfaceConfig",
     "images.apps.ImagesConfig",
-    "polygons.apps.PolygonsConfig"
+    "polygons.apps.PolygonsConfig",
+    "metrics.apps.MetricsConfig"
 ]
 
 MIDDLEWARE = [
@@ -161,3 +162,47 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
+
+# https://docs.djangoproject.com/en/5.2/ref/logging/#default-logging-configuration
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False, # Из-за этой хуйни мы видим логи из библиотек
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s: %(lineno)d %(message)s"
+        },
+        "simple": {
+            "format": "%(levelname)s %(message)s"
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "standard",
+        },
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "formatter": "standard",
+            "filename": os.path.join(BASE_DIR, "project_info.log"),
+            "maxBytes": 20 * 1024 * 1024,  # 20 MB
+            "backupCount": 5,
+            "encoding": "utf8",
+        },
+        "errors": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "ERROR",
+            "formatter": "standard",
+            "filename": os.path.join(BASE_DIR, "project_errors.log"),
+            "maxBytes": 10 * 1024 * 1024,  # 10 MB
+            "backupCount": 3,
+            "encoding": "utf8",
+        },
+    },
+    "root": {
+        "handlers": ["console", "file", "errors"],
+        "level": "DEBUG",
+    },
+}

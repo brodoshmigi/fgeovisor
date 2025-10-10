@@ -1,13 +1,17 @@
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import ListModelMixin
-from rest_framework.status import (HTTP_204_NO_CONTENT, HTTP_201_CREATED,
-                                   HTTP_400_BAD_REQUEST, HTTP_302_FOUND)
 
 from rest_framework.response import Response
 
+from rest_framework.renderers import JSONRenderer
+from rest_framework.permissions import IsAuthenticated
+
+from rest_framework.status import (HTTP_204_NO_CONTENT, HTTP_201_CREATED,
+                                   HTTP_400_BAD_REQUEST, HTTP_302_FOUND)
+
 from polygons.models import UserPolygon
 from web_interface.staff import is_query_valid
+
 from .models import UserImage
 from .serializators import ImageSerializator
 from .GEE import Image_GEE
@@ -38,10 +42,14 @@ NO_CACHE_HEADERS = {
 }
 
 
+# Мы возвращаем только одну ссылку, нужно делать Retrieve Model Mixin, List это для множества
 class UploadImgViewSet(GenericViewSet, ListModelMixin):
     permission_classes = [IsAuthenticated]
 
     serializer_class = ImageSerializator
+
+    # ыыы уебище
+    renderer_classes = [JSONRenderer]
 
     # По правилам drf, каждый запрос должен перевычеслять queryset
     # all там и тут передают
@@ -61,9 +69,11 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
         query_params = self.request.GET
         query_equals = DEFAULT_PARAMS.keys() - query_params.keys()
 
-        if is_query_valid(query_params, query_equals):
+        if is_query_valid(query_params, query_equals, 3):
 
             polygon_id, date, index = query_params.values()
+
+            # logger.debug("%s %s %s", polygon_id, date, index)
 
             queryset = self.filter_queryset(
                 self.get_queryset(polygon_id=polygon_id,
@@ -78,6 +88,9 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
                 obj = self.get_image_from_google(polygon_id=polygon_id,
                                                  date=date,
                                                  index=index)
+                
+                # logger.debug("%s", obj)
+
                 return Response(
                     status=HTTP_201_CREATED,
                     data={"url": obj.check_uri()},
@@ -94,14 +107,15 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
                 )
 
             return Response(status=HTTP_204_NO_CONTENT, data=serializer.data)
-
+        
+        # logger.debug("%s", serializer.data)
         error = {"error": f"You forgot {query_equals}"}
         return Response(status=HTTP_400_BAD_REQUEST, data=error)
 
     # overload
     def get_image_from_google(self, polygon_id, date, index):
         """ Зубов во рту должно быть столько, сколько ты можешь себе позволить вылечить. """
-        polygon_obj = UserPolygon.objects.all().filter(polygon_id=polygon_id)
+        polygon_obj = UserPolygon.objects.all().filter(polygon_id=polygon_id).first()
         image_object = Image_GEE(polygon_obj,
                                  index=index.upper(),
                                  date_start=date)

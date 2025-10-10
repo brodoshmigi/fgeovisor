@@ -1,0 +1,37 @@
+stages:
+    - build
+    - test
+
+variables:
+    DOCKER_TLS_CERTDIR: ""
+    DOCKER_DRIVER: overlay2
+
+default:
+    image: docker:latest
+
+build:
+    stage: build
+    script:
+        - echo "Файл создан гитлаб - $SERVICE_JSON_FILE "
+        - ls -l $SERVICE_JSON_FILE
+        - cp $SERVICE_JSON_FILE ./fgeovisor/service.json
+        - sleep 15
+        - docker compose -f docker-compose.yml build
+
+django-test:
+    stage: test
+    script:
+        - docker compose -f docker-compose.yml up -d db
+        - sleep 2m
+        - docker compose run --rm django sh -c "
+          python manage.py makemigrations &&
+          python manage.py migrate &&
+          python manage.py test
+          "
+        - docker compose logs django
+    rules:
+        - if: '$CI_COMMIT_BRANCH == "main"'
+          when: always
+        - when: never
+    after_script:
+        - docker-compose down --remove-orphans

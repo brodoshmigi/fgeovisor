@@ -1,17 +1,24 @@
+import logging
+
 from django.contrib.gis.geos import Polygon
 
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import (ListModelMixin, UpdateModelMixin,
                                    CreateModelMixin, DestroyModelMixin)
+
+from rest_framework.response import Response
+
+from rest_framework.renderers import JSONRenderer
+from rest_framework.permissions import IsAuthenticated
+
 from rest_framework.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
                                    HTTP_201_CREATED,
                                    HTTP_500_INTERNAL_SERVER_ERROR,
                                    HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN)
-from rest_framework.response import Response
 
 from images.GEE import delete_image, update_image_GEE
+
 from .models import UserPolygon, User, Bounds
 from .serializators import GeoJSONSerializer
 """
@@ -38,6 +45,8 @@ from .serializators import GeoJSONSerializer
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 """
 
+logger = logging.getLogger(__name__)
+
 
 class PolygonsViewSet(GenericViewSet, ListModelMixin, UpdateModelMixin,
                       CreateModelMixin, DestroyModelMixin):
@@ -47,13 +56,18 @@ class PolygonsViewSet(GenericViewSet, ListModelMixin, UpdateModelMixin,
 
     serializer_class = GeoJSONSerializer
 
+    renderer_classes = [JSONRenderer]
+
+    queryset = UserPolygon.objects.all()
+
     def get_queryset(self):
-        queryset = UserPolygon.objects.filter(owner=self.request.user.id)
+        queryset = UserPolygon.objects.all().filter(owner=self.request.user.id)
         code = self.request.GET.get('code')
         if code:
             queryset = queryset.filter(district__code=code)
         return queryset
-
+    
+    # Для логирования методов super класса нужно их менять
     def create(self, request, *args, **kwargs):
         input_polygon = Polygon(*self.request.data['geometry']['coordinates'])
         if self.check_district_valid(input_polygon):
@@ -101,22 +115,29 @@ class PolygonsViewSet(GenericViewSet, ListModelMixin, UpdateModelMixin,
         district_geom = Bounds.objects.filter(code=int(
             self.request.data['code']),
                                               geom__contains=input_polygon)
+        #logger.debug("Создание полигона: проверка на регион %s",
+        #             district_geom.exists())
         return district_geom.exists()
 
     def check_create_valid(self, input_polygon) -> bool:
         polygon_objects = UserPolygon.objects.filter(
             polygon_data__intersects=input_polygon)
+        #logger.debug("Создание полигона: проверка на пересечения %s",
+        #             polygon_objects.exists())
         return not polygon_objects.exists()
 
     def check_update_valid(self, input_polygon) -> bool:
         polygon_objects = UserPolygon.objects.exclude(
             polygon_id=self.kwargs['pk']).filter(
                 polygon_data__intersects=input_polygon)
+        #logger.debug("Обновление полигона: проверка на пересечение %s",
+        #             polygon_objects.exists())
         return not polygon_objects.exists()
 
 
 class PolygonsView(APIView):
     """ Low-level DRF, тот же CRUD, но на низком уровне """
+    # на 100 коммитов устарел
     permission_classes = [IsAuthenticated]
 
     def get(self, request):

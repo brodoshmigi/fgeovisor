@@ -4,4 +4,6 @@ fgeovisor/**/migrations/*
 fgeovisor/**/__pycache__/
 
 # Игнорируем какашки
+project_errors.log
+project.log
 *.geojson

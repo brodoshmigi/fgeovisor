@@ -30,4 +30,5 @@ urlpatterns = [
     path('', include('web_interface.urls'), name="api"),
     path('', include('polygons.urls'), name='api_poly'),
     path('', include('images.urls'), name='api_img'),
+    path('', include('metrics.urls'), name='api_mtr')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

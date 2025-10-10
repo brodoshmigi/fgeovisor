@@ -1,7 +1,10 @@
+import logging
 from copy import copy
 """
 Аналог utils.py. Тут храним вспомогательный код.
 """
+
+logger = logging.getLogger(__name__)
 
 
 class My_errors():
@@ -31,10 +34,10 @@ class My_errors():
         return (final)
 
 
-def is_query_valid(query_dict, q_equals) -> bool:
+def is_query_valid(query_dict, q_equals, n) -> bool:
     query_len = len(query_dict.keys())
 
-    if query_len < 3 or query_len > 3:
+    if query_len != n:
         return False
 
     if q_equals != set():

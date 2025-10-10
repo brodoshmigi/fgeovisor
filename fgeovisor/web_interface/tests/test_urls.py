@@ -1,7 +1,9 @@
+import logging
 from json import loads
-from datetime import date
+from datetime import date, timedelta
 
 from django.test import TestCase
+from django.urls import reverse
 from django.contrib.auth.models import User
 
 from images.models import UserImage
@@ -14,6 +16,8 @@ Client - имитация пользователя [get, post, put, delete] дл
 
 В Django встроен автоматический поиск любых тестов test*.py
 """
+
+logger = logging.disable()
 
 WKT = "POLYGON((41.863781 45.117765, 42.096478 45.117765, 42.096478 44.969087, \
     41.863781 44.969087, 41.863781 45.117765))"
@@ -50,51 +54,59 @@ TEST_POLY = {
 }
 
 
+# Нужно заменить и переписать это на RequestFactory
 class BaseUrlsTests(TestCase):
     """ Модульный тест, содержащий проверку на доступность urls и их корректную работу """
 
     @classmethod
     def setUpTestData(cls):
-        global user, polygon_instance, metrica
 
-        user = User.objects.create_user(username='Bombokly2',
-                                        password='1X<ISRUkw+tuK')
-        user.save()
+        cls.user = User.objects.create_user(username='Bombokly2',
+                                            password='1X<ISRUkw+tuK')
+        cls.user.save()
 
-        bounds = Bounds.objects.create(code=2558,
-                                       name="Stavropolsky kray",
-                                       geom=BDS)
-        bounds.save()
+        cls.bounds = Bounds.objects.create(code=2558,
+                                           name="Stavropolsky kray",
+                                           geom=BDS)
+        cls.bounds.save()
 
-        polygon_instance = UserPolygon.objects.create(owner=user,
-                                                      polygon_data=WKT,
-                                                      district=bounds)
-        polygon_instance.save()
+        cls.polygon_instance = UserPolygon.objects.create(owner=cls.user,
+                                                          polygon_data=WKT,
+                                                          district=cls.bounds)
+        cls.polygon_instance.save()
 
-        metrica = Metrics.objects.create(polygon_id=polygon_instance.pk,
-                                         date=date.today(),
-                                         storage=TEST_METRIC)
-        metrica.save()
+        cls.metrica = Metrics.objects.create(polygon_id=cls.polygon_instance,
+                                             date=date.today(),
+                                             storage=TEST_METRIC)
+        cls.metrica2 = Metrics.objects.create(polygon_id=cls.polygon_instance,
+                                              date=date.today() - timedelta(1),
+                                              storage=TEST_METRIC)
+        cls.metrica.save()
+        cls.metrica2.save()
 
-        image_instance = UserImage.objects.create(
-            polygon_id=polygon_instance,
+        cls.image_instance = UserImage.objects.create(
+            polygon_id=cls.polygon_instance,
             local_uri="./images/IMAGES/1_32MUupS.jpg",
             image_date=date.today(),
             image_index="NDVI")
-        image_instance.save()
+        cls.image_instance.save()
+
+    # Можно заменить Тестовым классом, для авторизации
+    # Чтобы не дублировать авторизацию каждый раз тысячу раз
+    def setUp(self):
+        self.client.force_login(self.user)
 
     def test_map_url_get_access_raw(self):
+        self.client.logout()
         response = self.client.get('')
         self.assertEqual(response.status_code, 200)
         self._valid_session_nonauth_check(response=response)
 
     def test_authentification_and_get_access_to_user_raw(self):
-        authentificate = self.client.force_login(user=user)
         response = self.client.get('')
         self._valid_session_auth_check(response=response)
 
     def test_polygons_url_get_raw(self):
-        authentificate = self.client.force_login(user=user)
         response = self.client.get('/crud/polygon', data={"code": 2558})
         polygon_objects = UserPolygon.objects.values('polygon_id')
         self._valid_get_polygons_data(response=response, obj=polygon_objects)
@@ -102,17 +114,18 @@ class BaseUrlsTests(TestCase):
     def test_for_login_post_request_raw(self):
         # password should be raw, cause django containts only encode
         # but checking raw
-        post_data = {'username': user.username, 'password': '1X<ISRUkw+tuK'}
+        post_data = {
+            'username': self.user.username,
+            'password': '1X<ISRUkw+tuK'
+        }
         response = self.client.post('/log-in/', data=post_data)
         self._valid_login_check(response=response)
 
     def test_for_logout_post_request_raw(self):
-        authentificate = self.client.force_login(user=user)
         response = self.client.post('/log-out/')
         self._valid_logout_check(response=response)
 
     def test_for_create_polygon_post_request_raw(self):
-        authentificate = self.client.force_login(user=user)
         post_data = TEST_POLY
         response = self.client.post('/crud/polygon',
                                     data=post_data,
@@ -120,37 +133,38 @@ class BaseUrlsTests(TestCase):
         self._valid_create_check(response=response)
 
     def test_for_delete_polygon_post_request_raw(self):
-        authentificate = self.client.force_login(user=user)
         try:
             response = self.client.delete(
-                f"/crud/polygon/{polygon_instance.pk}",
+                f"/crud/polygon/{self.polygon_instance.pk}",
                 content_type="application/json")
             self._valid_delete_polygons(response=response)
         except WindowsError:
             pass
 
     def test_for_update_polygon_post_request_raw(self):
-        authentificate = self.client.force_login(user=user)
         post_data = TEST_POLY
-        response = self.client.put(f'/crud/polygon/{polygon_instance.pk}',
+        response = self.client.put(f'/crud/polygon/{self.polygon_instance.pk}',
                                    data=post_data,
                                    content_type='application/json')
         self.assertEqual(response.status_code, 200)
 
     def test_for_upload_img_get_request_raw(self):
-        authentificate = self.client.force_login(user=user)
         response = self.client.get(
-            f"/get-img?id={polygon_instance.pk}&date={date.today()}&index=NDVI",
+            f"/get-img?id={self.polygon_instance.pk}&date={date.today()}&index=NDVI",
             content_type="application/json")
         self.assertEqual(response.status_code, 302)
 
-    def test_metrics_get(self):
-        authentificate = self.client.force_login(user=user)
+    def test_for_query_img_get_validation_raw(self):
+        response = self.client.get(f"/get-img",
+                                   content_type="application/json")
+        self.assertEqual(response.status_code, 400)
+
+    def test_metrics_get_raw(self):
         response = self.client.get(
-            f"/metrics?id={polygon_instance.pk}&from={date.today() - 5}&to={date.today()}"
+            f"/metrics?id={self.polygon_instance.pk}&from={
+                date.today() - timedelta(days=5)}&to={date.today()}"
         )
-        print(response.json())
-        self.assertEqual(response.json(), TEST_POLY)
+        self.assertEqual(response.json()[0]["storage"], TEST_METRIC)
 
     def _valid_create_check(self, response):
         self.assertEqual(response.status_code, 201)
@@ -179,4 +193,4 @@ class BaseUrlsTests(TestCase):
 
     def _valid_delete_polygons(self, response):
         self.assertEqual(response.status_code, 204)
-        self.assertFalse(UserPolygon.objects.contains(polygon_instance))
+        self.assertFalse(UserPolygon.objects.contains(self.polygon_instance))

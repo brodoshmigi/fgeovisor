@@ -1,5 +1,5 @@
 # venv ignore
-venv
+*venv
 geodjangorainmarker_venv/
 fgeovisor_venv/
 geodjrep_venv/
@@ -30,6 +30,10 @@ __pycache__
 /ssl/
 ssl/
 ssl
+
+# logs ignore
+project.log
+project_errors.log
 
 # some feature of root repository
 api.js

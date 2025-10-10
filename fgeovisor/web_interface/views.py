@@ -1,18 +1,23 @@
+import logging
+from typing import Dict
+
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import AnonymousUser, User
-from django.contrib.auth.hashers import make_password, check_password
 
-from rest_framework.permissions import (IsAuthenticatedOrReadOnly, AllowAny,
-                                        IsAuthenticated)
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import (RetrieveModelMixin, CreateModelMixin)
 from rest_framework.views import APIView
+
 from rest_framework.response import Response
+
+from rest_framework.permissions import (IsAuthenticatedOrReadOnly, AllowAny,
+                                        IsAuthenticated)
+
 from rest_framework.status import (HTTP_205_RESET_CONTENT,
                                    HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN,
-                                   HTTP_401_UNAUTHORIZED,
-                                   HTTP_201_CREATED, HTTP_404_NOT_FOUND,
+                                   HTTP_401_UNAUTHORIZED, HTTP_201_CREATED,
+                                   HTTP_404_NOT_FOUND,
                                    HTTP_500_INTERNAL_SERVER_ERROR,
                                    HTTP_302_FOUND, HTTP_200_OK)
 
@@ -20,6 +25,8 @@ from .serializators import (AuthRegisterSerializator, AuthSerializator,
                             AuthSerializer, ResetPasswordSerializer,
                             LoginSerializer)
 from .staff import My_errors
+
+logger = logging.getLogger(__name__)
 
 
 class MapView(APIView):
@@ -33,16 +40,24 @@ class MapView(APIView):
     def get(self, request):
         user = self.request.user
         context = My_errors.tmp_context
-        if user.username == AnonymousUser.username:
-            context['auth_check'] = False
-            return render(request,
-                          'site_back/map_over_osm.html',
-                          context=My_errors.error_send())
-        context['auth_check'] = True
-        context['is_staff'] = user.is_staff
+        is_anonymous = self.anonymous_check(username=user.username)
+        context["auth_check"] = is_anonymous
+        context["is_staff"] = user.is_staff
         return render(request,
-                      'site_back/map_over_osm.html',
+                      "site_back/map_over_osm.html",
                       context=My_errors.error_send())
+
+    def anonymous_check(*args, **kwargs) -> bool:
+        if kwargs["username"] == AnonymousUser.username:
+            return False
+        return True
+
+    # Почему то не работает, хз, говорит что ему два аргумента передает,
+    # Хотя только один позиционный, возможно из за self.
+    def anonymous_check_l(username: str) -> bool:
+        if username == AnonymousUser.username:
+            return False
+        return True
 
 
 class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
@@ -51,8 +66,8 @@ class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
 
     serializer_class = AuthSerializer
 
-    # lookup_field = 'token' # def pk
-    # lookup_url_kwarg = 'token' # def None'
+    # lookup_field = "token" # def pk
+    # lookup_url_kwarg = "token" # def None"
 
     queryset = User.objects.all()
 
@@ -69,41 +84,36 @@ class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
         self.check_object_permissions(self.request, obj)
 
         return obj
-    
-    # 30 + 3 < 50
+
+    # 24 + 3 < 50
     def create(self, request, *args, **kwargs):
         serializer: AuthSerializer = self.get_serializer(
             data=self.request.data)
 
         if not serializer.is_valid(raise_exception=True):
-            My_errors.tmp_context['is_vallid_error'] = True
-            return Response(
-                My_errors.error_send(),
-                # serializer.errors,
-                status=HTTP_400_BAD_REQUEST)
+            logger.error("%s", serializer.errors)
+            return Response(status=HTTP_400_BAD_REQUEST)
 
-        if not serializer.validated_data['email']:
-            My_errors.tmp_context['is_vallid_error'] = True
-            return Response(
-                My_errors.error_send(),
-                # {'error': 'email must be'},
-                status=HTTP_400_BAD_REQUEST)
+        if not serializer.validated_data["email"]:
+            msg = {"error": "email must be"}
+            return Response(msg, status=HTTP_400_BAD_REQUEST)
         # need more email validating
 
         self.perform_create(serializer)
 
         # when we call .save() password becomes hash
-        username, password = serializer.data['username'], self.request.data[
-            'password']
+        username, password = (serializer.data["username"],
+                              self.request.data["password"])
 
         user = authenticate(self.request, username=username, password=password)
 
         if user is not None:
             login(self.request, user)
 
-            My_errors.tmp_context['auth_check'] = True
+            My_errors.tmp_context["auth_check"] = True
             return Response(My_errors.error_send(), status=HTTP_201_CREATED)
 
+        logger.error("%s", serializer.errors)
         return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
 
     def authenticate(self, request, *args, **kwargs):
@@ -111,8 +121,8 @@ class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
 
         if serializer.is_valid():
 
-            username, password = serializer.data['username'], serializer.data[
-                'password']
+            username, password = (serializer.data["username"],
+                                  serializer.data["password"])
 
             user = authenticate(self.request,
                                 username=username,
@@ -120,16 +130,12 @@ class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
 
             if user is not None:
                 login(self.request, user)
-                My_errors.tmp_context['auth_check'] = True
-                My_errors.tmp_context['is_staff'] = self.request.user.is_staff
+                My_errors.tmp_context["auth_check"] = True
+                My_errors.tmp_context["is_staff"] = self.request.user.is_staff
                 return Response(My_errors.error_send(), status=HTTP_302_FOUND)
 
-            My_errors.tmp_context['login_error'] = True
-            return Response(My_errors.error_send(), status=HTTP_404_NOT_FOUND)
-
-        # print(serializer.errors)
-
-        My_errors.tmp_context['login_error'] = True
+        My_errors.tmp_context["login_error"] = True
+        logger.error("%s", serializer.errors)
         return Response(My_errors.error_send(), status=HTTP_404_NOT_FOUND)
 
     def forgot_password(self, request, *args, **kwargs):
@@ -139,15 +145,20 @@ class UserAuthViewSet(GenericViewSet, RetrieveModelMixin, CreateModelMixin):
                                              data=self.request.data)
         if serializer.is_valid():
             # all of it can be in update method in serializer
+            msg = {"error": "wrong password"}
+
             if not self.request.user.check_password(
-                    self.request.data.get('password')):
-                return Response({'error': 'wrong password'},
-                                status=HTTP_400_BAD_REQUEST)
+                    self.request.data.get("password")):
+                return Response(msg, status=HTTP_400_BAD_REQUEST)
+
             self.request.user.set_password(
-                self.request.data.get('new_password'))
+                self.request.data.get("new_password"))
             self.request.user.save()
+
             return Response(status=HTTP_205_RESET_CONTENT)
-        return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
+
+        logger.error("%s", serializer.errors)
+        return Response(status=HTTP_400_BAD_REQUEST)
 
     def logout(self, request, *args, **kwargs):
         logout(self.request)
@@ -167,15 +178,15 @@ class RegistryView(APIView):
         data_serialized = AuthRegisterSerializator(data=request.data)
 
         if not data_serialized.is_valid():
-            My_errors.tmp_context['is_vallid_error'] = True
+            My_errors.tmp_context["is_vallid_error"] = True
             return Response(My_errors.error_send())
 
         data_serialized.save()
-        username = data_serialized.data.get('username')
-        password = request.data['password']
+        username = data_serialized.data.get("username")
+        password = request.data["password"]
         user = authenticate(request, username=username, password=password)
         login(request, user)
-        My_errors.tmp_context['auth_check'] = True
+        My_errors.tmp_context["auth_check"] = True
         return Response(My_errors.error_send())
 
 
@@ -187,17 +198,17 @@ class LoginView(APIView):
     def post(self, request):
         data_serialized = AuthSerializator(data=request.data)
         data_serialized.is_valid()
-        username = data_serialized.data.get('username')
-        password = data_serialized.data.get('password')
+        username = data_serialized.data.get("username")
+        password = data_serialized.data.get("password")
         user = authenticate(username=username, password=password)
         try:
             login(request, user)
-            My_errors.tmp_context['auth_check'] = True
-            My_errors.tmp_context['is_staff'] = self.request.user.is_staff
+            My_errors.tmp_context["auth_check"] = True
+            My_errors.tmp_context["is_staff"] = self.request.user.is_staff
             return Response(My_errors.error_send())
         except AttributeError:
             # отрисовка карты, отправка ошибки на фронт
-            My_errors.tmp_context['login_error'] = True
+            My_errors.tmp_context["login_error"] = True
             return Response(My_errors.error_send())
 
 
