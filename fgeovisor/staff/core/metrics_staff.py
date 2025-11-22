@@ -50,7 +50,7 @@ def compute_index_stats_range(context: CalculationContext, obj: UserPolygon,
 
     # obj_data: Polygon = obj.polygon_data
 
-    collection = context(obj, date_start=start, date_end=end).metrics()
+    collection = context.metrics(obj, date_start=start, date_end=end)
     # logger.debug("%s", collection)
 
     df = pd.DataFrame(collection)

@@ -22,14 +22,16 @@ SIMPLE_METRIC = {
 class SimpleDataLoader(DataLoader):
 
     def __init__(self):
-        pass
+        logging.debug("Loader was initialize")
 
     def download_image(self):
         logging.debug("simple data loader download image")
         return True
     
     def calculate_index(self):
+        # read_bands
         logging.debug("simple data loader calculate index")
+        # remove_bands
         return True
     
     @classmethod

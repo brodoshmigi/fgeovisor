@@ -86,10 +86,7 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
             # bool(queryset) >= exists exists exists if 67, else no
             if not bool(queryset):
                 # если скачиваются ужен скачанные снимки, воможно проблема в датах
-                strategy = StrategyRegistry.get_strategy(DEFAULT_CALCULATION_STRATEGY)
-                context = CalculationContext(strategy)
-                obj = self.get_image(context=context,
-                                     polygon_id=polygon_id,
+                obj = self.get_image(polygon_id=polygon_id,
                                      date=date,
                                      index=index)
 
@@ -117,13 +114,12 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
         return Response(status=HTTP_400_BAD_REQUEST, data=error)
 
     # overload
-    def get_image(self, context, polygon_id, date, index):
+    def get_image(self, polygon_id, date, index):
         """ Зубов во рту должно быть столько, сколько ты можешь себе позволить вылечить. """
+        strategy = StrategyRegistry.get_strategy(DEFAULT_CALCULATION_STRATEGY)
+        context = CalculationContext(strategy)
         polygon_obj = UserPolygon.objects.all().filter(polygon_id=polygon_id).first()
-        image_object = context(polygon_obj,
-                               index=index.upper(),
-                               date_start=date)
-        image_object.download_image()
-        _image_object = image_object.calculate_index()
-        image_object.remove_bands()
-        return _image_object
+        image_object = context.visualize(polygon_obj,
+                                         index=index.upper(),
+                                         date_start=date)
+        return image_object
