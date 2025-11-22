@@ -9,8 +9,9 @@ class DataLoader:
     @abstractmethod
     def calculate_index(self) -> None: pass
 
+    @classmethod
     @abstractmethod
-    def auth(self) -> None: pass
+    def auth(cls) -> None: pass
 
     @abstractmethod
     def load_data(self) -> None: pass
