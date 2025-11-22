@@ -32,7 +32,8 @@ class SimpleDataLoader(DataLoader):
         logging.debug("simple data loader calculate index")
         return True
     
-    def auth(self):
+    @classmethod
+    def auth(cls):
         logging.debug("simple data loader auth")
         return True
     
