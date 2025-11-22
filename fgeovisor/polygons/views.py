@@ -17,7 +17,7 @@ from rest_framework.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
                                    HTTP_500_INTERNAL_SERVER_ERROR,
                                    HTTP_400_BAD_REQUEST, HTTP_403_FORBIDDEN)
 
-from images.GEE import delete_image, update_image_GEE
+from staff.core.image_helper import delete_image, update_image
 
 from .models import UserPolygon, User, Bounds
 from .serializators import GeoJSONSerializer
@@ -189,7 +189,7 @@ class PolygonsView(APIView):
                 owner=self.request.user.id, polygon_id=pk)
             polygon_object.polygon_data = str(request.data['geometry'])
             polygon_object.save()
-            update_image_GEE(polygon_object)
+            update_image(polygon_object)
             return Response(status=HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)},

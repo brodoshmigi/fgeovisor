@@ -4,9 +4,9 @@ from typing import TypeVar, Dict, Optional
 
 from requests import Session
 
-from core.io_default_api import IODefaultAPI, nasa_hosts
+from staff.infrastructure.default_api import IODefaultAPI, nasa_hosts
+from staff.interfaces.napi.abstract import NasaAuthBase
 from .decorators import formater
-from .abstract import NasaAuthBase
 
 _N = TypeVar('_N')
 

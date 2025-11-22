@@ -8,12 +8,12 @@ from json import dumps
 
 from django.contrib.gis.geos import Polygon
 
-from images.GEE import Image_GEE
+from staff.core.context.loader_context import CalculationContext
 
 from polygons.models import UserPolygon
 from images.models import UserImage
 
-from .models import Metrics
+from metrics.models import Metrics
 
 logger = logging.getLogger(__name__)
 
@@ -44,13 +44,13 @@ def calculate_default_polygon_stats(obj: UserPolygon, date: str):
     return stats
 
 
-def compute_index_stats_range(obj: UserPolygon, start: str, end: str):
+def compute_index_stats_range(context: CalculationContext, obj: UserPolygon,
+                              start: str, end: str):
     """ compute это значит в облаке """
 
     # obj_data: Polygon = obj.polygon_data
 
-    collection = Image_GEE(obj, date_start=start,
-                           date_end=end).load_data_reducer()
+    collection = context(obj, date_start=start, date_end=end).metrics()
     # logger.debug("%s", collection)
 
     df = pd.DataFrame(collection)

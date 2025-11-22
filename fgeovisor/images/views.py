@@ -10,11 +10,11 @@ from rest_framework.status import (HTTP_204_NO_CONTENT, HTTP_201_CREATED,
                                    HTTP_400_BAD_REQUEST, HTTP_302_FOUND)
 
 from polygons.models import UserPolygon
-from web_interface.staff import is_query_valid
+from staff.infrastructure.query_helper import is_query_valid
+from staff.core.context.loader_context import calculatuion_context
 
 from .models import UserImage
 from .serializators import ImageSerializator
-from .GEE import Image_GEE
 """
 ⣿⣿⣿⣿⣿⣿⣿⠿⠿⢛⣋⣙⣋⣩⣭⣭⣭⣭⣍⣉⡛⠻⢿⣿⣿⣿⣿
 ⣿⣿⣿⠟⣋⣥⣴⣾⣿⣿⣿⡆⣿⣿⣿⣿⣿⣿⡿⠟⠛⠗⢦⡙⢿⣿⣿
@@ -85,10 +85,11 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
             # bool(queryset) >= exists exists exists if 67, else no
             if not bool(queryset):
                 # если скачиваются ужен скачанные снимки, воможно проблема в датах
-                obj = self.get_image_from_google(polygon_id=polygon_id,
-                                                 date=date,
-                                                 index=index)
-                
+                obj = self.get_image(context=calculatuion_context,
+                                     polygon_id=polygon_id,
+                                     date=date,
+                                     index=index)
+
                 # logger.debug("%s", obj)
 
                 return Response(
@@ -107,18 +108,18 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
                 )
 
             return Response(status=HTTP_204_NO_CONTENT, data=serializer.data)
-        
+
         # logger.debug("%s", serializer.data)
         error = {"error": f"You forgot {query_equals}"}
         return Response(status=HTTP_400_BAD_REQUEST, data=error)
 
     # overload
-    def get_image_from_google(self, polygon_id, date, index):
+    def get_image(self, context, polygon_id, date, index):
         """ Зубов во рту должно быть столько, сколько ты можешь себе позволить вылечить. """
         polygon_obj = UserPolygon.objects.all().filter(polygon_id=polygon_id).first()
-        image_object = Image_GEE(polygon_obj,
-                                 index=index.upper(),
-                                 date_start=date)
+        image_object = context(polygon_obj,
+                               index=index.upper(),
+                               date_start=date)
         image_object.download_image()
         _image_object = image_object.calculate_index()
         image_object.remove_bands()

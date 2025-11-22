@@ -16,12 +16,11 @@ from rest_framework.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
                                    HTTP_302_FOUND)
 
 from polygons.models import UserPolygon
-from web_interface.staff import is_query_valid
-from images.GEE import Image_GEE
+from staff.infrastructure.query_helper import is_query_valid
+from staff.core.metrics_staff import (calculate_default_polygon_stats, compute_index_stats_range)
 
 from .models import Metrics
 from .serializators import MetricSerializator
-from .staff import (calculate_default_polygon_stats, compute_index_stats_range)
 """
 ██░└┐░░░░░░░░░░░░░░░░░┌┘░██
 ██░░└┐░░░░░░░░░░░░░░░┌┘░░██

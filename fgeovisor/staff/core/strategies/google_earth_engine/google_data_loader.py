@@ -11,56 +11,42 @@ from django.contrib.gis.gdal.raster.source import GDALRaster
 from polygons.serializators import GeoJSONSerializer
 from polygons.models import UserPolygon
 
-from .models import UserImage
-from .calculations import (calculate_NDVI, calculate_EVI,
-                           calculate_SAVI, calculate_GNDVI,
-                           calculate_MSAVI, calculate_NDRE,
-                           crop_image)
+from images.models import UserImage
+from staff.core.index_calculations import (calculate_NDVI, calculate_EVI,
+                                           calculate_SAVI, calculate_GNDVI,
+                                           calculate_MSAVI, calculate_NDRE,
+                                           crop_image)
 
 logger = logging.getLogger(__name__)
-
-
-def delete_image(polygon):
-    ImageInstances = UserImage.objects.filter(polygon_id=polygon)
-    for ImageInstance in ImageInstances:
-        remove(str(ImageInstance.local_uri))
-        ImageInstance.delete()
-
-def update_image_GEE(polygon):
-    delete_image(polygon)
-    new_image = Image_GEE(polygon)
-    new_image.download_image()
-    new_image.visualization()
-
 
 IMAGE_DIR = "images/IMAGES"
 
 RATIO_ENUM_S2_BANDS = {
-        "NDVI": ["B4", "B8"],            # Вегетационный индекс растительности
-        "EVI": ["B4", "B8", "B2"],       # Улучшенный индекс растительности
-        "SAVI": ["B4", "B8"],            # Индекс растительности с поправкой на почву
-        "GNDVI": ["B3", "B8"],           # NDVI только с зеленым каналом
-        "MSAVI": ["B4", "B8"],           # Модификация savi
-        "NDRE": ["B6", "B8"]             # Нормализованный индекс красного края (хз что это)
-        }
+    "NDVI": ["B4", "B8"],  # Вегетационный индекс растительности
+    "EVI": ["B4", "B8", "B2"],  # Улучшенный индекс растительности
+    "SAVI": ["B4", "B8"],  # Индекс растительности с поправкой на почву
+    "GNDVI": ["B3", "B8"],  # NDVI только с зеленым каналом
+    "MSAVI": ["B4", "B8"],  # Модификация savi
+    "NDRE": ["B6", "B8"]  # Нормализованный индекс красного края (хз что это)
+}
 
 RATIO_ENUM_LANDSAT_BANDS = {
-        "NDVI": [],
-        "EVI": [],
-        "SAVI": [],
-        "GNDVI": [],
-        "MSAVI": [],
-        "NDRE": []
-        }
+    "NDVI": [],
+    "EVI": [],
+    "SAVI": [],
+    "GNDVI": [],
+    "MSAVI": [],
+    "NDRE": []
+}
 
 RATIO_ENUM_CALLBACK = {
-        "NDVI": calculate_NDVI,
-        "EVI": calculate_EVI,
-        "SAVI": calculate_SAVI,
-        "GNDVI": calculate_GNDVI,
-        "MSAVI": calculate_MSAVI,
-        "NDRE": calculate_NDRE
-        }
+    "NDVI": calculate_NDVI,
+    "EVI": calculate_EVI,
+    "SAVI": calculate_SAVI,
+    "GNDVI": calculate_GNDVI,
+    "MSAVI": calculate_MSAVI,
+    "NDRE": calculate_NDRE
+}
 
 INDEX_EXPRESSION = {
     # B8 - NIR
@@ -72,12 +58,13 @@ INDEX_EXPRESSION = {
     "EVI": "2 * (b(8) - b(4)) / (b(8) + 6*b(4) - 7.5*b(2) + 1)",
     "SAVI": "1.5 * ((b(8) - b(4)) / (b(8) + b(4) + 0.5))",
     "GNDVI": "(b(8) - b(3)) / (b(8) + b(3))",
-    "MSAVI": "(2 * b(8) + 1 - sqrt((2 * b(8) + 1)*(2 * b(8) + 1) - 8 * (b(8) - b(4)))) / 2",
+    "MSAVI":
+    "(2 * b(8) + 1 - sqrt((2 * b(8) + 1)*(2 * b(8) + 1) - 8 * (b(8) - b(4)))) / 2",
     "NDRE": "(b(8) - b(6)) / (b(8) + b(6))"
 }
 
 
-class Image_GEE():
+class GoogleDataLoader():
 
     def __init__(self,
                  polygon: UserPolygon,
@@ -87,12 +74,14 @@ class Image_GEE():
 
         self.polygon_object = polygon
         self.index = index
-        self.dir = (IMAGE_DIR + f"/{self.polygon_object.polygon_id}_{index}_{date_start}")
+        self.dir = (IMAGE_DIR +
+                    f"/{self.polygon_object.polygon_id}_{index}_{date_start}")
         self.date_start = date_start
         self.date_end = date_end
-        self.REDUCER = (ee.Reducer.min()
-                        .combine(ee.Reducer.max(), sharedInputs=True)
-                        .combine(ee.Reducer.mean(), sharedInputs=True))
+        self.REDUCER = (ee.Reducer.min().combine(ee.Reducer.max(),
+                                                 sharedInputs=True).combine(
+                                                     ee.Reducer.mean(),
+                                                     sharedInputs=True))
 
     # 40 < 50
     def load_data_reducer(self):
@@ -101,18 +90,19 @@ class Image_GEE():
         polygon_ee_obj = ee.Geometry.Polygon(
             GeoJSONSerializer(
                 self.polygon_object).data["geometry"]["coordinates"])
-        
-        collection = (ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
-                      .filterDate(self.date_start, self.date_end)
-                      .filterBounds(polygon_ee_obj)
-                      .filter(ee.Filter.lt("CLOUD_COVERAGE_ASSESSMENT", 10)))
+
+        collection = (
+            ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED").filterDate(
+                self.date_start,
+                self.date_end).filterBounds(polygon_ee_obj).filter(
+                    ee.Filter.lt("CLOUD_COVERAGE_ASSESSMENT", 10)))
 
         # logger.debug("%s", collection.first().bandNames().getInfo())
         # logger.debug("%s", collection.size().getInfo())
 
         if collection.size().getInfo() == 0:
             return []
-        
+
         def compute_bands(img):
             """ compute значит в облаке, кампот"""
             for name, formula in INDEX_EXPRESSION.items():
@@ -143,7 +133,8 @@ class Image_GEE():
 
     def get_download_url(self) -> str:
         polygon_EE = ee.Geometry.Polygon(
-            GeoJSONSerializer(self.polygon_object).data["geometry"]["coordinates"])
+            GeoJSONSerializer(
+                self.polygon_object).data["geometry"]["coordinates"])
         sentinel_image = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED") \
             .filterDate(self.date_start, self.date_end) \
             .filterBounds(polygon_EE) \
@@ -167,12 +158,15 @@ class Image_GEE():
 
     def read_bands(self) -> list[GDALRaster]:
         list_of_rasters = listdir(self.dir)
-        bands = [GDALRaster(self.dir + "/" + item).bands[0].data().astype("float64") for item in list_of_rasters]
+        bands = [
+            GDALRaster(self.dir + "/" + item).bands[0].data().astype("float64")
+            for item in list_of_rasters
+        ]
         return bands
 
     def remove_bands(self):
         list_of_rasters = listdir(self.dir)
-        [remove(self.dir + "/" + item)for item in list_of_rasters]
+        [remove(self.dir + "/" + item) for item in list_of_rasters]
         rmdir(self.dir)
 
     def calculate_index(self):
@@ -188,9 +182,10 @@ class Image_GEE():
         image_DB.save()
         return image_DB
 
-if name == "posix":
-    credentials = ee.ServiceAccountCredentials("", "./service.json")
-    ee.Initialize(credentials=credentials)
-else:
-    ee.Authenticate()
-    ee.Initialize(project="ee-cocafin1595")
+    def auth(self):
+        if name == "posix":
+            credentials = ee.ServiceAccountCredentials("", "./service.json")
+            ee.Initialize(credentials=credentials)
+        else:
+            ee.Authenticate()
+            ee.Initialize(project="ee-cocafin1595")

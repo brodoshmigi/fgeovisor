@@ -5,8 +5,7 @@ import numpy as np
 from pandas import DataFrame
 from pystac_client.client import Client
 
-from .abstract import Assets
-
+from staff.interfaces.napi.abstract import Assets
 
 class SearchAssets(Assets):
 

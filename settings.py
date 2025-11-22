@@ -15,6 +15,7 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+LOGS_BASE_DIR = BASE_DIR / "logs"
 
 
 NASA_CREDS = {
@@ -186,7 +187,7 @@ LOGGING = {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "standard",
-            "filename": os.path.join(BASE_DIR, "project_info.log"),
+            "filename": os.path.join(LOGS_BASE_DIR, "project_info.log"),
             "maxBytes": 20 * 1024 * 1024,  # 20 MB
             "backupCount": 5,
             "encoding": "utf8",
@@ -195,7 +196,7 @@ LOGGING = {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "ERROR",
             "formatter": "standard",
-            "filename": os.path.join(BASE_DIR, "project_errors.log"),
+            "filename": os.path.join(LOGS_BASE_DIR, "project_errors.log"),
             "maxBytes": 10 * 1024 * 1024,  # 10 MB
             "backupCount": 3,
             "encoding": "utf8",

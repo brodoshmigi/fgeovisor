@@ -29,7 +29,6 @@ class My_errors():
 
     def error_send():
         final = copy(My_errors.tmp_context)
-        #сбрасывает временную переменную
         My_errors.tmp_context = copy(My_errors.error_wordbook)
         return (final)
 

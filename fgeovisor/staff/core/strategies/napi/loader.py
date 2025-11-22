@@ -6,8 +6,8 @@ from aiohttp import ClientSession
 from asyncio import gather
 from uuid import uuid4
 
-from .abstract import Download
-from core.gdal_staff import tif_creator
+from staff.interfaces.napi.abstract import Download
+from staff.infrastructure.gdal_helper import tif_creator
 
 
 class Download(Download):

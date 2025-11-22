@@ -20,7 +20,7 @@ from napi.utils import ClientPool
 from napi.loader import Download, ADownload
 from napi.collection import SearchCollections, ASearchCollections
 from napi.assets import SearchAssets, ASearchAssets
-from core.gdal_staff import tif_creator, jpeg_creator
+from staff.infrastructure.gdal_helper import tif_creator, jpeg_creator
 
 
 class IDownload():
@@ -207,5 +207,6 @@ def auth_test():
 
 if __name__ == '__main__':
     #main()
-    asyncio.run(amain())
+    #asyncio.run(amain())
     #auth_test()
+    pass

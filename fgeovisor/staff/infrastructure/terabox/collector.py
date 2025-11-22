@@ -5,7 +5,7 @@ from re import compile, search
 from json.decoder import JSONDecodeError
 from typing import Dict, Any, Iterable
 
-from core.io_default_api import IODefaultAPI, terabox_hosts
+from staff.api.io_default_api import IODefaultAPI, terabox_hosts
 from .utils import create_sign
 
 DEFAULT_PARAMS = {
