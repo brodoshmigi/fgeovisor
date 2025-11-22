@@ -18,6 +18,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 LOGS_BASE_DIR = BASE_DIR / "logs"
 
 
+# 1. "gee", 2. "napi" 3. "simple"
+DEFAULT_CALCULATION_STRATEGY = "simple"
+
 NASA_CREDS = {
     'username': '',
     'password': '',

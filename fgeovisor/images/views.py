@@ -11,7 +11,8 @@ from rest_framework.status import (HTTP_204_NO_CONTENT, HTTP_201_CREATED,
 
 from polygons.models import UserPolygon
 from staff.infrastructure.query_helper import is_query_valid
-from staff.core.context.loader_context import calculatuion_context
+from staff.core.context.loader_context import StrategyRegistry, CalculationContext
+from visor_bend_site.settings import DEFAULT_CALCULATION_STRATEGY
 
 from .models import UserImage
 from .serializators import ImageSerializator
@@ -85,7 +86,9 @@ class UploadImgViewSet(GenericViewSet, ListModelMixin):
             # bool(queryset) >= exists exists exists if 67, else no
             if not bool(queryset):
                 # если скачиваются ужен скачанные снимки, воможно проблема в датах
-                obj = self.get_image(context=calculatuion_context,
+                strategy = StrategyRegistry.get_strategy(DEFAULT_CALCULATION_STRATEGY)
+                context = CalculationContext(strategy)
+                obj = self.get_image(context=context,
                                      polygon_id=polygon_id,
                                      date=date,
                                      index=index)

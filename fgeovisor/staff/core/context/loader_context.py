@@ -13,27 +13,18 @@ class CalculationContext:
     def __init__(self, strategy: DataLoader) -> None:
         self._strategy = strategy
 
-        try:
-            self._strategy.auth()
-        except Exception as exc:
-            logger.exception("Authentification error: ", exc)
-
     def visualize(self):
         self._strategy.download_image()
         _image_obj = self._strategy.calculate_index()
         return _image_obj
-    
+
     def metrics(self):
         self._strategy.load_data()
 
 
 class StrategyRegistry:
-
-    _strategies = {
-        "gee": None,
-        "napi": None,
-        "simple": SimpleDataLoader
-    }
+    
+    _strategies = {}
 
     @classmethod
     def get_strategy(cls, name: str, *args, **kwargs):
@@ -42,11 +33,14 @@ class StrategyRegistry:
         if not strategy_class:
             raise ValueError(f"Strategy {name} not found")
         return strategy_class(*args, **kwargs)
-
+    
     @classmethod
     def registry(cls, name: str, strategy_class: DataLoader):
-        cls._strategies[name] = strategy_class
+        try:
+            strategy_class.auth()
+            cls._strategies[name] = strategy_class
+        except Exception as e:
+            logger.exception("Failed to register %s: Cant authenticate",
+                             strategy_class)
 
-
-strategy = StrategyRegistry.get_strategy(DEFAULT_CALCULATION_STRATEGY)
-calculatuion_context = CalculationContext(strategy)
+StrategyRegistry.registry("simple", SimpleDataLoader)
