@@ -17,6 +17,16 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 LOGS_BASE_DIR = BASE_DIR / "logs"
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.0/howto/static-files/
+
+STATIC_URL = "static/"
+
+# STATICFILEDIRS
+
+# Было "."
+MEDIA_ROOT = BASE_DIR / "images" / "IMAGES"
+MEDIA_URL = "/media/"
 
 # 1. "gee", 2. "napi" 3. "simple"
 DEFAULT_CALCULATION_STRATEGY = "simple"
@@ -25,6 +35,8 @@ NASA_CREDS = {
     'username': '',
     'password': '',
 }
+
+GOOGLE_PROJ_NAME = "ee-cocafin1595"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -149,17 +161,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = 'static/'
-
-# STATICFILEDIRS
-
-MEDIA_ROOT = '.'
-MEDIA_URL = '/media/'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -190,7 +191,7 @@ LOGGING = {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "DEBUG",
             "formatter": "standard",
-            "filename": os.path.join(LOGS_BASE_DIR, "project_info.log"),
+            "filename": (LOGS_BASE_DIR / "project_errors.log"),
             "maxBytes": 20 * 1024 * 1024,  # 20 MB
             "backupCount": 5,
             "encoding": "utf8",
@@ -199,7 +200,7 @@ LOGGING = {
             "class": "logging.handlers.RotatingFileHandler",
             "level": "ERROR",
             "formatter": "standard",
-            "filename": os.path.join(LOGS_BASE_DIR, "project_errors.log"),
+            "filename": (LOGS_BASE_DIR / "project_errors.log"),
             "maxBytes": 10 * 1024 * 1024,  # 10 MB
             "backupCount": 3,
             "encoding": "utf8",

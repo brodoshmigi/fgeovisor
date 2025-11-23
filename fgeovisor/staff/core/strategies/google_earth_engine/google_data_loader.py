@@ -2,24 +2,28 @@ import ee
 import requests
 import logging
 from datetime import date
-from os import (makedirs, remove, listdir, rmdir, name)
+from os import (makedirs, remove, name)
 from zipfile import ZipFile
 from matplotlib.pyplot import imsave
-
-from django.contrib.gis.gdal.raster.source import GDALRaster
+from typing import List, Any
 
 from polygons.serializators import GeoJSONSerializer
 from polygons.models import UserPolygon
 
+from visor_bend_site.settings import MEDIA_ROOT, GOOGLE_PROJ_NAME
+
 from images.models import UserImage
-from staff.core.index_calculations import (calculate_NDVI, calculate_EVI,
-                                           calculate_SAVI, calculate_GNDVI,
-                                           calculate_MSAVI, calculate_NDRE,
-                                           crop_image)
+from staff.core.gdal_calculations import (calculate_NDVI, calculate_EVI,
+                                          calculate_SAVI, calculate_GNDVI,
+                                          calculate_MSAVI, calculate_NDRE,
+                                          crop_image, read_bands, remove_bands)
+from staff.interfaces.strategies.loader import DataLoader
 
 logger = logging.getLogger(__name__)
 
-IMAGE_DIR = "images/IMAGES"
+
+# Все расчеты индексов нужно по хорошему делить на 10000 тысяч, это просто так, заметка
+# Nasa mentioned
 
 RATIO_ENUM_S2_BANDS = {
     "NDVI": ["B4", "B8"],  # Вегетационный индекс растительности
@@ -64,7 +68,7 @@ INDEX_EXPRESSION = {
 }
 
 
-class GoogleDataLoader():
+class GoogleDataLoader(DataLoader):
 
     def __init__(self,
                  polygon: UserPolygon,
@@ -74,8 +78,8 @@ class GoogleDataLoader():
 
         self.polygon_object = polygon
         self.index = index
-        self.dir = (IMAGE_DIR +
-                    f"/{self.polygon_object.polygon_id}_{index}_{date_start}")
+        self.dir = (MEDIA_ROOT /
+                    f"{self.polygon_object.polygon_id}_{index}_{date_start}")
         self.date_start = date_start
         self.date_end = date_end
         self.REDUCER = (ee.Reducer.min().combine(ee.Reducer.max(),
@@ -83,19 +87,46 @@ class GoogleDataLoader():
                                                      ee.Reducer.mean(),
                                                      sharedInputs=True))
 
-    # 40 < 50
-    def load_data_reducer(self):
-        """ reducer значит в облаке """
+    def auth(self) -> None:
+        if name == "posix":
+            credentials = ee.ServiceAccountCredentials("", "./service.json")
+            ee.Initialize(credentials=credentials)
+        else:
+            ee.Authenticate()
+            ee.Initialize(project=GOOGLE_PROJ_NAME)
 
-        polygon_ee_obj = ee.Geometry.Polygon(
+    def _get_sentinel_collection(self, ee_poly_obj):
+        return (ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED")
+                .filterDate(self.date_start, self.date_end)
+                .filterBounds(ee_poly_obj)
+                .filter(ee.Filter.lt("CLOUD_COVERAGE_ASSESSMENT", 10)))
+
+    def _get_download_url(self) -> str:
+        """
+        Задание от Тайлера: Сделать маскировку облачности по пикселям(метод QA60 - Quality Assurance),
+        вместо ee.Filter.lt
+        """
+        ee_poly_obj = ee.Geometry.Polygon(
             GeoJSONSerializer(
                 self.polygon_object).data["geometry"]["coordinates"])
 
-        collection = (
-            ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED").filterDate(
-                self.date_start,
-                self.date_end).filterBounds(polygon_ee_obj).filter(
-                    ee.Filter.lt("CLOUD_COVERAGE_ASSESSMENT", 10)))
+        sentinel_image = (self._get_sentinel_collection(ee_poly_obj)
+                          .select(RATIO_ENUM_S2_BANDS[self.index])
+                          .first()
+                          .reproject(crs="EPSG:4326", scale=10)
+                          .clip(ee_poly_obj))
+
+        return sentinel_image.getDownloadURL()
+
+    # 36 < 50
+    def load_data(self) -> List[Any]:
+        """ облачная функция """
+
+        ee_poly_obj = ee.Geometry.Polygon(
+            GeoJSONSerializer(
+                self.polygon_object).data["geometry"]["coordinates"])
+
+        collection = self._get_sentinel_collection(ee_poly_obj)
 
         # logger.debug("%s", collection.first().bandNames().getInfo())
         # logger.debug("%s", collection.size().getInfo())
@@ -115,13 +146,13 @@ class GoogleDataLoader():
             """ камшот значит в облаке """
             img = img.select([*INDEX_EXPRESSION.keys()])
             result = img.reduceRegion(reducer=self.REDUCER,
-                                      geometry=polygon_ee_obj,
+                                      geometry=ee_poly_obj,
                                       scale=10,
                                       bestEffort=True)
             return ee.Feature(
                 None, result.set("date",
                                  img.date().format("YYYY-MM-dd")))
-
+        # Убийца синхронных очередей
         result = collection.map(compute_stats).getInfo()["features"]
 
         # logger.debug("%s", result.getInfo()["features"])
@@ -131,61 +162,42 @@ class GoogleDataLoader():
 
         return result_list
 
-    def get_download_url(self) -> str:
-        polygon_EE = ee.Geometry.Polygon(
-            GeoJSONSerializer(
-                self.polygon_object).data["geometry"]["coordinates"])
-        sentinel_image = ee.ImageCollection("COPERNICUS/S2_SR_HARMONIZED") \
-            .filterDate(self.date_start, self.date_end) \
-            .filterBounds(polygon_EE) \
-            .filter(ee.Filter.lt("CLOUD_COVERAGE_ASSESSMENT", 10)) \
-            .select(RATIO_ENUM_S2_BANDS[self.index]) \
-            .first() \
-            .reproject(crs="EPSG:4326", scale=10) \
-            .clip(polygon_EE)
-        return sentinel_image.getDownloadURL()
+    def download_image(self) -> None:
+        """
+        Задание от Тайлера: читать изображение напрямую,
+        например, через io.BytesIO. Нахуя? Потому что,
+        изображение и так нихуя не весит из гугла, так что,
+        это оптимизация. Если сосал - можно не делать.
+        """
+        response = requests.get(self._get_download_url())
+        exctract_path = self.dir.with_suffix(".zip")
 
-    def download_image(self):
-        response = requests.get(self.get_download_url())
-        path = self.dir + ".zip"
-        with open(path, "wb") as fd:
+        with open(exctract_path, "wb") as fd:
             fd.write(response.content)
-        extract_to_directory = path.replace(".zip", "")
-        makedirs(extract_to_directory)
-        with ZipFile(path, "r") as zip_ref:
-            zip_ref.extractall(extract_to_directory)
-        remove(path)
 
-    def read_bands(self) -> list[GDALRaster]:
-        list_of_rasters = listdir(self.dir)
-        bands = [
-            GDALRaster(self.dir + "/" + item).bands[0].data().astype("float64")
-            for item in list_of_rasters
-        ]
-        return bands
+        makedirs(self.dir)
 
-    def remove_bands(self):
-        list_of_rasters = listdir(self.dir)
-        [remove(self.dir + "/" + item) for item in list_of_rasters]
-        rmdir(self.dir)
+        with ZipFile(exctract_path, "r") as zip_ref:
+            zip_ref.extractall(self.dir)
 
-    def calculate_index(self):
-        index = RATIO_ENUM_CALLBACK[self.index](*self.read_bands())
-        url_raster = self.dir + "/" + str(listdir(self.dir)[0])
+        remove(exctract_path)
+
+    def calculate_index(self) -> UserImage:
+        # Возможно как input параметр нужно будет конвертировать в str
+        raster_path = self.dir / next(self.dir.iterdir())
+        output_path = self.dir.with_suffix(".png")
+
+        index = RATIO_ENUM_CALLBACK[self.index](*read_bands(self.dir))
         polygon = GeoJSONSerializer(self.polygon_object).data["geometry"]
-        valid_array = crop_image(url_raster, polygon, index)
-        imsave((self.dir + ".png"), valid_array, vmin=-1, vmax=1)
+
+        valid_array = crop_image(raster_path, polygon, index)
+        imsave(output_path, valid_array, vmin=-1, vmax=1)
+
         image_DB = UserImage(polygon_id=self.polygon_object,
                              image_index=self.index,
-                             local_uri=(self.dir + ".png"),
+                             local_uri=output_path,
                              image_date=self.date_start)
         image_DB.save()
-        return image_DB
 
-    def auth(self):
-        if name == "posix":
-            credentials = ee.ServiceAccountCredentials("", "./service.json")
-            ee.Initialize(credentials=credentials)
-        else:
-            ee.Authenticate()
-            ee.Initialize(project="ee-cocafin1595")
+        remove_bands(self.dir)
+        return image_DB
