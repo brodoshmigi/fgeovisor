@@ -1,18 +1,38 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import ListModelMixin
-from rest_framework.status import (HTTP_200_OK, HTTP_204_NO_CONTENT,
-                                   HTTP_201_CREATED,
-                                   HTTP_500_INTERNAL_SERVER_ERROR,
-                                   HTTP_400_BAD_REQUEST, HTTP_302_FOUND)
 
 from rest_framework.response import Response
+
+from rest_framework.renderers import JSONRenderer
+from rest_framework.permissions import IsAuthenticated
+
+from rest_framework.status import (HTTP_204_NO_CONTENT, HTTP_201_CREATED,
+                                   HTTP_400_BAD_REQUEST, HTTP_302_FOUND)
+
 from polygons.models import UserPolygon
-from web_interface.staff import My_errors
+from staff.infrastructure.query_helper import is_query_valid
+from staff.core.context.loader_context import StrategyRegistry, CalculationContext
+from visor_bend_site.settings import DEFAULT_CALCULATION_STRATEGY
+
 from .models import UserImage
 from .serializators import ImageSerializator
-from .GEE import Image_GEE
+"""
+⣿⣿⣿⣿⣿⣿⣿⠿⠿⢛⣋⣙⣋⣩⣭⣭⣭⣭⣍⣉⡛⠻⢿⣿⣿⣿⣿
+⣿⣿⣿⠟⣋⣥⣴⣾⣿⣿⣿⡆⣿⣿⣿⣿⣿⣿⡿⠟⠛⠗⢦⡙⢿⣿⣿
+⣿⡟⡡⠾⠛⠻⢿⣿⣿⣿⡿⠃⣿⡿⣿⠿⠛⠉⠠⠴⢶⡜⣦⡀⡈⢿⣿
+⡿⢀⣰⡏⣼⠋⠁⢲⡌⢤⣠⣾⣷⡄⢄⠠⡶⣾⡀⠀⣸⡷⢸⡷⢹⠈⣿
+⡇⢘⢿⣇⢻⣤⣠⡼⢃⣤⣾⣿⣿⣿⢌⣷⣅⡘⠻⠿⢛⣡⣿⠀⣾⢠⣿ 
+⣷⠸⣮⣿⣷⣨⣥⣶⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⢁⡼⠃⣼⣿ 
+⡟⠛⠛⠛⣿⠛⠛⢻⡟⠛⠛⢿⡟⠛⠛⡿⢻⡿⠛⡛⢻⣿⠛⡟⠛⠛⢿ 
+⡇⢸⣿⠀⣿⠀⠛⢻⡇⠸⠃⢸⡇⠛⢛⡇⠘⠃⢼⣷⡀⠃⣰⡇⠸⠇⢸ 
+⡇⢸⣿⠀⣿⠀⠛⢻⡇⢰⣿⣿⡇⠛⠛⣇⢸⣧⠈⣟⠃⣠⣿⡇⢰⣾⣿ 
+⣿⣿⣿⠘⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢋⣿⠙⣷⢸⣷⠀⣿⣿⣿ 
+⣿⣿⣿⡇⢻⣿⣿⣿⡿⠿⢿⣿⣿⣿⠟⠋⣡⡈⠻⣇⢹⣿⣿⢠⣿⣿⣿ 
+⣿⣿⣿⣿⠘⣿⣿⣿⣿⣯⣽⣉⣿⣟⣛⠷⠙⢿⣷⣌⠀⢿⡇⣼⣿⣿⣿ 
+⣿⣿⣿⡿⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣤⡙⢿⢗⣀⣁⠈⢻⣿⣿ 
+⣿⡿⢋⣴⣿⣎⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⡉⣯⣿⣷⠆⠙⢿ 
+⣏⠀⠈⠧⠡⠉⠙⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠃⠉⢉⣁⣀⣀⣾
+"""
 
 DEFAULT_PARAMS = {'id': '', 'date': '', 'index': ''}
 
@@ -23,93 +43,83 @@ NO_CACHE_HEADERS = {
 }
 
 
+# Мы возвращаем только одну ссылку, нужно делать Retrieve Model Mixin, List это для множества
 class UploadImgViewSet(GenericViewSet, ListModelMixin):
     permission_classes = [IsAuthenticated]
 
     serializer_class = ImageSerializator
 
-    # можно сделать get_queryset(self, **kwargs) и не будет реюз кода
-    def get_queryset(self):
-        # drf said that query_params is more correct name than GET :)
-        # for us, it is a complex issue(like miyadzaki skill issue)
-        query_params = self.request.GET
-        polygon_id, date, index = query_params.values()
-        polygon_object = UserPolygon.objects.get(polygon_id=polygon_id)
-        return UserImage.objects.filter(polygon_id=polygon_object,
-                                        image_index=index.upper(),
-                                        image_date=date)
+    # ыыы уебище
+    renderer_classes = [JSONRenderer]
 
+    # По правилам drf, каждый запрос должен перевычеслять queryset
+    # all там и тут передают
+    queryset = UserImage.objects.all()
+
+    # Если хочется соблюдать реальный MVC, тогда нужно использовать ->
+    # filter_backends = [и создать свой бекенд для фильтрации]
+    # И в нашем случае, раз мы используем, что-то типо get_obj 10 из 10,
+    # Нужно будет переписать логику чисто get_object, а queryset оставить серьезным дядям
+    def get_queryset(self, polygon_id, date, index):
+        return self.queryset.all().filter(polygon_id__pk=polygon_id,
+                                          image_index=index.upper(),
+                                          image_date=date)
+
+    # 32 + 4 < 50
     def list(self, request, *args, **kwargs) -> Response:
         query_params = self.request.GET
         query_equals = DEFAULT_PARAMS.keys() - query_params.keys()
 
-        if not self.is_query_valid(self.request.GET, query_equals):
-            error = {'error': f'You forgot {query_equals}'}
-            return Response(status=HTTP_400_BAD_REQUEST, data=error)
+        if is_query_valid(query_params, query_equals, 3):
 
-        polygon_id, date, index = query_params.values()
+            polygon_id, date, index = query_params.values()
 
-        queryset: UserImage = self.filter_queryset(self.get_queryset())
-        polygon_object = UserPolygon.objects.get(polygon_id=polygon_id)
+            # logger.debug("%s %s %s", polygon_id, date, index)
 
-        if not queryset:
-            #если скачиваются ужен скачанные снимки, воможно проблема в датах
-            image_object = Image_GEE(polygon_object,
-                                     index=index.upper(),
-                                     date_start=date)
-            image_object.download_image()
-            _image_object = image_object.calculate_index()
-            image_object.remove_bands()
-            return Response(
-                status=HTTP_201_CREATED,
-                data={'url': _image_object.check_uri(request='1')},
-                # headers={'Location': _image_object.check_uri(request='1')}.update(NO_CACHE)
-            )
+            queryset = self.filter_queryset(
+                self.get_queryset(polygon_id=polygon_id,
+                                  date=date,
+                                  index=index))
 
-        serializer = self.get_serializer(queryset, many=True)
-        image_uri = queryset[0].check_uri(request='1')
-        if image_uri is not None:
-            return Response(
-                {'url': image_uri},
-                status=HTTP_302_FOUND,
-                # headers={'Location: _image_object.check_uri(request='1')'}.update(NO_CACHE)
-            )
+            serializer = self.get_serializer(queryset, many=True)
 
-        return Response(serializer.data, status=HTTP_204_NO_CONTENT)
+            # bool(queryset) >= exists exists exists if 67, else no
+            if not bool(queryset):
+                # если скачиваются ужен скачанные снимки, воможно проблема в датах
+                obj = self.get_image(polygon_id=polygon_id,
+                                     date=date,
+                                     index=index)
 
-    def is_query_valid(self, query_dict, q_e) -> bool:
-        query_len = len(query_dict.keys())
+                # logger.debug("%s", obj)
 
-        if query_len < 3 or query_len > 3:
-            return False
+                return Response(
+                    status=HTTP_201_CREATED,
+                    data={"url": obj.check_uri()},
+                    # headers={headers={"Location": obj.check_uri()}.update(NO_CACHE)
+                )
 
-        if q_e != set():
-            return False
+            obj = queryset.first()
 
-        return True
+            if obj is not None:
+                return Response(
+                    status=HTTP_302_FOUND,
+                    data={"url": obj.check_uri()},
+                    # headers={"Location": obj.check_uri()}.update(NO_CACHE)
+                )
 
+            return Response(status=HTTP_204_NO_CONTENT, data=serializer.data)
 
-class ImageGEE(APIView):
-    """
-    Добавление фото из Google Earth Engine
-    """
-    permission_classes = [IsAuthenticated]
+        # logger.debug("%s", serializer.data)
+        error = {"error": f"You forgot {query_equals}"}
+        return Response(status=HTTP_400_BAD_REQUEST, data=error)
 
-    def get(self, request, id, date):
-        polygons = UserPolygon.objects.filter(owner=self.request.user.id)
-        polygon_instance = polygons.get(polygon_id=id)
-        polygon_image = Image_GEE(polygon_instance, date_start=date)
-        """
-        try:
-            polygon_image.download_image()
-            polygon_image.visualization()
-            My_errors.tmp_context['photo'] = True
-            return Response(My_errors.error_send())
-        except Exception:
-            My_errors.tmp_context['photo'] = False
-            return Response(status=507)
-        """
-        polygon_image.download_image()
-        polygon_image.visualization()
-        My_errors.tmp_context['photo'] = True
-        return Response(My_errors.error_send())
+    # overload
+    def get_image(self, polygon_id, date, index):
+        """ Зубов во рту должно быть столько, сколько ты можешь себе позволить вылечить. """
+        strategy = StrategyRegistry.get_strategy(DEFAULT_CALCULATION_STRATEGY)
+        context = CalculationContext(strategy)
+        polygon_obj = UserPolygon.objects.all().filter(polygon_id=polygon_id).first()
+        image_object = context.visualize(polygon_obj,
+                                         index=index.upper(),
+                                         date_start=date)
+        return image_object

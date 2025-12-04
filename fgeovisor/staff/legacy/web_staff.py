@@ -1,0 +1,45 @@
+import logging
+from copy import copy
+"""
+Аналог utils.py. Тут храним вспомогательный код.
+"""
+
+logger = logging.getLogger(__name__)
+
+
+class My_errors():
+    """
+    Cамопальный обработчик ошибок
+
+    Существует для того что бы упростить передачу ошибок с Django на js, 
+    При каждой передачи пременной 'context' при отрисовки html страницы 
+    Не перечислять состояние всех ошибок
+    """
+    #список всех существующих ошибок
+    error_wordbook = {
+        'auth_check': False,
+        'is_staff': False,
+        'is_vallid_error': False,
+        'login_error': False,
+        'create_error': False,
+        'photo': False
+    }
+
+    tmp_context = copy(error_wordbook)
+
+    def error_send():
+        final = copy(My_errors.tmp_context)
+        My_errors.tmp_context = copy(My_errors.error_wordbook)
+        return (final)
+
+
+def is_query_valid(query_dict, q_equals, n) -> bool:
+    query_len = len(query_dict.keys())
+
+    if query_len != n:
+        return False
+
+    if q_equals != set():
+        return False
+
+    return True

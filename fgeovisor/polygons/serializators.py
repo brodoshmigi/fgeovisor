@@ -8,12 +8,12 @@ class PolygonSerializator(serializers.ModelSerializer):
 
     class Meta:
         model = UserPolygon
-        fields = '__all__'
+        fields = "__all__"
 
 
 class GeoJSONSerializer(GeoFeatureModelSerializer):
 
     class Meta:
         model = UserPolygon
-        fields = ['polygon_id', 'polygon_data']
-        geo_field = 'polygon_data'
+        fields = ["polygon_id", "polygon_data"]
+        geo_field = "polygon_data"

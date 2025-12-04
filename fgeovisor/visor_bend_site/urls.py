@@ -26,8 +26,9 @@ import web_interface.views as views
 
 
 urlpatterns = [
-    path('api/secretadmin/', admin.site.urls, name="admin"),
-    path('api/', include('web_interface.urls'), name="api"),
-    path('api/', include('polygons.urls'), name='api_poly'),
-    path('api/', include('images.urls'), name='api_img'),
+    path('secretadmin/', admin.site.urls, name="admin"),
+    path('', include('web_interface.urls'), name="api"),
+    path('', include('polygons.urls'), name='api_poly'),
+    path('', include('images.urls'), name='api_img'),
+    path('', include('metrics.urls'), name='api_mtr')
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

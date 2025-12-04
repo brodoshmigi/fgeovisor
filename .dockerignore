@@ -1,3 +1,9 @@
+# Игнорируем другие какашки
 fgeovisor/**/migrations/*
 !fgeovisor/**/migrations/__init__.py
 fgeovisor/**/__pycache__/
+
+# Игнорируем какашки
+project_errors.log
+project.log
+*.geojson

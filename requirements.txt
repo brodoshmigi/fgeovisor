@@ -12,6 +12,7 @@ pystac==1.11.0
 pystac-client==0.8.5
 psycopg==3.2.1
 psycopg2==2.9.9
+pandas==2.3.3
 tzdata==2024.1
 typing_extensions==4.12.2
 numpy==2.1.3

@@ -15,12 +15,28 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+LOGS_BASE_DIR = BASE_DIR / "logs"
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/5.0/howto/static-files/
+
+STATIC_URL = "static/"
+
+# STATICFILEDIRS
+
+# Было "."
+MEDIA_ROOT = BASE_DIR / "images" / "IMAGES"
+MEDIA_URL = "/media/"
+
+# 1. "gee", 2. "napi" 3. "simple"
+DEFAULT_CALCULATION_STRATEGY = "simple"
 
 NASA_CREDS = {
     'username': '',
     'password': '',
 }
+
+GOOGLE_PROJ_NAME = "ee-cocafin1595"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
@@ -54,7 +70,8 @@ INSTALLED_APPS = [
     "rest_framework_gis",
     "web_interface.apps.WebInterfaceConfig",
     "images.apps.ImagesConfig",
-    "polygons.apps.PolygonsConfig"
+    "polygons.apps.PolygonsConfig",
+    "metrics.apps.MetricsConfig"
 ]
 
 MIDDLEWARE = [
@@ -144,20 +161,53 @@ USE_I18N = True
 
 USE_TZ = True
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.0/howto/static-files/
-
-STATIC_URL = 'static/'
-
-# STATICFILEDIRS
-
-MEDIA_ROOT = '.'
-MEDIA_URL = '/media/'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
+
+# https://docs.djangoproject.com/en/5.2/ref/logging/#default-logging-configuration
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False, # Из-за этой хуйни мы видим логи из библиотек
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s: %(lineno)d %(message)s"
+        },
+        "simple": {
+            "format": "%(levelname)s %(message)s"
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "standard",
+        },
+        "file": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "DEBUG",
+            "formatter": "standard",
+            "filename": (LOGS_BASE_DIR / "project_errors.log"),
+            "maxBytes": 20 * 1024 * 1024,  # 20 MB
+            "backupCount": 5,
+            "encoding": "utf8",
+        },
+        "errors": {
+            "class": "logging.handlers.RotatingFileHandler",
+            "level": "ERROR",
+            "formatter": "standard",
+            "filename": (LOGS_BASE_DIR / "project_errors.log"),
+            "maxBytes": 10 * 1024 * 1024,  # 10 MB
+            "backupCount": 3,
+            "encoding": "utf8",
+        },
+    },
+    "root": {
+        "handlers": ["console", "file", "errors"],
+        "level": "DEBUG",
+    },
+}
